@@ -17,6 +17,8 @@ const app = Express()
 
 const slideshow = new Slidehow("powerpoint");
 
+let loaded = null;
+
 slideshow.boot()
 .then(function () {
   app.listen(process.env.ROMEO_PORT);
@@ -63,6 +65,8 @@ app.get('/files/:filename', async function(req, res) {
   await slideshow.open(`./${process.env.ROMEO_FOLDER}/${filename}`);
   await slideshow.start();
 
+  loaded = filename;
+
   res.status(300);
   res.send(`This powerpoint has been loaded!`);
 });
@@ -82,8 +86,9 @@ app.post('/files/upload', function (req, res) {
 });
 
 app.get('/slides/:index', async function(req, res) {
+  const info = await slideshow.info.length();
   const index = req.params.index;
-  const slides = slideshow.info.length;
+  const length = info.titles.length;
 
   // Make sure the index is a number
   if (!Number.isInteger(index)) {
@@ -92,7 +97,7 @@ app.get('/slides/:index', async function(req, res) {
     return;
   };
 
-  if (index < 0 && slides <= slides) {
+  if (index < 0 && index > length) {
     res.status(500);
     res.send(`There is no slide at this index`);
     return;
