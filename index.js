@@ -86,18 +86,19 @@ app.post('/files/upload', function (req, res) {
 });
 
 app.get('/slides/:index', async function(req, res) {
-  const info = await slideshow.info.length();
+  const info = await slideshow.info();
+
   const index = req.params.index;
   const length = info.titles.length;
 
   // Make sure the index is a number
-  if (!Number.isInteger(index)) {
+  if (index != parseInt(index)) {
     res.status(500);
     res.send(`This is not a valid slide number!`);
     return;
   };
 
-  if (index < 0 && index > length) {
+  if (index < 1 || index > length) {
     res.status(500);
     res.send(`There is no slide at this index`);
     return;
