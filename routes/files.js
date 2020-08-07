@@ -17,7 +17,6 @@ module.exports = (function() {
     res.send(files)
   });
 
-
   router.get('/:filename', function(req, res) {
     const filename = req.params.filename;
   

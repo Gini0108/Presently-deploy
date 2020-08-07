@@ -1,9 +1,16 @@
+const Slideshow = require("slideshow");
+
+
 const express = require('express');
 const dotenv = require('dotenv');
 const events = require('events');
 
+global.slideshow = new Slideshow("powerpoint");
+slideshow.boot();
+
 global.playingValue = false;
 global.intervalValue = 5000;
+global.powerpointValue = '';
 
 global.event = new events.EventEmitter();
 
@@ -37,11 +44,11 @@ app.use(function (req, res, next) {
 // Load external routes
 const files = require('./routes/files');
 const system = require('./routes/system');
-// const powerpoint = require('./routes/powerpoint');
+const powerpoint = require('./routes/powerpoint');
 
 app.use('/files', files);
 app.use('/system', system);
-// app.use('/powerpoint', powerpoint);
+app.use('/powerpoint', powerpoint);
 
 // Listen to selected port
 app.listen(process.env.ROMEO_PORT);
