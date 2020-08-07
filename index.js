@@ -1,110 +1,47 @@
-const Express = require('express');
+const express = require('express');
 const dotenv = require('dotenv');
-const path = require('path');
-const Slidehow = require("slideshow");
-const size = require('get-folder-size');
-const fs = require('fs');
+const events = require('events');
 
-// Load .ENV file
+global.playingValue = false;
+global.intervalValue = 5000;
+
+global.event = new events.EventEmitter();
+
+event.on('play', () => {
+  playingValue = true;
+});
+
+event.on('pause', () => {
+  playingValue = false;
+});
+
+event.on('interval', (interval) => {
+  intervalValue = interval;
+});
+
+// Load the .ENV variables
 dotenv.config();
 
-// Create the powerpoint folder if need be
-if (!fs.existsSync(`./${process.env.ROMEO_FOLDER}`)){
-  fs.mkdirSync(`./${process.env.ROMEO_FOLDER}`);
-}
+// Create the Express app
+const app = express();
 
-const app = Express()
-
-const slideshow = new Slidehow("powerpoint");
-
-let loaded = null;
-
-slideshow.boot()
-.then(function () {
-  app.listen(process.env.ROMEO_PORT);
+// Allow anything TBH
+app.use(function (req, res, next) {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
+  res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type');
+  res.setHeader('Access-Control-Allow-Credentials', true);
+  next();
 });
 
-// var slideshow = new SlideShow("Keynote")
-// slideshow.boot()
-// .then(function () { slideshow.open("pres.pptx") })
-// .then(function () { slideshow.start() })
-// .then(function () { slideshow.goto(2) })
-// .delay(2*1000)
-// .then(function () { slideshow.stop() })
-// .then(function () { slideshow.close() })
-// .then(function () { slideshow.quit() })
-// .then(function () { slideshow.end() })
-// .done()
+// Load external routes
+const files = require('./routes/files');
+const system = require('./routes/system');
+// const powerpoint = require('./routes/powerpoint');
 
-// Start Express server on the .ENV port
-app.get('/files', function (req, res) {
-  // Get all files
-  const files = fs.readdirSync(`./${process.env.ROMEO_FOLDER}`)
+app.use('/files', files);
+app.use('/system', system);
+// app.use('/powerpoint', powerpoint);
 
-  res.status(300);
-  res.send(files)
-})
-
-app.get('/files/:filename', async function(req, res) {
-  const filename = req.params.filename;
-
-  // Make sure the file exists
-  if (!fs.existsSync(`./${process.env.ROMEO_FOLDER}/${filename}`)) {
-    res.status(404);
-    res.send('This powerpoint could not be found!');
-    return;
-  };
-
-  // Make sure the file extension is right
-  if (path.extname(filename) !== `.pptx`) {
-    res.status(500);
-    res.send(`This file doesn't have a .pptx file extension!`);
-    return;
-  };
-
-  await slideshow.open(`./${process.env.ROMEO_FOLDER}/${filename}`);
-  await slideshow.start();
-
-  loaded = filename;
-
-  res.status(300);
-  res.send(`This powerpoint has been loaded!`);
-});
-
-app.post('/files/upload', function (req, res) {
-  const form = new formidable.IncomingForm();
-
-  // Parse the form request
-  form.parse(req);
-
-  // Write the file to storage
-  form.on('fileBegin', function (name, file) {
-      file.path = `${__dirname}/${process.env.ROMEO_FOLDER}/${file.name}`;
-  });
-
-  res.status(200);
-});
-
-app.get('/slides/:index', async function(req, res) {
-  const info = await slideshow.info.length();
-  const index = req.params.index;
-  const length = info.titles.length;
-
-  // Make sure the index is a number
-  if (!Number.isInteger(index)) {
-    res.status(500);
-    res.send(`This is not a valid slide number!`);
-    return;
-  };
-
-  if (index < 0 && index > length) {
-    res.status(500);
-    res.send(`There is no slide at this index`);
-    return;
-  }
-
-  await slideshow.goto(index);
-
-  res.status(300);
-  res.send(`Switched to the correct slide!`);
-});
+// Listen to selected port
+app.listen(process.env.ROMEO_PORT);
