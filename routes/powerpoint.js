@@ -14,14 +14,14 @@ module.exports = (function() {
     // Make sure the file exists
     if (!fs.existsSync(`./${process.env.ROMEO_FOLDER}/${filename}`)) {
       res.status(404);
-      res.send();
+      res.send(`File not found`);
       return;
     };
   
     // Make sure the file extension is right
     if (path.extname(filename) !== `.pptx`) {
-      res.status(422);
-      res.send();
+      res.status(400);
+      res.send(`Invalid file extension`);
       return;
     };
 
@@ -30,25 +30,74 @@ module.exports = (function() {
       slideshow.start().then(() => {
         res.status(200);
         res.send();
-      }).catch(error => console.log(error));
-    }).catch(error => console.log(error));
+      }).catch(() => {
+        res.status(500)
+        res.send('A unknown error occurred')
+      });
+    }).catch(() => {
+      res.status(500)
+      res.send('A unknown error occurred')
+    });
 
     res.status(200);
     res.send();
   });
 
   router.get('/', async function(req, res) {
-    res.status(200);
-    const titles = (await slideshow.info()).titles;
-    res.send(titles);
+    const stats = await slideshow.stat();
+
+    // Make sure a powerpoint has been loaded
+    if (stats.slides < 0) {
+      res.status(404);
+      res.send('No PowerPoint loaded');
+      return;
+    }
+
+    // Fetch the info
+    slideshow.info()
+      .then((info) => {
+        res.status(200);
+        res.send(info.titles);
+      })
+      .catch(() => {
+        res.status(500)
+        res.send('A unknown error occurred')
+      });
   });
 
   router.get('/slide/:index', async function(req, res) {
-    const index = parseInt(req.params.index) + 1;
-    await slideshow.goto(index);
+    // Make sure the input is a number
+    if (Number.isInteger(req.params.index)) {
+      res.status(400);
+      res.send(`Slide index must be a number`);
+      return;
+    }
 
-    res.status(200);
-  })
+    const stats = await slideshow.stat();
+    const index = parseInt(req.params.index) + 1;
+
+    // Make sure a powerpoint has been loaded
+    if (stats.slides < 0) {
+      res.status(404);
+      res.send('No PowerPoint loaded');
+      return;
+    }
+
+    // Make sure the slide is a valid index
+    if (index < 0 || index >= stats.slides) {
+      res.status(400);
+      res.send('Slide index is out of range');
+      return;
+    }
+
+    // Switch to the correct slide
+    slideshow.goto(index)
+      .then(() => res.status(200))
+      .catch(() => {
+        res.status(500)
+        res.send('A unknown error occurred')
+      });
+  });
 
   return router;
   
