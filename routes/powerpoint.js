@@ -26,12 +26,29 @@ module.exports = (function() {
     };
 
     // Load the new PowerPoint and start the presentation
-    await slideshow.open(`./${process.env.ROMEO_FOLDER}/${filename}`);
-    await slideshow.start();
+    slideshow.open(`./${process.env.ROMEO_FOLDER}/${filename}`).then(() => {
+      slideshow.start().then(() => {
+        res.status(200);
+        res.send();
+      }).catch(error => console.log(error));
+    }).catch(error => console.log(error));
 
     res.status(200);
     res.send();
   });
+
+  router.get('/', async function(req, res) {
+    res.status(200);
+    const titles = (await slideshow.info()).titles;
+    res.send(titles);
+  });
+
+  router.get('/slide/:index', async function(req, res) {
+    const index = parseInt(req.params.index) + 1;
+    await slideshow.goto(index);
+
+    res.status(200);
+  })
 
   return router;
   
