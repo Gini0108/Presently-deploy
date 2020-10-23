@@ -1,43 +1,9 @@
 const Slideshow = require("slideshow");
-
-
 const express = require('express');
 const dotenv = require('dotenv');
-const events = require('events');
 
-global.event = new events.EventEmitter();
 global.slideshow = new Slideshow("powerpoint");
-
-slideshow.boot();
-
-global.intervalId = ``;
-global.intervalVale = 5000;
-global.intervalPlaying = false;
-
-event.on('play', () => {
-  intervalPlaying = true;
-});
-
-event.on('pause', () => {
-  intervalPlaying = false;
-});
-
-event.on('interval', (intervalParameter) => {
-  intervalValue = intervalParameter;
-
-  clearInterval(intervalId);
-
-  setTimeout(async () => {
-    if (intervalPlaying) {
-      const stats = await slideshow.stat();
-
-      if (stats.position > 0 && stats.slides > 0) {
-        if (stats.position + 1 > stats.slides) slideshow.goto(0);
-        else slideshow.next();
-      }
-    }
-  }, intervalValue)
-});
+global.slideshow.boot();
 
 // Load the .ENV variables
 dotenv.config();

@@ -21,16 +21,34 @@ function generateObject() {
       
       // Create the object and return it
       resolve({
-        intervalPlaying: playingValue,
-        intervalVale: intervalValue,
+        intervalPlaying: intervalPlaying,
+        intervalValue: intervalValue,
         storage: storageValue,
       });
     });
   });
 }
 
-module.exports = (function() {
+async function executeInterval() {
+  const stats = await global.slideshow.stat();
 
+  // Make sure a PowerPoint has been loaded
+  if (stats.position > 0 && stats.slides > 0) {
+
+    // If we've reacted the last slide
+    if (stats.position + 1 > stats.slides) {
+      global.slideshow.goto(1);
+    } else {
+      global.slideshow.next();
+    }
+  }
+}
+
+intervalId = ``;
+intervalValue = 5000;
+intervalPlaying = false;
+
+module.exports = (function() {
   // Get system statistics
   router.get('/', async function (req, res) {
     const object = await generateObject();
@@ -42,11 +60,13 @@ module.exports = (function() {
   // Trigger PowerPoint playing
   router.get('/play', async function (req, res) {
 
-    // Update the global playing state
-    event.emit('play');
+    // Only update the play state if its paused
+    if (!intervalPlaying) {
+      intervalPlaying = true;
+      setInterval(executeInterval, intervalValue);
+    }
 
     const object = await generateObject();
-
     res.status(200);
     res.send(object);
   });
@@ -54,11 +74,13 @@ module.exports = (function() {
   // Trigger PowerPoint playing
   router.get('/pause', async function (req, res) {
 
-    // Update the global playing state
-    event.emit('pause');
+    // Only update the play state if its playing
+    if (intervalPlaying) {
+      intervalPlaying = false;
+      clearInterval(intervalId);
+    }
 
     const object = await generateObject();
-
     res.status(200);
     res.send(object);
   });
@@ -81,11 +103,14 @@ module.exports = (function() {
       return;
     }
 
-    // Update the global playing state
-    event.emit('interval', value);
+    // Make sure the value has changed
+    if (value !== intervalValue) {
+      intervalValue = value;
+      clearInterval(intervalId);
+      setInterval(executeInterval, intervalValue);
+    }
 
     const object = await generateObject();
-
     res.status(200);
     res.send(object);
   });
