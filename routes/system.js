@@ -1,6 +1,13 @@
+"use strict";
+
 // Import required packages
-const express = require('express');
-const size = require('get-folder-size');
+import express from 'express';
+import size from 'get-folder-size';
+
+let intervalValue = 30000;
+let intervalPlaying = true;
+
+let intervalId = setInterval(executeInterval, intervalValue);
 
 // Create Router instance
 const router = express.Router();
@@ -44,77 +51,69 @@ async function executeInterval() {
   }
 }
 
-intervalId = ``;
-intervalValue = 5000;
-intervalPlaying = false;
+// Get system statistics
+router.get('/', async function (req, res) {
+  const object = await generateObject();
 
-module.exports = (function() {
-  // Get system statistics
-  router.get('/', async function (req, res) {
-    const object = await generateObject();
+  res.status(200);
+  res.send(object);
+});
 
-    res.status(200);
-    res.send(object);
-  });
+// Trigger PowerPoint playing
+router.get('/play', async function (req, res) {
 
-  // Trigger PowerPoint playing
-  router.get('/play', async function (req, res) {
+  // Only update the play state if its paused
+  if (!intervalPlaying) {
+    intervalPlaying = true;
+    intervalId = setInterval(executeInterval, intervalValue);
+  }
 
-    // Only update the play state if its paused
-    if (!intervalPlaying) {
-      intervalPlaying = true;
-      setInterval(executeInterval, intervalValue);
-    }
+  const object = await generateObject();
+  res.status(200);
+  res.send(object);
+});
 
-    const object = await generateObject();
-    res.status(200);
-    res.send(object);
-  });
+// Trigger PowerPoint playing
+router.get('/pause', async function (req, res) {
 
-  // Trigger PowerPoint playing
-  router.get('/pause', async function (req, res) {
+  // Only update the play state if its playing
+  if (intervalPlaying) {
+    intervalPlaying = false;
+    clearInterval(intervalId);
+  }
 
-    // Only update the play state if its playing
-    if (intervalPlaying) {
-      intervalPlaying = false;
-      clearInterval(intervalId);
-    }
+  const object = await generateObject();
+  res.status(200);
+  res.send(object);
+});
 
-    const object = await generateObject();
-    res.status(200);
-    res.send(object);
-  });
+router.get('/interval/:value', async function(req, res) {
+  let value = req.params.value;
 
-  router.get('/interval/:value', async function(req, res) {
-    let value = req.params.value;
+  // Make sure the value is a number
+  if (value != parseInt(value)) {
+    res.status(400);
+    res.send();
+    return;
+  };
 
-    // Make sure the value is a number
-    if (value != parseInt(value)) {
-      console.log("Its not a number!");
-      res.status(400);
-      res.send();
-      return;
-    };
+  // Make sure the value isn't to high or low
+  if (value <= 100 || value >= 2147483647) {
+    res.status(400);
+    res.send();
+    return;
+  }
 
-    // Make sure the value isn't to high or low
-    if (value <= 100 || value >= 2147483647) {
-      res.status(400);
-      res.send();
-      return;
-    }
+  // Make sure the value has changed
+  if (value !== intervalValue) {
+    intervalValue = value;
+    clearInterval(intervalId);
+    intervalId = setInterval(executeInterval, parseInt(intervalValue));
+  }
 
-    // Make sure the value has changed
-    if (value !== intervalValue) {
-      intervalValue = value;
-      clearInterval(intervalId);
-      setInterval(executeInterval, intervalValue);
-    }
+  const object = await generateObject();
+  res.status(200);
+  res.send(object);
+});
 
-    const object = await generateObject();
-    res.status(200);
-    res.send(object);
-  });
-
-  return router;
-  
-})();
+export default router;

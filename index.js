@@ -1,6 +1,8 @@
-const Slideshow = require("slideshow");
-const express = require('express');
-const dotenv = require('dotenv');
+"use strict";
+
+import Slideshow from 'slideshow';
+import express from 'express';
+import dotenv from 'dotenv';
 
 global.slideshow = new Slideshow("powerpoint");
 global.slideshow.boot();
@@ -21,10 +23,9 @@ app.use(function (req, res, next) {
 });
 
 // Load external routes
-const files = require('./routes/files');
-const system = require('./routes/system');
-const powerpoint = require('./routes/powerpoint');
-const slideshow = require("slideshow");
+import files from './routes/files.js';
+import system from './routes/system.js';
+import powerpoint from './routes/powerpoint.js';
 
 app.use('/files', files);
 app.use('/system', system);
