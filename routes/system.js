@@ -21,8 +21,8 @@ function generateObject() {
       
       // Create the object and return it
       resolve({
-        playing: playingValue,
-        interval: intervalValue,
+        intervalPlaying: playingValue,
+        intervalVale: intervalValue,
         storage: storageValue,
       });
     });

@@ -5,25 +5,38 @@ const express = require('express');
 const dotenv = require('dotenv');
 const events = require('events');
 
+global.event = new events.EventEmitter();
 global.slideshow = new Slideshow("powerpoint");
+
 slideshow.boot();
 
-global.playingValue = false;
-global.intervalValue = 5000;
-global.powerpointValue = '';
-
-global.event = new events.EventEmitter();
+global.intervalId = ``;
+global.intervalVale = 5000;
+global.intervalPlaying = false;
 
 event.on('play', () => {
-  playingValue = true;
+  intervalPlaying = true;
 });
 
 event.on('pause', () => {
-  playingValue = false;
+  intervalPlaying = false;
 });
 
-event.on('interval', (interval) => {
-  intervalValue = interval;
+event.on('interval', (intervalParameter) => {
+  intervalValue = intervalParameter;
+
+  clearInterval(intervalId);
+
+  setTimeout(async () => {
+    if (intervalPlaying) {
+      const stats = await slideshow.stat();
+
+      if (stats.position > 0 && stats.slides > 0) {
+        if (stats.position + 1 > stats.slides) slideshow.goto(0);
+        else slideshow.next();
+      }
+    }
+  }, intervalValue)
 });
 
 // Load the .ENV variables
@@ -45,6 +58,7 @@ app.use(function (req, res, next) {
 const files = require('./routes/files');
 const system = require('./routes/system');
 const powerpoint = require('./routes/powerpoint');
+const slideshow = require("slideshow");
 
 app.use('/files', files);
 app.use('/system', system);
