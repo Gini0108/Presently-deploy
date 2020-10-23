@@ -92,7 +92,10 @@ module.exports = (function() {
 
     // Switch to the correct slide
     slideshow.goto(index)
-      .then(() => res.status(200))
+      .then(() => {
+        res.status(200)
+        res.send()
+      })
       .catch(() => {
         res.status(500)
         res.send('A unknown error occurred')
