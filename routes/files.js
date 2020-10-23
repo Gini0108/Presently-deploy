@@ -120,7 +120,7 @@ router.post('/upload', async function(req, res) {
         return;
       }
 
-      const newPath = `${__dirname}/../${process.env.ROMEO_FOLDER}/${uploadName}`;
+      const newPath = `${path.resolve()}/${process.env.ROMEO_FOLDER}/${uploadName}`;
 
       // If we've gotten here we can move the file to the PowerPoint folder
       fs.renameSync(uploadPath, newPath);

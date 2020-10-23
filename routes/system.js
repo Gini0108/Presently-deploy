@@ -40,7 +40,7 @@ async function executeInterval() {
   const stats = await global.slideshow.stat();
 
   // Make sure a PowerPoint has been loaded
-  if (stats.position > 0 && stats.slides > 0) {
+  if (stats.position >= 0 && stats.slides >= 0) {
 
     // If we've reacted the last slide
     if (stats.position + 1 > stats.slides) {

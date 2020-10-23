@@ -25,6 +25,10 @@ router.get('/:filename', async function(req, res) {
     return;
   };
 
+  // Close the previous PowerPoint if it exists
+  const stats = await slideshow.stat();
+  if (stats.position >= 0 && stats.slides >= 0) slideshow.close();
+
   // Load the new PowerPoint and start the presentation
   slideshow.open(`./${process.env.ROMEO_FOLDER}/${filename}`).then(() => {
     slideshow.start().then(() => {
