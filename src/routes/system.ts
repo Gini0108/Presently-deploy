@@ -3,7 +3,6 @@
 // Import required packages
 import express from 'express';
 import Slideshow from 'slideshow';
-import { executeInterval, folderSize } from '../utils';
 
 let intervalId: NodeJS.Timeout;
 let intervalValue = 30000;
@@ -66,7 +65,7 @@ async function updateInterval(interval: number, slider: Slideshow) {
 
     // Set the new interval
     intervalId = setInterval(() => {
-      executeInterval(slider);
+      nextSlide(slider);
     }, intervalValue);
   }
 }
@@ -79,7 +78,7 @@ async function updatePlaying(playing: boolean, slider: Slideshow) {
     // Start the interval again
     if (playing) {
       intervalId = setInterval(() => {
-        executeInterval(slider);
+        nextSlide(slider);
       }, intervalValue);
     }
 
@@ -91,9 +90,24 @@ async function updatePlaying(playing: boolean, slider: Slideshow) {
 async function fetchSettings() {
   return {
     playing: intervalPlaying,
-    maximum: 10420,
-    current: await folderSize(`./${process.env.ROMEO_FOLDER}`),
     interval: intervalValue,
+    
+    // maximum: 10420,
+    // current: await folderSize(`./${process.env.ROMEO_FOLDER}`),
+  }
+}
+
+async function nextSlide(slider: Slideshow) {
+  // Fetch the slideshow statistics
+  const statistics = await slider.stat();
+
+  // Execute the actual movement logic
+  if (statistics.position >= 0 && statistics.slides >= 0) {
+    if (statistics.position + 1 > statistics.slides) {
+      await slider.goto(1);
+    } else {
+      await slider.next();
+    }
   }
 }
 
