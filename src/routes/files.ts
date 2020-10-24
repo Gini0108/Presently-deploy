@@ -124,6 +124,11 @@ router.post('/upload', async (request, response) => {
         return;
       }
 
+      // Make sure the folder exist
+      if (!fs.existsSync(`../${process.env.ROMEO_FOLDER}`)){
+        fs.mkdirSync(`../${process.env.ROMEO_FOLDER}`);
+      }
+
       const newPath = `${path.resolve()}/../${process.env.ROMEO_FOLDER}/${uploadName}`;
 
       // If we've gotten here we can move the file to the PowerPoint folder
