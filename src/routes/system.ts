@@ -27,9 +27,9 @@ router.put('/', async (request, response) => {
   if (interval) {
     // Validate the property type and range
     const isNumber = Number.isInteger(interval);
-    const inRange = interval <= 100 || interval >= 2147483647
+    const inRange = interval >= 100 && interval <= 2147483647;
 
-    if (!isNumber && inRange) {
+    if (!isNumber || !inRange) {
       response.status(422);
       response.send(`Invalid 'interval' property`);
       return;
@@ -41,11 +41,11 @@ router.put('/', async (request, response) => {
 
   if (playing) {
     // Validate the property type
-    const isBoolean = typeof playing !== `boolean`;
+    const isBoolean = typeof playing === `boolean`;
 
     if (!isBoolean) {
       response.status(422);
-      response.send(`Invalid 'interval' property`);
+      response.send(`Invalid 'playing' property`);
       return;
     }
 
@@ -93,8 +93,8 @@ async function fetchSettings() {
     playing: intervalPlaying,
     maximum: 10420,
     current: await folderSize(`./${process.env.ROMEO_FOLDER}`),
-    interval: intervalValue,
-  }
+    interval: intervalValue
+  };
 }
 
 export default router;
