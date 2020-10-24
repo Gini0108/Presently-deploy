@@ -34,7 +34,6 @@ router.put('/', async (request, response) => {
       return;
     }
 
-    // Update the interval and return the object
     await updateInterval(interval, slider);
   }
 
