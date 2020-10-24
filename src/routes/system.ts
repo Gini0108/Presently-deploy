@@ -5,106 +5,96 @@ import express from 'express';
 import Slideshow from 'slideshow';
 import { executeInterval, folderSize } from '../utils';
 
-let intervalId;
+let intervalId: NodeJS.Timeout;
 let intervalValue = 30000;
 let intervalPlaying = false;
 
 const router = express.Router();
 
-// Get system statistics
 router.get('/', async (request, response) => {
+  const settings = await fetchSettings();
   response.status(200);
-  response.send({
-    value: intervalValue,
-    playing: intervalPlaying,
-    storage: {
-      maximum: 10420,
-      current: await folderSize(`./${process.env.ROMEO_FOLDER}`)
-    }
-  });
+  response.send(settings);
 });
 
-// Trigger PowerPoint playing
-router.get('/play', async (request, response) => {
+router.put('/', async (request, response) => {
+  const interval = request.body.interval;
+  const playing = request.body.playing;
+
+  // Fetch the slideshow instance
   const slider: Slideshow = request.app.get('slider');
 
-  // Only update the play state if its paused
-  if (!intervalPlaying) {
-    intervalPlaying = true;
+  if (interval) {
+    // Validate the property type and range
+    const isNumber = Number.isInteger(interval);
+    const inRange = interval <= 100 || interval >= 2147483647
 
-    intervalId = setInterval(() => {
-      executeInterval(slider);
-    }, intervalValue);
+    if (!isNumber && inRange) {
+      response.status(422);
+      response.send(`Invalid 'interval' property`);
+      return;
+    }
+
+    // Update the interval and return the object
+    await updateInterval(interval, slider);
   }
 
-  response.status(200);
-  response.send({
-    value: intervalValue,
-    playing: intervalPlaying,
-    storage: {
-      maximum: 10420,
-      current: await folderSize(`./${process.env.ROMEO_FOLDER}`)
+  if (playing) {
+    // Validate the property type
+    const isBoolean = typeof playing !== `boolean`;
+
+    if (!isBoolean) {
+      response.status(422);
+      response.send(`Invalid 'interval' property`);
+      return;
     }
-  });
+
+    await updatePlaying(playing, slider);
+  }
+
+  // Fetch the settings and return it
+  const settings = await fetchSettings();
+  response.status(200);
+  response.send(settings);
 });
 
-// Trigger PowerPoint playing
-router.get('/pause', async (request, response) => {
-  // Only update the play state if its playing
-  if (intervalPlaying) {
-    intervalPlaying = false;
-    clearInterval(intervalId);
-  }
-
-  response.status(200);
-  response.send({
-    value: intervalValue,
-    playing: intervalPlaying,
-    storage: {
-      maximum: 10420,
-      current: await folderSize(`./${process.env.ROMEO_FOLDER}`)
-    }
-  });
-});
-
-router.get('/interval/:value', async (request, response) => {
-  const slider: Slideshow = request.app.get('slider');
-
-  // Make sure the value is a number
-  if (Number.isInteger(request.params.value)) {
-    response.status(400);
-    response.send();
-    return;
-  }
-
-  const interval = Number.parseInt(request.params.value, 10);
-
-  // Make sure the value isn't to high or low
-  if (interval <= 100 || interval >= 2147483647) {
-    response.status(400);
-    response.send();
-    return;
-  }
-
-  // Make sure the value has changed
+async function updateInterval(interval: number, slider: Slideshow) {
+  // Make sure the interval has changed
   if (interval !== intervalValue) {
     intervalValue = interval;
     clearInterval(intervalId);
 
+    // Set the new interval
     intervalId = setInterval(() => {
       executeInterval(slider);
     }, intervalValue);
   }
+}
 
-  response.status(200);
-  response.send({
-    value: intervalValue,
-    playing: intervalPlaying,
-    storage: {
-      maximum: 10420,
-      current: await folderSize(`./${process.env.ROMEO_FOLDER}`)
+async function updatePlaying(playing: boolean, slider: Slideshow) {
+  // Make sure the playing value has changed
+  if (playing !== intervalPlaying) {
+    intervalPlaying = playing;
+
+    // Start the interval again
+    if (playing) {
+      intervalId = setInterval(() => {
+        executeInterval(slider);
+      }, intervalValue);
     }
-  });
-});
+
+    // Cancel the playing interval
+    if (!playing) clearInterval(intervalId);
+  }
+}
+
+async function fetchSettings() {
+  return {
+    playing: intervalPlaying,
+    maximum: 10420,
+    current: await folderSize(`./${process.env.ROMEO_FOLDER}`),
+    interval: intervalValue,
+  }
+}
 
 export default router;
