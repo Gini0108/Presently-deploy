@@ -18,16 +18,17 @@ dotenv.config();
 // Initialize the Express server
 const app = express();
 
-app.use('/files', files);
-app.use('/system', system);
-app.use('/powerpoint', powerpoint);
-
+app.use(express.json());
 app.use((request, response, next) => {
   response.setHeader('Access-Control-Allow-Origin', '*');
   response.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
   response.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type');
   next();
 });
+
+app.use('/files', files);
+app.use('/system', system);
+app.use('/powerpoint', powerpoint);
 
 app.set('slider', slider);
 app.listen(process.env.ROMEO_PORT);

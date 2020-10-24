@@ -90,8 +90,8 @@ async function updatePlaying(playing: boolean, slider: Slideshow) {
 async function fetchSettings() {
   return {
     playing: intervalPlaying,
-    interval: intervalValue,
-  }
+    interval: intervalValue
+  };
 }
 
 async function nextSlide(slider: Slideshow) {

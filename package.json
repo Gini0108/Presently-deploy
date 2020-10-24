@@ -20,6 +20,8 @@
   },
   "homepage": "https://github.com/krijn-inc/Romeo-server#readme",
   "dependencies": {
+    "@types/cors": "^2.8.8",
+    "cors": "^2.8.5",
     "dotenv": "^8.2.0",
     "events": "^3.2.0",
     "express": "^4.17.1",
