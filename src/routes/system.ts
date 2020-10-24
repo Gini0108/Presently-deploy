@@ -2,12 +2,12 @@
 
 // Import required packages
 import express from 'express';
+import Slideshow from 'slideshow';
 import { executeInterval, folderSize } from '../utils';
 
+let intervalId;
 let intervalValue = 30000;
-let intervalPlaying = true;
-
-let intervalId = setInterval(executeInterval, intervalValue);
+let intervalPlaying = false;
 
 const router = express.Router();
 
@@ -26,10 +26,15 @@ router.get('/', async (request, response) => {
 
 // Trigger PowerPoint playing
 router.get('/play', async (request, response) => {
+  const slider: Slideshow = request.app.get('slider');
+
   // Only update the play state if its paused
   if (!intervalPlaying) {
     intervalPlaying = true;
-    intervalId = setInterval(executeInterval, intervalValue);
+
+    intervalId = setInterval(() => {
+      executeInterval(slider);
+    }, intervalValue);
   }
 
   response.status(200);
@@ -63,6 +68,8 @@ router.get('/pause', async (request, response) => {
 });
 
 router.get('/interval/:value', async (request, response) => {
+  const slider: Slideshow = request.app.get('slider');
+
   // Make sure the value is a number
   if (Number.isInteger(request.params.value)) {
     response.status(400);
@@ -83,7 +90,10 @@ router.get('/interval/:value', async (request, response) => {
   if (interval !== intervalValue) {
     intervalValue = interval;
     clearInterval(intervalId);
-    intervalId = setInterval(executeInterval, intervalValue);
+
+    intervalId = setInterval(() => {
+      executeInterval(slider);
+    }, intervalValue);
   }
 
   response.status(200);
