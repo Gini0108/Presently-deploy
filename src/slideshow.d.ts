@@ -1,24 +1,37 @@
-// This should defenitly be refactored
-
 declare module 'slideshow' {
-  interface info {
-    titles: string[];
-    notes: string[];
-  }
-
+  
   class Slideshow {
-    constructor(program: string);
 
-    boot(): void;
-    stat(): Promise<any>;
-    next(): Promise<any>;
+    constructor(application: string);
+
     info(): Promise<info>;
-    open(filename: string): Promise<any>;
-    goto(index: number): Promise<any>;
-    start(): Promise<any>;
-    close(): Promise<any>;
-    slider(): Promise<any>;
+    stat(): Promise<stat>;
+
+    boot(): Promise<string>;
+    quit(): Promise<string>;
+    last(): Promise<string>;
+    prev(): Promise<string>;
+    next(): Promise<string>;
+    start(): Promise<string>;
+    close(): Promise<string>;
+    pause(): Promise<string>;
+    first(): Promise<string>;
+    resume(): Promise<string>;
+
+    open(file: string): Promise<string>;
+    goto(index: number): Promise<string>;
   }
 
-  export = Slideshow;
+  interface info {
+    notes: string[];
+    titles: string[];
+  }
+
+  interface stat {
+    state: string;
+    slides: number;
+    position: number;
+  }
+
+  export = Slideshow
 }
