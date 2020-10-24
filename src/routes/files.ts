@@ -125,7 +125,7 @@ router.post('/upload', async (request, response) => {
       }
 
       // Make sure the folder exist
-      if (!fs.existsSync(`../${process.env.ROMEO_FOLDER}`)){
+      if (!fs.existsSync(`../${process.env.ROMEO_FOLDER}`)) {
         fs.mkdirSync(`../${process.env.ROMEO_FOLDER}`);
       }
 
