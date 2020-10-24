@@ -3,11 +3,10 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
-  "type": "module",
   "scripts": {
     "lint": "tslint -p tsconfig.json",
     "serve": "nodemon",
-    "build": "npm run lint && npm run format && ts",
+    "build": "npm run lint && npm run format && ts && node dist/index.js",
     "format": "prettier --write \"src/**/*.ts\""
   },
   "repository": {
