@@ -1,7 +1,5 @@
 declare module 'slideshow' {
-  
   class Slideshow {
-
     constructor(application: string);
 
     info(): Promise<info>;
@@ -33,5 +31,5 @@ declare module 'slideshow' {
     position: number;
   }
 
-  export = Slideshow
+  export = Slideshow;
 }

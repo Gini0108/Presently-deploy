@@ -19,8 +19,10 @@ router.get('/', (request, response) => {
 
   // If the folder exists fetch the content
   const files = fs.readdirSync(`./${process.env.ROMEO_FOLDER}`);
+  const filtered = files.filter((filename) => filename.substring(0, 2) !== `~$`);
+
   response.status(200);
-  response.send(files);
+  response.send(filtered);
 });
 
 router.get('/:filename', (request, response) => {

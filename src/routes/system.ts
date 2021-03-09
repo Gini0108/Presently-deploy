@@ -37,7 +37,7 @@ router.put('/', async (request, response) => {
     await updateInterval(interval, slider);
   }
 
-  if (playing) {
+  if (typeof playing !== `undefined`) {
     // Validate the property type
     const isBoolean = typeof playing === `boolean`;
 
@@ -60,12 +60,16 @@ async function updateInterval(interval: number, slider: Slideshow) {
   // Make sure the interval has changed
   if (interval !== intervalValue) {
     intervalValue = interval;
-    clearInterval(intervalId);
 
-    // Set the new interval
-    intervalId = setInterval(() => {
-      nextSlide(slider);
-    }, intervalValue);
+    // Only change interval if it's already playing
+    if (intervalPlaying) {
+      clearInterval(intervalId);
+
+      // Set the new interval
+      intervalId = setInterval(() => {
+        nextSlide(slider);
+      }, intervalValue);
+    }
   }
 }
 
@@ -80,7 +84,7 @@ async function updatePlaying(playing: boolean, slider: Slideshow) {
         nextSlide(slider);
       }, intervalValue);
     }
-
+    
     // Cancel the playing interval
     if (!playing) clearInterval(intervalId);
   }
