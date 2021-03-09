@@ -1,8 +1,8 @@
-'use strict';
+"use strict";
 
 // Import required packages
-import express from 'express';
-import Slideshow from 'slideshow';
+import express from "express";
+import Slideshow from "slideshow";
 
 let intervalId: NodeJS.Timeout;
 let intervalValue = 30000;
@@ -10,18 +10,18 @@ let intervalPlaying = false;
 
 const router = express.Router();
 
-router.get('/', async (request, response) => {
+router.get("/", async (request, response) => {
   const settings = await fetchSettings();
   response.status(200);
   response.send(settings);
 });
 
-router.put('/', async (request, response) => {
+router.put("/", async (request, response) => {
   const interval = request.body.interval;
   const playing = request.body.playing;
 
   // Fetch the slideshow instance
-  const slider: Slideshow = request.app.get('slider');
+  const slider: Slideshow = request.app.get("slider");
 
   if (interval) {
     // Validate the property type and range
@@ -30,20 +30,20 @@ router.put('/', async (request, response) => {
 
     if (!isNumber || !inRange) {
       response.status(422);
-      response.send(`Invalid 'interval' property`);
+      response.send("Invalid 'interval' property");
       return;
     }
 
     await updateInterval(interval, slider);
   }
 
-  if (typeof playing !== `undefined`) {
+  if (typeof playing !== "undefined") {
     // Validate the property type
-    const isBoolean = typeof playing === `boolean`;
+    const isBoolean = typeof playing === "boolean";
 
     if (!isBoolean) {
       response.status(422);
-      response.send(`Invalid 'playing' property`);
+      response.send("Invalid 'playing' property");
       return;
     }
 
@@ -84,7 +84,7 @@ async function updatePlaying(playing: boolean, slider: Slideshow) {
         nextSlide(slider);
       }, intervalValue);
     }
-    
+
     // Cancel the playing interval
     if (!playing) clearInterval(intervalId);
   }

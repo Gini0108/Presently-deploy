@@ -1,4 +1,4 @@
-declare module 'slideshow' {
+declare module "slideshow" {
   class Slideshow {
     constructor(application: string);
 

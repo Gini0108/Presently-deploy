@@ -1,31 +1,31 @@
-'use strict';
+"use strict";
 
 // Import slideshow type
-import Slideshow from 'slideshow';
+import Slideshow from "slideshow";
 
 // Import required packages
-import express from 'express';
-import path from 'path';
-import fs from 'fs';
+import express from "express";
+import path from "path";
+import fs from "fs";
 
 const router = express.Router();
 
-let powerpointName = ``;
+let powerpointName = "";
 
-router.get('/', async (request, response) => {
-  const slider: Slideshow = request.app.get('slider');
+router.get("/", async (request, response) => {
+  const slider: Slideshow = request.app.get("slider");
   const powerpoint = await fetchPowerpoint(slider);
 
   response.status(200);
   response.send(powerpoint);
 });
 
-router.put('/', async (request, response) => {
+router.put("/", async (request, response) => {
   const index = request.body.index;
   const filename = request.body.filename;
 
   // Fetch the slideshow instance
-  const slider: Slideshow = request.app.get('slider');
+  const slider: Slideshow = request.app.get("slider");
 
   if (index) {
     // Check if a PowerPoint has been loaded
@@ -35,7 +35,7 @@ router.put('/', async (request, response) => {
     // Return an error if no PowerPoint has been loaded
     if (!loaded) {
       response.status(404);
-      response.send(`No PowerPoint loaded`);
+      response.send("No PowerPoint loaded");
       return;
     }
 
@@ -45,7 +45,7 @@ router.put('/', async (request, response) => {
 
     if (!isNumber || !inRange) {
       response.status(422);
-      response.send(`Invalid 'index' property`);
+      response.send("Invalid 'index' property");
       return;
     }
 
@@ -57,14 +57,14 @@ router.put('/', async (request, response) => {
     // Make sure the file exists
     if (!fs.existsSync(`./${process.env.ROMEO_FOLDER}/${filename}`)) {
       response.status(404);
-      response.send(`File not found`);
+      response.send("File not found");
       return;
     }
 
     // Make sure the file extension is right
-    if (path.extname(filename) !== `.pptx`) {
+    if (path.extname(filename) !== ".pptx") {
       response.status(400);
-      response.send(`Invalid file extension`);
+      response.send("Invalid file extension");
       return;
     }
 

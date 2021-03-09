@@ -1,15 +1,15 @@
-'use strict';
+"use strict";
 
 // Import required packages
-import formidable from 'formidable';
-import express from 'express';
-import size from 'get-folder-size';
-import path from 'path';
-import fs from 'fs';
+import formidable from "formidable";
+import express from "express";
+import size from "get-folder-size";
+import path from "path";
+import fs from "fs";
 
 const router = express.Router();
 
-router.get('/', (request, response) => {
+router.get("/", (request, response) => {
   // If the folder hasn't been created
   if (!fs.existsSync(`./${process.env.ROMEO_FOLDER}`)) {
     response.status(200);
@@ -19,26 +19,26 @@ router.get('/', (request, response) => {
 
   // If the folder exists fetch the content
   const files = fs.readdirSync(`./${process.env.ROMEO_FOLDER}`);
-  const filtered = files.filter((filename) => filename.substring(0, 2) !== `~$`);
+  const filtered = files.filter((filename) => filename.substring(0, 2) !== "~$");
 
   response.status(200);
   response.send(filtered);
 });
 
-router.get('/:filename', (request, response) => {
+router.get("/:filename", (request, response) => {
   const filename = request.params.filename;
 
   // Make sure the file exists
   if (!fs.existsSync(`./${process.env.ROMEO_FOLDER}/${filename}`)) {
     response.status(404);
-    response.send(`File not found`);
+    response.send("File not found");
     return;
   }
 
   // Make sure the file extension is right
-  if (path.extname(filename) !== `.pptx`) {
+  if (path.extname(filename) !== ".pptx") {
     response.status(422);
-    response.send(`Invalid file extension`);
+    response.send("Invalid file extension");
     return;
   }
 
@@ -56,20 +56,20 @@ router.get('/:filename', (request, response) => {
   });
 });
 
-router.delete('/:filename', (request, response) => {
+router.delete("/:filename", (request, response) => {
   const filename = request.params.filename;
 
   // Make sure the file exists
   if (!fs.existsSync(`./${process.env.ROMEO_FOLDER}/${filename}`)) {
     response.status(404);
-    response.send(`File not found`);
+    response.send("File not found");
     return;
   }
 
   // Make sure the file extension is right
-  if (path.extname(filename) !== `.pptx`) {
+  if (path.extname(filename) !== ".pptx") {
     response.status(422);
-    response.send(`Invalid file extension`);
+    response.send("Invalid file extension");
     return;
   }
 
@@ -79,14 +79,14 @@ router.delete('/:filename', (request, response) => {
   response.send();
 });
 
-router.post('/', async (request, response) => {
+router.post("/", async (request, response) => {
   const form = new formidable.IncomingForm();
 
   form.parse(request, (formError, formFields, formFiles) => {
     // If we get an error for some reason return 500
     if (formError) {
       response.status(500);
-      response.send(`Internal server error`);
+      response.send("Internal server error");
       return;
     }
 
@@ -104,7 +104,7 @@ router.post('/', async (request, response) => {
     // If file is larger than 64MB
     if (uploadSize > 67108864) {
       response.status(413);
-      response.send(`File too large`);
+      response.send("File too large");
       return;
     }
 
@@ -112,14 +112,14 @@ router.post('/', async (request, response) => {
       // If we get an error for some reason return 500
       if (folderError) {
         response.status(500);
-        response.send(`Internal server error`);
+        response.send("Internal server error");
         return;
       }
 
       // Make sure we don't exceed 10GB
       if (folderSize + uploadSize > 10926161920) {
         response.status(507);
-        response.send(`No storage left`);
+        response.send("No storage left");
         return;
       }
 
