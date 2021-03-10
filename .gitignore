@@ -9,3 +9,6 @@ node_modules
 
 # Ignore the PowerPoint folder
 /powerpoints
+
+# Ignore the DB folder
+/db
