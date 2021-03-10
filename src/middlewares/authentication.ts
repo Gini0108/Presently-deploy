@@ -2,11 +2,17 @@ import { RequestHandler, Response } from "express";
 import { verify, sign } from "jsonwebtoken";
 import { User } from "../entities/User";
 
+import { config } from "dotenv";
+// We load dotenv for JWTSECRET
+config();
+
 if (!process.env.JWTSECRET)
   throw new Error("Environment Variable JWTSECRET not found.");
 const clientSecret = process.env.JWTSECRET;
 
 export const checkToken: RequestHandler = async (req, res, next) => {
+  if (req.path === "/user/login") return next(); // Ignore if user is logging in.
+
   const token = req.headers.authorization?.split(" ")[1];
 
   if (!token) return rejectClient(res);

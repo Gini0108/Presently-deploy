@@ -2,6 +2,7 @@ import { compare } from "bcrypt";
 import { v1 } from "uuid";
 import { Database } from "../../modules/aloedb";
 import { hash } from "bcrypt";
+import { signToken } from "../middlewares/authentication";
 
 interface IUser {
     id: string;
@@ -71,6 +72,10 @@ export class User {
      */
     async save(): Promise<void> {
       await User.db.insertOne(this);
+    }
+
+    generateToken(): string {
+      return signToken(this);
     }
 
     publicData(): Partial<User> {
