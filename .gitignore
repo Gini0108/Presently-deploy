@@ -1,14 +1,4 @@
-# Ignore node modules
-node_modules
+/db/*
+.env
 
-# Ignore MacOS finder files
-.DS_Store
-
-# Don't push dist folder
-/dist
-
-# Ignore the PowerPoint folder
-/powerpoints
-
-# Ignore the DB folder
-/db
+.vscode
