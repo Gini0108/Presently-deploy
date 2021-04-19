@@ -1,4 +1,7 @@
-/db/*
 .env
-
 .vscode
+.DS_Store
+
+# Exclude local storage folders
+/database
+/powerpoint
