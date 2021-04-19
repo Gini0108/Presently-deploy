@@ -26,5 +26,5 @@ export const authenticationHandler = async (
 };
 
 export const generateToken = (payload: Payload) => {
-  return create({ alg: "HS512", typ: "JWT" }, payload, jwtSecret); // TODO: Might want to add an expiration timestamp
+  return create({ alg: "HS512", typ: "JWT" }, payload, jwtSecret);
 };
