@@ -16,7 +16,7 @@ router.get("/", authenticationHandler, getUsers);
 router.get("/:email", authenticationHandler, getUser);
 
 router.post("/", authenticationHandler, addUser);
-router.post("/login", authenticationHandler, loginUser);
+router.post("/login", loginUser);
 
 router.delete("/:email", authenticationHandler, deleteUser);
 
