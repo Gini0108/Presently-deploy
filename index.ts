@@ -1,17 +1,8 @@
-import { config } from "https://deno.land/x/dotenv/mod.ts";
 import { Application } from "https://deno.land/x/oak/mod.ts";
 import { ensureDirSync } from "https://deno.land/std@0.93.0/fs/mod.ts";
 
 import userRouter from "./routes/user.ts";
 import fileRouter from "./routes/file.ts";
-
-// Load .env file
-config({ export: true });
-
-// Make sure required variables are set
-if (!Deno.env.get("JWT_SECRET")) {
-  throw new Error("JWT_SECRET .env variable must be set.");
-}
 
 // Make sure the required folders exist
 ensureDirSync("./database");
