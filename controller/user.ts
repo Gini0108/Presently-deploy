@@ -23,16 +23,16 @@ const cleanUser = (user: User): Partial<User> => {
   return {
     email: user.email,
     firstname: user.firstname,
-    lastname: user.lastname
+    lastname: user.lastname,
   };
-}
+};
 
 const getUsers = async (
   { response }: { response: Response },
 ) => {
   // Find every user and return it
   const users = await database.findMany();
-  response.body = users.map((user) => cleanUser(user))
+  response.body = users.map((user) => cleanUser(user));
   response.status = 200;
 };
 

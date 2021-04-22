@@ -1,6 +1,11 @@
-import { create, Payload, verify, getNumericDate } from "https://deno.land/x/djwt/mod.ts";
+import {
+  create,
+  getNumericDate,
+  Payload,
+  verify,
+} from "https://deno.land/x/djwt/mod.ts";
 import { AuthenticationError } from "./error.ts";
-import { Context, } from "https://deno.land/x/oak/mod.ts";
+import { Context } from "https://deno.land/x/oak/mod.ts";
 import { config } from "https://deno.land/x/dotenv/mod.ts";
 
 // Load .env file
@@ -36,5 +41,9 @@ export const authenticationHandler = async (
 
 export const generateToken = (payload: Payload) => {
   // Add expiration time as NumericDate, expiration time is in seconds.
-  return create({ alg: "HS512", typ: "JWT" }, Object.assign(payload, { exp: getNumericDate(60 * 60 ) }), jwtSecret);
+  return create(
+    { alg: "HS512", typ: "JWT" },
+    Object.assign(payload, { exp: getNumericDate(60 * 60) }),
+    jwtSecret,
+  );
 };
