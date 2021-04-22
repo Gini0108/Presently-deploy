@@ -39,10 +39,16 @@ export class AuthenticationError extends Error {
   public statusError = 401;
 
   constructor(error: "expired" | "missing" | "incorrect") {
-    if (error === "expired") super("JWT token has expired.");
-    if (error === "missing") super("JWT token is missing");
-
-    // Default to incorrect credentials
+    if (error === "expired") {
+      super("JWT token has expired.");
+      return;
+    }
+    if (error === "missing") {
+      super("JWT token is missing");
+      return;
+    }
     super("The email address or password is incorrect.");
+  }
+}
   }
 }
