@@ -9,7 +9,7 @@ export function isEmail(email: string): boolean {
 export function isPassword(password: string): boolean {
   // Copied RegExp from https://stackoverflow.com/a/5142164
   const regex = new RegExp(
-    /^(?=.*[A-Z].*[A-Z])(?=.*[!@#$&*])(?=.*[0-9].*[0-9])(?=.*[a-z].*[a-z].*[a-z]).{8}$/,
+    /^(?=.*[A-Z].*[A-Z])(?=.*[!@#$&*])(?=.*[0-9].*[0-9])(?=.*[a-z].*[a-z].*[a-z]).{8,}$/,
   );
   return regex.test(password);
 }
