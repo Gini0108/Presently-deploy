@@ -35,5 +35,6 @@ export const authenticationHandler = async (
 };
 
 export const generateToken = (payload: Payload) => {
-  return create({ alg: "HS512", typ: "JWT" }, payload, jwtSecret);
+  // Add expiration time as NumericDate, expiration time is in seconds.
+  return create({ alg: "HS512", typ: "JWT" }, Object.assign(payload, { exp: getNumericDate(60 * 60 ) }), jwtSecret);
 };
