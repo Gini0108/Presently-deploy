@@ -11,6 +11,7 @@ import { generateToken } from "../middleware/authentication.ts";
 import { User } from "../types.ts";
 import {
   AuthenticationError,
+  BodyError,
   PropertyError,
   ResourceError,
 } from "../middleware/error.ts";
@@ -29,8 +30,11 @@ const getUsers = async (
 const addUser = async (
   { request, response }: { request: Request; response: Response },
 ) => {
-  const body = await request.body();
-  const value = await body.value;
+  if (!request.hasBody) throw new BodyError("missing");
+  const body = await request.body({ type: "json" });
+  const value = await body.value.catch(() => {
+    throw new BodyError("invalid");
+  });
 
   const email = value.email;
   const password = value.password;
@@ -79,8 +83,11 @@ const getUser = async (
 const loginUser = async (
   { request, response }: { request: Request; response: Response },
 ) => {
-  const body = await request.body();
-  const value = await body.value;
+  if (!request.hasBody) throw new BodyError("missing");
+  const body = await request.body({ type: "json" });
+  const value = await body.value.catch(() => {
+    throw new BodyError("invalid");
+  });
 
   const email = value.email;
   const password = value.password;

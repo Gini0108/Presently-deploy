@@ -50,5 +50,16 @@ export class AuthenticationError extends Error {
     super("The email address or password is incorrect.");
   }
 }
+
+export class BodyError extends Error {
+  // Set default status to "Not Found"
+  public statusError = 400;
+
+  constructor(error: "missing" | "invalid") {
+    if (error === "invalid") {
+      super("Request had an invalid (JSON) body.");
+      return;
+    }
+    super("Request is missing a valid JSON body.");
   }
 }

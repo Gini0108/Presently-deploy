@@ -8,7 +8,6 @@ async function getFiles(): Promise<Array<File>> {
   for await (const entry of walk("./powerpoint/")) {
     // Filter out everything but .pptx files
     if (isPowerpoint(entry.name)) {
-
       // Transform the path into a File instance
       const stat = await Deno.stat(entry.path);
       const file = {
@@ -26,4 +25,4 @@ async function getFiles(): Promise<Array<File>> {
   return files;
 }
 
-export { getFiles }
+export { getFiles };

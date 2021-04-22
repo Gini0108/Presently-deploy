@@ -1,15 +1,22 @@
 import { Request, Response } from "https://deno.land/x/oak/mod.ts";
 import { existsSync } from "https://deno.land/std/fs/mod.ts";
 
-import { PropertyError, ResourceError } from "../middleware/error.ts";
+import {
+  BodyError,
+  PropertyError,
+  ResourceError,
+} from "../middleware/error.ts";
 import { isPowerpoint } from "../helper.ts";
 
 const addFile = async (
   { request, response }: { request: Request; response: Response },
 ) => {
   // Fetch the body object
-  const body = await request.body();
-  const value = await body.value;
+  if (!request.hasBody) throw new BodyError("missing");
+  const body = await request.body({ type: "json" });
+  const value = await body.value.catch(() => {
+    throw new BodyError("invalid");
+  });
 
   const base64 = value.base64;
   const filename = value.filename;
