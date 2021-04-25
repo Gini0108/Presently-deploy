@@ -1,20 +1,11 @@
+import { AuthenticationError } from "./error.ts";
+import { Context } from "https://deno.land/x/oak/mod.ts";
 import {
   create,
   getNumericDate,
   Payload,
   verify,
 } from "https://deno.land/x/djwt/mod.ts";
-import { AuthenticationError } from "./error.ts";
-import { Context } from "https://deno.land/x/oak/mod.ts";
-import { config } from "https://deno.land/x/dotenv/mod.ts";
-
-// Load .env file
-config({ export: true });
-
-// Make sure required variables are set
-if (!Deno.env.get("JWT_SECRET")) {
-  throw new Error("JWT_SECRET .env variable must be set.");
-}
 
 const jwtSecret = Deno.env.get("JWT_SECRET")!;
 
