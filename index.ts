@@ -1,6 +1,7 @@
 import { Application } from "https://deno.land/x/oak@v7.3.0/mod.ts";
 import { ensureDirSync } from "https://deno.land/std@0.93.0/fs/mod.ts";
 
+import systemRouter from "./routes/system.ts";
 import userRouter from "./routes/user.ts";
 import fileRouter from "./routes/file.ts";
 
@@ -23,8 +24,10 @@ app.addEventListener("error", (error) => {
 
 app.use(userRouter.routes());
 app.use(fileRouter.routes());
+app.use(systemRouter.routes());
 
 app.use(userRouter.allowedMethods());
 app.use(fileRouter.allowedMethods());
+app.use(systemRouter.allowedMethods());
 
 app.listen({ port: 5000 });
