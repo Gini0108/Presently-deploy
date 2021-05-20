@@ -34,6 +34,19 @@ export class PropertyError extends Error {
   }
 }
 
+export class TypeError extends Error {
+  // Set status error to "Bad Request"
+  public statusError = 400;
+
+  constructor(
+    type: "string" | "number" | "boolean",
+    property: string,
+  ) {
+    // Otherwise send the "property is missing" error message
+    super(`Property '${property}' should be a ${type}.`);
+  }
+}
+
 export class AuthenticationError extends Error {
   // Set status error to "Unauthorized"
   public statusError = 401;
@@ -43,10 +56,12 @@ export class AuthenticationError extends Error {
       super("JWT token has expired.");
       return;
     }
+
     if (error === "missing") {
       super("JWT token is missing");
       return;
     }
+    
     super("The email address or password is incorrect.");
   }
 }
