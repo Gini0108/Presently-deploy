@@ -1,4 +1,4 @@
-import { Request, Response } from "https://deno.land/x/oak/mod.ts";
+import { Request, Response } from "https://deno.land/x/oak@v7.3.0/mod.ts";
 import { existsSync } from "https://deno.land/std/fs/mod.ts";
 
 import {

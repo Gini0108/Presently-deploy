@@ -1,5 +1,4 @@
-import { Application } from "https://deno.land/x/oak/mod.ts";
-import { initializeEnv } from "./helper.ts"
+import { Application } from "https://deno.land/x/oak@v7.3.0/mod.ts";
 import { ensureDirSync } from "https://deno.land/std@0.93.0/fs/mod.ts";
 
 import userRouter from "./routes/user.ts";
