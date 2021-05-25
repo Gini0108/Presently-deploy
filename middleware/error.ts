@@ -61,7 +61,7 @@ export class AuthenticationError extends Error {
       super("JWT token is missing");
       return;
     }
-    
+
     super("The email address or password is incorrect.");
   }
 }

@@ -1,12 +1,14 @@
 import { Request, Response } from "https://deno.land/x/oak@v7.3.0/mod.ts";
 import { existsSync } from "https://deno.land/std/fs/mod.ts";
 
+import { isPowerpoint } from "../helper.ts";
+import { emmiter } from "../websocket.ts";
 import {
   BodyError,
   PropertyError,
   ResourceError,
+  TypeError,
 } from "../middleware/error.ts";
-import { isPowerpoint } from "../helper.ts";
 
 const addFile = async (
   { request, response }: { request: Request; response: Response },
@@ -20,6 +22,9 @@ const addFile = async (
 
   const base64 = value.base64;
   const filename = value.filename;
+
+  if (typeof base64 !== "string") throw new TypeError("string", "base64");
+  if (typeof filename !== "string") throw new TypeError("string", "filename");
 
   // Make sure all required values are provided
   if (!base64) throw new PropertyError("missing", "base64");
@@ -43,6 +48,9 @@ const addFile = async (
 
   await Deno.writeFile(`./powerpoint/${filename}`, array);
 
+  // Propagate the event to the websocket
+  emmiter.emit("addedEvent", filename);
+
   response.status = 200;
 };
 
@@ -63,6 +71,9 @@ const deleteFile = (
 
   // Delete the file from storage
   Deno.removeSync(`./powerpoint/${filename}`);
+
+  // Propagate the event to the websocket
+  emmiter.emit("removedEvent", filename);
 
   response.status = 200;
 };
