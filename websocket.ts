@@ -11,46 +11,37 @@ import { walkSync } from "https://deno.land/std@0.96.0/fs/mod.ts";
 initializeEnv(["DENO_APP_WEBSOCKET_PORT"]);
 
 let files: Array<string> = [];
+let slides: Array<string> = [];
 
-for (const entry of walkSync("./powerpoint")) {
-  if (entry.isFile && isPowerpoint(entry.name)) files.push(entry.name);
+// Load every .pptx file
+function updateFiles() {
+  files = [];
+
+  for (const entry of walkSync("./powerpoint")) {
+    if (entry.isFile && isPowerpoint(entry.name)) files.push(entry.name);
+  }
 }
 
 const server = new WebSocketServer(Number(Deno.env.get("DENO_APP_WEBSOCKET_PORT")!));
 const emmiter = new EventEmitter<{
-  addedEvent(filename: string): void;
-  removedEvent(filename: string): void;
-
-  addedProcessed(): void;
-  removedProcessed(): void;
+  updateFile(): void;
+  updateSlides(): void;
+  updateClient(): void;
 }>();
 
-emmiter.on("addedEvent", (filename: string) => {
-  files.push(filename);
-
-  emmiter.emit("addedProcessed");
+emmiter.on("updateFile", () => {
+  updateFiles();
+  emmiter.emit("updateClient");
 });
 
-emmiter.on("removedEvent", (filename: string) => {
-  const index = files.indexOf(filename);
-
-  if (index !== -1) {
-    files.splice(index, 1);
-  }
-
-  emmiter.emit("removedProcessed");
-});
 
 server.on("connection", function (client: WebSocketClient) {
-  emmiter.on("addedProcessed", () => {
-    client.send(JSON.stringify({ files }));
+  emmiter.on("updateClient", () => {
+    client.send(JSON.stringify({ files, slides }));
   });
 
-  emmiter.on("removedProcessed", () => {
-    client.send(JSON.stringify({ files }));
-  });
-
-  client.send(JSON.stringify({ files }));
+  updateFiles();
+  client.send(JSON.stringify({ files, slides }));
 });
 
 export { emmiter };

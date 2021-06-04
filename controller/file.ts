@@ -49,7 +49,7 @@ const addFile = async (
   await Deno.writeFile(`./powerpoint/${filename}`, array);
 
   // Propagate the event to the websocket
-  emmiter.emit("addedEvent", filename);
+  emmiter.emit("updateFile");
 
   response.status = 200;
 };
@@ -73,7 +73,7 @@ const deleteFile = (
   Deno.removeSync(`./powerpoint/${filename}`);
 
   // Propagate the event to the websocket
-  emmiter.emit("removedEvent", filename);
+  emmiter.emit("updateFile");
 
   response.status = 200;
 };
