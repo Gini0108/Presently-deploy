@@ -12,7 +12,9 @@ initializeEnv([
   "DENO_APP_WEBSOCKET_PORT",
 ]);
 
+import { errorHandler } from "./middleware/error.ts";
 import { Application } from "https://deno.land/x/oak@v7.3.0/mod.ts";
+import { oakCors } from "https://deno.land/x/cors/mod.ts";
 
 import systemRouter from "./routes/system.ts";
 import userRouter from "./routes/user.ts";
@@ -25,6 +27,9 @@ const application = new Application();
 application.addEventListener("error", (error) => {
   console.log(error);
 });
+
+application.use(oakCors());
+application.use(errorHandler);
 
 application.use(userRouter.routes());
 application.use(fileRouter.routes());

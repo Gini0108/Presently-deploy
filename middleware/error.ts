@@ -1,4 +1,4 @@
-import { Context } from "https://deno.land/x/oak/mod.ts";
+import { Context } from "https://deno.land/x/oak@v7.3.0/mod.ts";
 
 export class ResourceError extends Error {
   // Set default status to "Not Found"
@@ -7,7 +7,7 @@ export class ResourceError extends Error {
   constructor(error: "missing" | "duplicate", type: "user" | "file") {
     // If error type is duplicate update the error message and status
     if (error === "duplicate") {
-      super(`This '${type}' already exists.`);
+      super(`This ${type} already exists.`);
       this.statusError = 409;
       return;
     }
@@ -96,7 +96,7 @@ export const errorHandler = async (
     ) => {
       response.status = error.statusError;
       response.body = {
-        message: { error }
+        message: error.message
       };
     },
   );
