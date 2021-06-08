@@ -1,27 +1,45 @@
+import { Base64 } from "https://deno.land/x/bb64/mod.ts";
+import { walkSync } from "https://deno.land/std@0.96.0/fs/mod.ts";
+import { existsSync } from "https://deno.land/std/fs/mod.ts";
+import {
+  WebSocketClient,
+  WebSocketServer,
+} from "https://deno.land/x/websocket@v0.1.2/mod.ts";
+
 import Sleno from "../Sleno/index.ts";
-import { initializeEnv } from "./helper.ts";
-import { emitter } from "./websocket.ts";
-import { Info, Stat } from "https://deno.land/x/sleno@2.0.0/types.ts";
+
+import { PropertyError, ResourceError } from "./middleware/error.ts";
+
+import { initializeEnv, isPowerpoint } from "./helper.ts";
 
 // Load. env file
 initializeEnv([
+  "DENO_APP_WEBSOCKET_PORT",
   "DENO_APP_POWERPOINT_LOCATION",
 ]);
 
 class Slenosafe {
   private sleno = new Sleno("PowerPoint");
 
+  public files: Array<string> = [];
+  public slides: Array<string> = [];
+
+  public current: string | null = null;
+  public position: number | null = null;
+
   public playing = false;
   public interval = 30;
-  public filename = "";
 
-  public info?: Info;
-  public stat?: Stat;
-  public timer?: number;
+  private timer?: number;
+  private server?: WebSocketServer;
+
+  private clients: Array<WebSocketClient> = [];
 
   async initializeSleno() {
-    // Start PowerPoint if it isn't running
+    // Fetch the Powerpoint .exe path
     const path = Deno.env.get("DENO_APP_POWERPOINT_LOCATION")!;
+
+    // Start PowerPoint if it isn't running
     await Deno.run({
       cmd: [
         "powershell.exe",
@@ -29,63 +47,102 @@ class Slenosafe {
       ],
     });
 
-    await this.sleno.boot().catch((error) => {
-      // Since the application is already running we can just log it
-      if (error === "Application is already running") console.log(error);
-      // Stop the application if anything else if thrown
-      else throw new Error(error);
-    });
+    // Start the websocket server
+    this.server = new WebSocketServer(
+      Number(Deno.env.get("DENO_APP_WEBSOCKET_PORT")!),
+    );
+
+    this.server.on("connection", this.clientConnect);
+
+    // Start Sleno
+    await this.sleno.boot();
   }
 
-  async loadFile(filename: string) {
-    // Pause the PowerPoint while we're loading another file
-    if (this.playing) await this.setPlaying(false);
+  async removeFile(filename: string) {
+    // Make sure the file exists
+    if (!existsSync(`./powerpoint/${filename}`)) {
+      throw new ResourceError("missing", "file");
+    }
 
-    await this.sleno.close().catch(() => console.log("I don't care"));
-    await this.sleno.open(`powerpoint/${filename}`);
-    await this.sleno.start();
+    // Unload the file from Sleno
+    await this.unloadFile(filename);
 
-    this.filename = filename;
+    // Delete the file from storage
+    Deno.removeSync(`./powerpoint/${filename}`);
 
-    this.info = await this.sleno.info();
-    this.stat = await this.sleno.stat();
-
-    // Temporary fix to start the position at 0
-    this.stat.position = this.stat.position - 1;
-
-    // Continue playing if we paused
-    if (this.playing) await this.setPlaying(true);
-
-    // Update the clients
-    emitter.emit("updateSleno");
+    // Update the files array
+    this.files = this.readFiles();
+    this.clientUpdate();
   }
 
-  async unloadFile(filename: string) {
-    if (this.filename === filename) {
+  async createFile(filename: string, base64: string) {
+    // Make sure the file doesn't already exist
+    if (existsSync(`./powerpoint/${filename}`)) {
+      throw new ResourceError("duplicate", "file");
+    }
+
+    // Write the file to storage
+    await Base64.fromBase64String(base64).toFile(`./powerpoint/${filename}`);
+
+    // Update the files array
+    this.files = this.readFiles();
+    this.clientUpdate();
+  }
+
+  async unloadFile(filename: string | null) {
+    if (this.current && this.current === filename) {
       await this.sleno.close();
 
-      this.filename = "";
-      this.info!.titles = [];
+      this.slides = [];
+      this.current = null;
+      this.position = null;
 
-      // Update the clients
-      emitter.emit("updateSleno");
+      this.clientUpdate();
     }
   }
 
+  async loadFile(filename: string) {
+    // Make sure the user is trying to add an .pptx file
+    if (!isPowerpoint(filename)) {
+      throw new PropertyError("extension", "filename");
+    }
+
+    // Make sure the file exist
+    if (!existsSync(`./powerpoint/${filename}`)) {
+      throw new ResourceError("missing", "file");
+    }
+
+    // Stop the presentation interval and close the current file
+    await this.setPlaying(false);
+    await this.unloadFile(this.current);
+
+    // Open and start the new presentation
+    await this.sleno.open(`powerpoint/${filename}`);
+    await this.sleno.start();
+
+    const info = await this.sleno.info();
+
+    this.slides = info.titles;
+    this.current = filename;
+    this.position = 0;
+
+    this.clientUpdate();
+  }
+
   async setPosition(position: number) {
-    const slides = this.stat!.slides;
-    const remainder = position % slides;
+    if (this.current) {
+      const stats = await this.sleno.stat();
+      const slides = stats!.slides;
+      const remainder = position % slides;
 
-    position = remainder >= 0 ? remainder : slides + remainder;
+      this.position = remainder >= 0 ? remainder : slides + remainder;
 
-    await this.sleno.goto(position + 1);
+      await this.sleno.goto(this.position + 1);
 
-    // Temporary fix to start the position at 0
-    this.stat = await this.sleno.stat();
-    this.stat.position = this.stat.position - 1;
+      this.clientUpdate();
+    }
 
-    // Update the clients
-    emitter.emit("updateSleno");
+    // TODO: throw error if no presentation is loaded
   }
 
   setInterval(interval: number) {
@@ -100,8 +157,9 @@ class Slenosafe {
       );
     }
 
-    // Update the clients
-    emitter.emit("updateSleno");
+    this.clientUpdate();
+
+    // TODO: refactor interval logic to timeout to account for delay in moving to the next slide
   }
 
   setPlaying(playing: boolean) {
@@ -116,18 +174,43 @@ class Slenosafe {
       clearInterval(this.timer);
     }
 
-    // Update the clients
-    emitter.emit("updateSleno");
+    this.clientUpdate();
   }
 
   private async nextIndex() {
     // Fetch the latest application position
-    this.stat = await this.sleno.stat();
+    const stats = await this.sleno.stat();
 
-    if (this.stat!.position < this.stat!.slides) {
-      await this.setPosition(this.stat!.position);
+    if (stats!.position < stats!.slides) {
+      await this.setPosition(stats!.position);
     } else {
       await this.setPosition(0);
+    }
+
+    this.clientUpdate();
+  }
+
+  private readFiles() {
+    const files: Array<string> = [];
+
+    for (const entry of walkSync("./powerpoint")) {
+      if (entry.isFile && isPowerpoint(entry.name)) this.files.push(entry.name);
+    }
+
+    return files;
+  }
+
+  private clientUpdate() {
+    this.clients.forEach((client: WebSocketClient) => {
+      if (!client.isClosed) {
+        client.send(JSON.stringify(this));
+      }
+    });
+  }
+
+  private clientConnect(client: WebSocketClient) {
+    if (!client.isClosed) {
+      client.send(JSON.stringify(this));
     }
   }
 }
