@@ -1,7 +1,6 @@
 import {
   WebSocketClient,
   WebSocketServer,
-  WebSocketState,
 } from "https://deno.land/x/websocket@v0.1.2/mod.ts";
 import slenosafe from "./slenosafe.ts";
 import { initializeEnv } from "./helper.ts";
@@ -51,25 +50,25 @@ server.on("connection", function (client: WebSocketClient) {
   const json = JSON.stringify(data);
 
   client.send(json);
-  
+
   emitter.on("updateFiles", () => {
     if (!client.isClosed) {
-    // Re-read the powerpoint directory
-    updateFiles();
+      // Re-read the powerpoint directory
+      updateFiles();
 
-    // Update the system variables and send it to the client
-    const data = generateSystem();
-    const json = JSON.stringify(data);
-    client.send(json);
+      // Update the system variables and send it to the client
+      const data = generateSystem();
+      const json = JSON.stringify(data);
+      client.send(json);
     }
   });
 
   emitter.on("updateSleno", () => {
     if (!client.isClosed) {
-    // Update the system variables and send it to the client
-    const data = generateSystem();
-    const json = JSON.stringify(data);
-    client.send(json);
+      // Update the system variables and send it to the client
+      const data = generateSystem();
+      const json = JSON.stringify(data);
+      client.send(json);
     }
   });
 });
