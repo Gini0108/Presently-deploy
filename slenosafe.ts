@@ -1,6 +1,12 @@
 import Sleno from "../Sleno/index.ts";
+import { initializeEnv } from "./helper.ts";
 import { emitter } from "./websocket.ts";
 import { Info, Stat } from "https://deno.land/x/sleno@2.0.0/types.ts";
+
+// Load. env file
+initializeEnv([
+  "DENO_APP_POWERPOINT_LOCATION", 
+]);
 
 class Slenosafe {
   private sleno = new Sleno("PowerPoint");
@@ -14,6 +20,10 @@ class Slenosafe {
   public timer?: number;
 
   async initializeSleno() {
+    // Start PowerPoint if it isn't running
+    const path = Deno.env.get("DENO_APP_POWERPOINT_LOCATION")!;
+    await Deno.run({ cmd: ['powershell.exe', `if (! (ps | ? {$_.path -eq "${path}"})) { & "${path}"}`] });
+    
     await this.sleno.boot().catch((error) => {
       // Since the application is already running we can just log it
       if (error === "Application is already running") console.log(error);
