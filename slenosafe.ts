@@ -1,10 +1,12 @@
 import Sleno from "../Sleno/index.ts";
+import { emitter } from "./websocket.ts";
 import { Info, Stat } from "https://deno.land/x/sleno@2.0.0/types.ts";
 
 class Slenosafe {
   private sleno = new Sleno("PowerPoint");
-  private interval = 30;
-  private playing = false;
+
+  public playing = false;
+  public interval = 30;
 
   public info?: Info;
   public stat?: Stat;
@@ -20,11 +22,14 @@ class Slenosafe {
   }
 
   async loadFile(file: string) {
-    await this.sleno.open(file).catch(async (error) => {
+    // Pause the PowerPoint while we're loading another file
+    if (this.playing) await this.setPlaying(false);
+
+    await this.sleno.open(`powerpoint/${file}`).catch(async (error) => {
       if (error === "There is already a presentation loaded") {
         // Close the previous presentation and reattempt opening the presentation file
         await this.sleno.close();
-        await this.sleno.open(file);
+        await this.sleno.open(`powerpoint/${file}`);
       } // Stop the application if anything else if thrown
       else throw new Error(error);
     });
@@ -34,10 +39,31 @@ class Slenosafe {
 
     this.info = await this.sleno.info();
     this.stat = await this.sleno.stat();
+
+    // Temporary fix to start the position at 0
+    this.stat.position = this.stat.position - 1;
+
+    // Continue playing if we paused
+    if (this.playing) await this.setPlaying(true);
+
+    // Update the clients
+    emitter.emit("updateSleno");
   }
 
-  setPosition(position: number) {
-    return this.sleno.goto(position);
+  async setPosition(position: number) {
+    const slides = this.stat!.slides;
+    const remainder = position % slides;
+
+    position = remainder >= 0 ? remainder : slides + remainder;
+
+    await this.sleno.goto(position + 1);
+
+    // Temporary fix to start the position at 0
+    this.stat = await this.sleno.stat();
+    this.stat.position = this.stat.position - 1;
+
+    // Update the clients
+    emitter.emit("updateSleno");
   }
 
   setInterval(interval: number) {
@@ -47,27 +73,41 @@ class Slenosafe {
       // Clear the previous interval and start a new one
       clearInterval(this.timer);
       this.timer = setInterval(
-        this.intervalFunction.bind(this),
+        this.nextIndex.bind(this),
         this.interval * 1000,
       );
     }
+
+    // Update the clients
+    emitter.emit("updateSleno");
   }
 
   setPlaying(playing: boolean) {
     if (playing && !this.playing) {
+      // Start a timer with the new interval
       this.timer = setInterval(
-        this.intervalFunction.bind(this),
+        this.nextIndex.bind(this),
         this.interval * 1000,
       );
-    } else if (!playing && this.playing) clearInterval(this.timer);
+    } else if (!playing && this.playing) {
+      // Stop the previous timer
+      clearInterval(this.timer);
+    }
+
+    // Update the clients
+    emitter.emit("updateSleno");
   }
 
-  private async intervalFunction() {
-    // const stat = await this.sleno.stat();
-    // console.log(stat.position);
+  private async nextIndex() {
+    // Fetch the latest application position
+    this.stat = await this.sleno.stat();
 
-    // await this.sleno.next();
+    if (this.stat!.position < this.stat!.slides) {
+      await this.setPosition(this.stat!.position);
+    } else {
+      await this.setPosition(0);
+    }
   }
 }
- 
+
 export default new Slenosafe();

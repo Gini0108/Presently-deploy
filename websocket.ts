@@ -1,7 +1,9 @@
 import {
   WebSocketClient,
   WebSocketServer,
-} from "https://deno.land/x/websocket@v0.1.1/mod.ts";
+  WebSocketState,
+} from "https://deno.land/x/websocket@v0.1.2/mod.ts";
+import slenosafe from "./slenosafe.ts";
 import { initializeEnv } from "./helper.ts";
 import { EventEmitter } from "https://deno.land/x/eventemitter@1.2.1/mod.ts";
 import { isPowerpoint } from "./helper.ts";
@@ -11,7 +13,6 @@ import { walkSync } from "https://deno.land/std@0.96.0/fs/mod.ts";
 initializeEnv(["DENO_APP_WEBSOCKET_PORT"]);
 
 let files: Array<string> = [];
-let slides: Array<string> = [];
 
 // Load every .pptx file
 function updateFiles() {
@@ -22,26 +23,55 @@ function updateFiles() {
   }
 }
 
-const server = new WebSocketServer(Number(Deno.env.get("DENO_APP_WEBSOCKET_PORT")!));
-const emmiter = new EventEmitter<{
-  updateFile(): void;
-  updateSlides(): void;
-  updateClient(): void;
+// Gather every system variable
+function generateSystem() {
+  return {
+    files,
+    index: slenosafe.stat ? slenosafe.stat.position : 0,
+    slides: slenosafe.info ? slenosafe.info.titles : [],
+    playing: slenosafe.playing,
+    interval: slenosafe.interval,
+  };
+}
+
+const server = new WebSocketServer(
+  Number(Deno.env.get("DENO_APP_WEBSOCKET_PORT")!),
+);
+
+const emitter = new EventEmitter<{
+  updateFiles(): void;
+  updateSleno(): void;
 }>();
 
-emmiter.on("updateFile", () => {
-  updateFiles();
-  emmiter.emit("updateClient");
-});
-
+updateFiles();
 
 server.on("connection", function (client: WebSocketClient) {
-  emmiter.on("updateClient", () => {
-    client.send(JSON.stringify({ files, slides }));
+  // Update the system variables and send it to the client
+  const data = generateSystem();
+  const json = JSON.stringify(data);
+
+  client.send(json);
+  
+  emitter.on("updateFiles", () => {
+    if (!client.isClosed) {
+    // Re-read the powerpoint directory
+    updateFiles();
+
+    // Update the system variables and send it to the client
+    const data = generateSystem();
+    const json = JSON.stringify(data);
+    client.send(json);
+    }
   });
 
-  updateFiles();
-  client.send(JSON.stringify({ files, slides }));
+  emitter.on("updateSleno", () => {
+    if (!client.isClosed) {
+    // Update the system variables and send it to the client
+    const data = generateSystem();
+    const json = JSON.stringify(data);
+    client.send(json);
+    }
+  });
 });
 
-export { emmiter };
+export { emitter };

@@ -1,12 +1,16 @@
-import { initializeEnv } from "./helper.ts";
 import { ensureDirSync } from "https://deno.land/std@0.93.0/fs/mod.ts";
+import { initializeEnv } from "./helper.ts";
 
 // Make sure the required folders exist
 ensureDirSync("./database");
 ensureDirSync("./powerpoint");
 
 // Load. env file
-initializeEnv(["DENO_APP_REST_PORT", "DENO_APP_JWT_SECRET", "DENO_APP_WEBSOCKET_PORT"]);
+initializeEnv([
+  "DENO_APP_REST_PORT",
+  "DENO_APP_JWT_SECRET",
+  "DENO_APP_WEBSOCKET_PORT",
+]);
 
 import { Application } from "https://deno.land/x/oak@v7.3.0/mod.ts";
 
@@ -17,10 +21,6 @@ import fileRouter from "./routes/file.ts";
 import slenosafe from "./slenosafe.ts";
 
 const application = new Application();
-
-application.addEventListener("listen", () => {
-  console.log("Listening for HTTP requests on port 5000");
-});
 
 application.addEventListener("error", (error) => {
   console.log(error);

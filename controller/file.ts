@@ -1,8 +1,8 @@
 import { Request, Response } from "https://deno.land/x/oak@v7.3.0/mod.ts";
 import { existsSync } from "https://deno.land/std/fs/mod.ts";
-
+import { Base64 } from "https://deno.land/x/bb64/mod.ts";
 import { isPowerpoint } from "../helper.ts";
-import { emmiter } from "../websocket.ts";
+import { emitter } from "../websocket.ts";
 import {
   BodyError,
   PropertyError,
@@ -32,24 +32,19 @@ const addFile = async (
 
   // Make sure the user is trying to add an .pptx file
   if (!isPowerpoint(filename)) {
-    throw new PropertyError("email", "filename");
+    throw new PropertyError("extension", "filename");
   }
 
   // Make sure the file doesn't already exist
-  if (!existsSync(`./powerpoint/${filename}`)) {
+  if (existsSync(`./powerpoint/${filename}`)) {
     throw new ResourceError("duplicate", "file");
   }
 
-  const encoder = new TextEncoder();
-
   // Write the file to storage
-  const text = atob(base64);
-  const array = encoder.encode(text);
-
-  await Deno.writeFile(`./powerpoint/${filename}`, array);
+  Base64.fromBase64String(base64).toFile(`./powerpoint/${filename}`);
 
   // Propagate the event to the websocket
-  emmiter.emit("updateFile");
+  emitter.emit("updateFiles");
 
   response.status = 200;
 };
@@ -73,7 +68,7 @@ const deleteFile = (
   Deno.removeSync(`./powerpoint/${filename}`);
 
   // Propagate the event to the websocket
-  emmiter.emit("updateFile");
+  emitter.emit("updateFiles");
 
   response.status = 200;
 };

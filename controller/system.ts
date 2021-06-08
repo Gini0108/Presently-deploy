@@ -1,8 +1,5 @@
 import { Request, Response } from "https://deno.land/x/oak@v7.3.0/mod.ts";
-import { existsSync } from "https://deno.land/std/fs/mod.ts";
-
 import slenosafe from "../slenosafe.ts";
-import { isPowerpoint } from "../helper.ts";
 import { BodyError, TypeError } from "../middleware/error.ts";
 
 const updateSystem = async (
@@ -18,40 +15,38 @@ const updateSystem = async (
   const playing = value.playing;
   const filename = value.filename;
   const interval = value.interval;
-  const position = value.position;
+  const index = value.index;
 
-  // The setInterval and setPlaying functions can't return an error 
-  if (playing) {
+  // The setInterval and setPlaying functions can't return an error
+  if (typeof playing !== "undefined") {
     if (typeof playing !== "boolean") throw new TypeError("boolean", "playing");
     slenosafe.setPlaying(playing);
   }
 
-  if (interval) {
+  if (typeof interval !== "undefined") {
     if (typeof interval !== "number") throw new TypeError("number", "interval");
     slenosafe.setInterval(interval);
   }
 
-  if (filename) {
+  if (typeof filename !== "undefined") {
     if (typeof filename !== "string") throw new TypeError("string", "filename");
 
-    // If Sleno throws an error send it back to the user
+    // If Sleno throws an error send it back to the
     await slenosafe.loadFile(filename).catch((error) => {
       response.body = error;
       response.status = 400;
     });
   }
 
-  if (position) {
-    if (typeof position !== "number") throw new TypeError("number", "position");
+  if (typeof index !== "undefined") {
+    if (typeof index !== "number") throw new TypeError("number", "index");
 
     // If Sleno throws an error send it back to the user
-    slenosafe.setPosition(position).catch((error) => {
+    slenosafe.setPosition(index).catch((error) => {
       response.body = error;
       response.status = 400;
     });
   }
-
-  // If the system has changed echo a websocket change
 
   response.status = 200;
 };

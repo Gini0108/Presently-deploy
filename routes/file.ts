@@ -6,8 +6,8 @@ const router = new Router();
 
 router.prefix("/file");
 
-router.post("/", authenticationHandler, addFile);
+router.post("/", addFile);
 
-router.delete("/:filename", authenticationHandler, deleteFile);
+router.delete("/:filename", deleteFile);
 
 export default router;
