@@ -1,6 +1,7 @@
 import { Request, Response } from "https://deno.land/x/oak@v7.3.0/mod.ts";
 import { existsSync } from "https://deno.land/std/fs/mod.ts";
 import { Base64 } from "https://deno.land/x/bb64/mod.ts";
+import slenosafe from "../slenosafe.ts";
 import { isPowerpoint } from "../helper.ts";
 import { emitter } from "../websocket.ts";
 import {
@@ -49,7 +50,7 @@ const addFile = async (
   response.status = 200;
 };
 
-const deleteFile = (
+const deleteFile = async (
   { params, response }: { params: { filename: string }; response: Response },
 ) => {
   const filename = params.filename;
@@ -63,6 +64,8 @@ const deleteFile = (
   if (!existsSync(`./powerpoint/${filename}`)) {
     throw new ResourceError("missing", "file");
   }
+
+  await slenosafe.unloadFile(filename);
 
   // Delete the file from storage
   Deno.removeSync(`./powerpoint/${filename}`);

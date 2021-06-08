@@ -7,6 +7,7 @@ class Slenosafe {
 
   public playing = false;
   public interval = 30;
+  public filename = '';
 
   public info?: Info;
   public stat?: Stat;
@@ -21,21 +22,15 @@ class Slenosafe {
     });
   }
 
-  async loadFile(file: string) {
+  async loadFile(filename: string) {
     // Pause the PowerPoint while we're loading another file
     if (this.playing) await this.setPlaying(false);
 
-    await this.sleno.open(`powerpoint/${file}`).catch(async (error) => {
-      if (error === "There is already a presentation loaded") {
-        // Close the previous presentation and reattempt opening the presentation file
-        await this.sleno.close();
-        await this.sleno.open(`powerpoint/${file}`);
-      } // Stop the application if anything else if thrown
-      else throw new Error(error);
-    });
-
-    // Start the presentation
+    await this.sleno.close();
+    await this.sleno.open(`powerpoint/${filename}`);
     await this.sleno.start();
+
+    this.filename = filename;
 
     this.info = await this.sleno.info();
     this.stat = await this.sleno.stat();
@@ -48,6 +43,18 @@ class Slenosafe {
 
     // Update the clients
     emitter.emit("updateSleno");
+  }
+
+  async unloadFile(filename: string) {
+    if (this.filename === filename) {
+      await this.sleno.close();
+
+      this.filename = '';
+      this.info!.titles = [];
+
+      // Update the clients
+      emitter.emit("updateSleno");
+    }
   }
 
   async setPosition(position: number) {
