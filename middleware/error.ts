@@ -96,7 +96,7 @@ export const errorHandler = async (
     ) => {
       response.status = error.statusError;
       response.body = {
-        message: error.message
+        message: error.message,
       };
     },
   );

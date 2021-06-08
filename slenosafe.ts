@@ -5,7 +5,7 @@ import { Info, Stat } from "https://deno.land/x/sleno@2.0.0/types.ts";
 
 // Load. env file
 initializeEnv([
-  "DENO_APP_POWERPOINT_LOCATION", 
+  "DENO_APP_POWERPOINT_LOCATION",
 ]);
 
 class Slenosafe {
@@ -13,7 +13,7 @@ class Slenosafe {
 
   public playing = false;
   public interval = 30;
-  public filename = '';
+  public filename = "";
 
   public info?: Info;
   public stat?: Stat;
@@ -22,8 +22,13 @@ class Slenosafe {
   async initializeSleno() {
     // Start PowerPoint if it isn't running
     const path = Deno.env.get("DENO_APP_POWERPOINT_LOCATION")!;
-    await Deno.run({ cmd: ['powershell.exe', `if (! (ps | ? {$_.path -eq "${path}"})) { & "${path}"}`] });
-    
+    await Deno.run({
+      cmd: [
+        "powershell.exe",
+        `if (! (ps | ? {$_.path -eq "${path}"})) { & "${path}"}`,
+      ],
+    });
+
     await this.sleno.boot().catch((error) => {
       // Since the application is already running we can just log it
       if (error === "Application is already running") console.log(error);
@@ -36,7 +41,7 @@ class Slenosafe {
     // Pause the PowerPoint while we're loading another file
     if (this.playing) await this.setPlaying(false);
 
-    await this.sleno.close();
+    await this.sleno.close().catch(() => console.log("I don't care"));
     await this.sleno.open(`powerpoint/${filename}`);
     await this.sleno.start();
 
@@ -59,7 +64,7 @@ class Slenosafe {
     if (this.filename === filename) {
       await this.sleno.close();
 
-      this.filename = '';
+      this.filename = "";
       this.info!.titles = [];
 
       // Update the clients
