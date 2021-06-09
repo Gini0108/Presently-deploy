@@ -9,8 +9,11 @@ import {
 import Sleno from "../Sleno/index.ts";
 
 import { PropertyError, ResourceError } from "./middleware/error.ts";
-
-import { initializeEnv, isPowerpoint } from "./helper.ts";
+import {
+  isTemporary,
+  isPowerpoint,
+  initializeEnv
+ } from "./helper.ts";
 
 // Load. env file
 initializeEnv([
@@ -52,7 +55,8 @@ class Slenosafe {
       Number(Deno.env.get("DENO_APP_WEBSOCKET_PORT")!),
     );
 
-    this.server.on("connection", this.clientConnect);
+    this.server.on("connection", this.clientConnect.bind(this));
+    this.readFiles();
 
     // Start Sleno
     await this.sleno.boot();
@@ -194,23 +198,39 @@ class Slenosafe {
     const files: Array<string> = [];
 
     for (const entry of walkSync("./powerpoint")) {
-      if (entry.isFile && isPowerpoint(entry.name)) this.files.push(entry.name);
+      if (
+        entry.isFile && isPowerpoint(entry.name) && !isTemporary(entry.name)
+      ) {
+        this.files.push(entry.name);
+      }
     }
 
     return files;
   }
 
+  private generateJSON() {
+    return JSON.stringify({
+      files: this.files,
+      slides: this.slides,
+      playing: this.playing,
+      current: this.current,
+      position: this.position,
+      interval: this.interval,
+    });
+  }
+
   private clientUpdate() {
     this.clients.forEach((client: WebSocketClient) => {
       if (!client.isClosed) {
-        client.send(JSON.stringify(this));
+        client.send(this.generateJSON());
       }
     });
   }
 
   private clientConnect(client: WebSocketClient) {
     if (!client.isClosed) {
-      client.send(JSON.stringify(this));
+      this.clients.push(client);
+      client.send(this.generateJSON());
     }
   }
 }

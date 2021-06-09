@@ -22,6 +22,11 @@ export function isPowerpoint(filename: string): boolean {
   return regex.test(filename);
 }
 
+export function isTemporary(filename: string): boolean {
+  const regex = new RegExp(/^~\$/);
+  return regex.test(filename);
+}
+
 export function isLength(input: string): boolean {
   const result = input.length >= 3 && input.length <= 255;
   return result;
