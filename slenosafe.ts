@@ -178,6 +178,7 @@ class Slenosafe {
       clearInterval(this.timer);
     }
 
+    this.playing = playing;
     this.clientUpdate();
   }
 
