@@ -1,4 +1,4 @@
-import { config } from "https://deno.land/x/dotenv/mod.ts";
+import { config } from "https://deno.land/x/dotenv@v2.0.0/mod.ts";
 
 export function isEmail(email: string): boolean {
   // Copied RegExp from https://stackoverflow.com/a/46181

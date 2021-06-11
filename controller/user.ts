@@ -1,6 +1,6 @@
 import { Request, Response } from "https://deno.land/x/oak@v7.3.0/mod.ts";
-import { Database } from "https://deno.land/x/aloedb/mod.ts";
-import { Payload } from "https://deno.land/x/djwt/mod.ts";
+import { Database } from "https://deno.land/x/aloedb@0.9.0/mod.ts";
+import { Payload } from "https://deno.land/x/djwt@v2.2/mod.ts";
 import {
   compareSync,
   hashSync,

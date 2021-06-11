@@ -6,7 +6,7 @@ import {
   getNumericDate,
   Payload,
   verify,
-} from "https://deno.land/x/djwt/mod.ts";
+} from "https://deno.land/x/djwt@v2.2/mod.ts";
 
 initializeEnv(["DENO_APP_JWT_SECRET"]);
 

@@ -1,7 +1,7 @@
 import { Request, Response } from "https://deno.land/x/oak@v7.3.0/mod.ts";
-import { OAuth2Client } from "https://deno.land/x/oauth2_client/mod.ts";
-import { Database } from "https://deno.land/x/aloedb/mod.ts";
-import { Payload } from "https://deno.land/x/djwt/mod.ts";
+import { OAuth2Client } from "https://deno.land/x/oauth2_client@v0.2.1/mod.ts";
+import { Database } from "https://deno.land/x/aloedb@0.9.0/mod.ts";
+import { Payload } from "https://deno.land/x/djwt@v2.2/mod.ts";
 
 import { generateToken } from "../middleware/authentication.ts";
 import { initializeEnv } from "../helper.ts";

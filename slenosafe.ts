@@ -1,6 +1,6 @@
-import { Base64 } from "https://deno.land/x/bb64/mod.ts";
+import { Base64 } from "https://deno.land/x/bb64@1.1.0/mod.ts";
 import { walkSync } from "https://deno.land/std@0.96.0/fs/mod.ts";
-import { existsSync } from "https://deno.land/std/fs/mod.ts";
+import { existsSync } from "https://deno.land/std@0.98.0/fs/mod.ts";
 import {
   WebSocketClient,
   WebSocketServer,

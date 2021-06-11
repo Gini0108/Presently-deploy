@@ -14,7 +14,7 @@ initializeEnv([
 
 import { errorHandler } from "./middleware/error.ts";
 import { Application } from "https://deno.land/x/oak@v7.3.0/mod.ts";
-import { oakCors } from "https://deno.land/x/cors/mod.ts";
+import { oakCors } from "https://deno.land/x/cors@v1.2.1/mod.ts";
 
 import systemRouter from "./routes/system.ts";
 import oauthRouter from "./routes/oauth.ts";
