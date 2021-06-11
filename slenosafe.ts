@@ -167,19 +167,23 @@ class Slenosafe {
   }
 
   setPlaying(playing: boolean) {
-    if (playing && !this.playing) {
-      // Start a timer with the new interval
-      this.timer = setInterval(
-        this.nextIndex.bind(this),
-        this.interval * 1000,
-      );
-    } else if (!playing && this.playing) {
-      // Stop the previous timer
-      clearInterval(this.timer);
-    }
+    // Make sure a PowerPoint has been loaded
+    if (this.current) {
 
-    this.playing = playing;
-    this.clientUpdate();
+      if (playing && !this.playing) {
+        // Start a timer with the new interval
+        this.timer = setInterval(
+          this.nextIndex.bind(this),
+          this.interval * 1000,
+        );
+      } else if (!playing && this.playing) {
+        // Stop the previous timer
+        clearInterval(this.timer);
+      }
+
+      this.playing = playing;
+      this.clientUpdate();
+    }
   }
 
   private async nextIndex() {
