@@ -52,7 +52,7 @@ class Slenosafe {
     );
 
     this.server.on("connection", this.clientConnect.bind(this));
-    this.readFiles();
+    this.files = this.readFiles();
 
     // Start Sleno
     await this.sleno.boot();
@@ -201,7 +201,7 @@ class Slenosafe {
       if (
         entry.isFile && isPowerpoint(entry.name) && !isTemporary(entry.name)
       ) {
-        this.files.push(entry.name);
+        files.push(entry.name);
       }
     }
 
