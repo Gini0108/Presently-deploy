@@ -1,4 +1,5 @@
 import { AuthenticationError } from "./error.ts";
+import { initializeEnv } from "../helper.ts";
 import { Context } from "https://deno.land/x/oak@v7.3.0/mod.ts";
 import {
   create,
@@ -7,17 +8,22 @@ import {
   verify,
 } from "https://deno.land/x/djwt/mod.ts";
 
-const jwtSecret = Deno.env.get("JWT_SECRET")!;
+initializeEnv(["DENO_APP_JWT_SECRET"]);
 
 export const authenticationHandler = async (
   { request, state }: Context,
   next: () => Promise<void>,
 ) => {
+  const secret = Deno.env.get("DENO_APP_JWT_SECRET")!;
   const header = request.headers.get("Authorization");
   const token = header?.split(" ")[1];
 
   if (token) {
-    const payload = await verify(token, jwtSecret, "HS512").catch(() => {
+    const payload = await verify(
+      token,
+      secret,
+      "HS512",
+    ).catch(() => {
       throw new AuthenticationError("expired");
     });
 
@@ -35,6 +41,6 @@ export const generateToken = (payload: Payload) => {
   return create(
     { alg: "HS512", typ: "JWT" },
     Object.assign(payload, { exp: getNumericDate(60 * 60) }),
-    jwtSecret,
+    Deno.env.get("DENO_APP_JWT_SECRET")!,
   );
 };
