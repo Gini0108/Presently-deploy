@@ -9,11 +9,7 @@ import {
 import Sleno from "../Sleno/index.ts";
 
 import { PropertyError, ResourceError } from "./middleware/error.ts";
-import {
-  isTemporary,
-  isPowerpoint,
-  initializeEnv
- } from "./helper.ts";
+import { initializeEnv, isPowerpoint, isTemporary } from "./helper.ts";
 
 // Load. env file
 initializeEnv([
@@ -169,7 +165,6 @@ class Slenosafe {
   setPlaying(playing: boolean) {
     // Make sure a PowerPoint has been loaded
     if (this.current) {
-
       if (playing && !this.playing) {
         // Start a timer with the new interval
         this.timer = setInterval(
