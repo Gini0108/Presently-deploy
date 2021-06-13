@@ -56,8 +56,7 @@ class Slenosafe {
       Number(Deno.env.get("DENO_APP_WEBSOCKET_PORT")!),
     );
 
-    this.readFiles();
-
+    this.files = this.readFiles();
     this.server.on("connection", this.clientConnect.bind(this));
     this.events.on('update_clients', () => {
       this.clientUpdate.bind(this);
@@ -197,7 +196,7 @@ class Slenosafe {
       if (
         entry.isFile && isPowerpoint(entry.name) && !isTemporary(entry.name)
       ) {
-        this.files.push(entry.name);
+        files.push(entry.name);
       }
     }
 
