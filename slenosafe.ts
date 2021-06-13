@@ -1,6 +1,7 @@
 import { Base64 } from "https://deno.land/x/bb64@1.1.0/mod.ts";
 import { walkSync } from "https://deno.land/std@0.96.0/fs/mod.ts";
 import { existsSync } from "https://deno.land/std@0.98.0/fs/mod.ts";
+import { EventEmitter } from "https://deno.land/x/eventemitter@1.2.1/mod.ts";
 import {
   WebSocketClient,
   WebSocketServer,
@@ -29,6 +30,10 @@ class Slenosafe {
   public playing = false;
   public interval = 30;
 
+  public events = new EventEmitter<{
+    update_clients(): void
+  }>();
+
   private timer?: number;
   private server?: WebSocketServer;
 
@@ -51,8 +56,12 @@ class Slenosafe {
       Number(Deno.env.get("DENO_APP_WEBSOCKET_PORT")!),
     );
 
-    this.server.on("connection", this.clientConnect.bind(this));
     this.readFiles();
+
+    this.server.on("connection", this.clientConnect.bind(this));
+    this.events.on('update_clients', () => {
+      this.clientUpdate.bind(this);
+    });
 
     // Start Sleno
     await this.sleno.boot();
@@ -72,7 +81,6 @@ class Slenosafe {
 
     // Update the files array
     this.files = this.readFiles();
-    this.clientUpdate();
   }
 
   async createFile(filename: string, base64: string) {
@@ -86,7 +94,6 @@ class Slenosafe {
 
     // Update the files array
     this.files = this.readFiles();
-    this.clientUpdate();
   }
 
   async unloadFile(filename: string | null) {
@@ -96,8 +103,6 @@ class Slenosafe {
       this.slides = [];
       this.current = null;
       this.position = null;
-
-      this.clientUpdate();
     }
   }
 
@@ -125,8 +130,6 @@ class Slenosafe {
     this.slides = info.titles;
     this.current = filename;
     this.position = 0;
-
-    this.clientUpdate();
   }
 
   async setPosition(position: number) {
@@ -138,8 +141,6 @@ class Slenosafe {
       this.position = remainder >= 0 ? remainder : slides + remainder;
 
       await this.sleno.goto(this.position + 1);
-
-      this.clientUpdate();
     }
 
     // TODO: throw error if no presentation is loaded
@@ -156,8 +157,6 @@ class Slenosafe {
         this.interval * 1000,
       );
     }
-
-    this.clientUpdate();
 
     // TODO: refactor interval logic to timeout to account for delay in moving to the next slide
   }
@@ -177,7 +176,6 @@ class Slenosafe {
       }
 
       this.playing = playing;
-      this.clientUpdate();
     }
   }
 
@@ -190,8 +188,6 @@ class Slenosafe {
     } else {
       await this.setPosition(0);
     }
-
-    this.clientUpdate();
   }
 
   private readFiles() {

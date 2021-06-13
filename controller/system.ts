@@ -40,6 +40,8 @@ const updateSystem = async (
     await slenosafe.setPosition(position);
   }
 
+  await slenosafe.events.emit('update_clients');
+
   response.status = 200;
 };
 
