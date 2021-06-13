@@ -58,9 +58,7 @@ class Slenosafe {
 
     this.files = this.readFiles();
     this.server.on("connection", this.clientConnect.bind(this));
-    this.events.on("update_clients", () => {
-      this.clientUpdate.bind(this);
-    });
+    this.events.on("update_clients", this.clientUpdate.bind(this));
 
     // Start Sleno
     await this.sleno.boot();
