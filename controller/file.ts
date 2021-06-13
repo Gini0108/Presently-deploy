@@ -25,7 +25,7 @@ const addFile = async (
   if (!filename) throw new PropertyError("missing", "filename");
 
   await slenosafe.createFile(filename, base64);
-  await slenosafe.events.emit('update_clients');
+  await slenosafe.events.emit("update_clients");
 
   response.status = 200;
 };
@@ -36,7 +36,7 @@ const deleteFile = async (
   const filename = params.filename;
 
   await slenosafe.removeFile(filename);
-  await slenosafe.events.emit('update_clients');
+  await slenosafe.events.emit("update_clients");
 
   response.status = 200;
 };

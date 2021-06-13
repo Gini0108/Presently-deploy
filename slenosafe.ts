@@ -31,7 +31,7 @@ class Slenosafe {
   public interval = 30;
 
   public events = new EventEmitter<{
-    update_clients(): void
+    update_clients(): void;
   }>();
 
   private timer?: number;
@@ -58,7 +58,7 @@ class Slenosafe {
 
     this.files = this.readFiles();
     this.server.on("connection", this.clientConnect.bind(this));
-    this.events.on('update_clients', () => {
+    this.events.on("update_clients", () => {
       this.clientUpdate.bind(this);
     });
 
