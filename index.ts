@@ -29,6 +29,10 @@ application.addEventListener("error", (error) => {
   console.log(error);
 });
 
+application.addEventListener("listen", () => {
+  console.log(`Listening on port ${Deno.env.get("DENO_APP_REST_PORT")!}`);
+});
+
 application.use(oakCors());
 application.use(errorHandler);
 
