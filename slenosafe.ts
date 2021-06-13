@@ -40,16 +40,18 @@ class Slenosafe {
   private clients: Array<WebSocketClient> = [];
 
   async initializeSleno() {
-    // Fetch the Powerpoint .exe path
-    const path = Deno.env.get("DENO_APP_POWERPOINT_LOCATION")!;
+    console.log("Starting PowerPoint application");
 
     // Start PowerPoint if it isn't running
+    const path = Deno.env.get("DENO_APP_POWERPOINT_LOCATION")!;
     await Deno.run({
       cmd: [
         "powershell.exe",
         `if (! (ps | ? {$_.path -eq "${path}"})) { & "${path}"}`,
       ],
     });
+
+    console.log("Starting WebSocket server");
 
     // Start the websocket server
     this.server = new WebSocketServer(
@@ -61,6 +63,8 @@ class Slenosafe {
     this.events.on("update_clients", () => {
       this.clientUpdate.bind(this);
     });
+
+    console.log("Starting Sleno");
 
     // Start Sleno
     await this.sleno.boot();
