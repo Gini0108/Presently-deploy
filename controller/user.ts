@@ -117,9 +117,10 @@ const loginUser = async (
 
   // Generate a token using the email
   const token = await generateToken({ email: user.email } as Payload);
+  const { lastname, firstname } = user;
 
   response.status = 200;
-  response.body = { token };
+  response.body = { token, lastname, firstname, email };
 };
 
 const deleteUser = async (
