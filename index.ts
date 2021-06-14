@@ -17,7 +17,6 @@ import { Application } from "https://deno.land/x/oak@v7.3.0/mod.ts";
 import { oakCors } from "https://deno.land/x/cors@v1.2.1/mod.ts";
 
 import systemRouter from "./routes/system.ts";
-import oauthRouter from "./routes/oauth.ts";
 import userRouter from "./routes/user.ts";
 import fileRouter from "./routes/file.ts";
 
@@ -38,12 +37,10 @@ application.use(errorHandler);
 
 application.use(userRouter.routes());
 application.use(fileRouter.routes());
-application.use(oauthRouter.routes());
 application.use(systemRouter.routes());
 
 application.use(userRouter.allowedMethods());
 application.use(fileRouter.allowedMethods());
-application.use(oauthRouter.allowedMethods());
 application.use(systemRouter.allowedMethods());
 
 application.listen({ port: Number(Deno.env.get("DENO_APP_REST_PORT")!) });
