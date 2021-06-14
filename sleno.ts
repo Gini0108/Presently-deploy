@@ -2,44 +2,46 @@ import { Base64 } from "https://deno.land/x/bb64@1.1.0/mod.ts";
 import { walkSync } from "https://deno.land/std@0.96.0/fs/mod.ts";
 import { existsSync } from "https://deno.land/std@0.98.0/fs/mod.ts";
 import { EventEmitter } from "https://deno.land/x/eventemitter@1.2.1/mod.ts";
+
+import { Info, Stat } from "./types.ts";
+import { isPowerpoint, isTemporary } from "./helper.ts";
+import { PropertyError, ResourceError } from "./errors.ts";
 import {
   WebSocketClient,
   WebSocketServer,
 } from "https://deno.land/x/websocket@v0.1.2/mod.ts";
 
-import { Info, Stat } from "./types.ts";
-
-import { PropertyError, ResourceError } from "./middleware/error.ts";
-import { initializeEnv, isPowerpoint, isTemporary } from "./helper.ts";
-
-// Load. env file
-initializeEnv([
-  "DENO_APP_WEBSOCKET_PORT",
-  "DENO_APP_POWERPOINT_LOCATION",
-]);
-
-class Slenosafe {
+class Sleno {
   public files: Array<string> = [];
   public slides: Array<string> = [];
 
   public current: string | null = null;
   public position: number | null = null;
 
-  public playing = false;
   public interval = 30;
-
-  public events = new EventEmitter<{
+  public playing = false;
+  public emitter = new EventEmitter<{
     update_clients(): void;
   }>();
 
   private timer?: number;
   private server?: WebSocketServer;
-
   private clients: Array<WebSocketClient> = [];
 
-  async initializeSleno() {
-    console.log("Starting PowerPoint application");
+  constructor() {
+    // Start the websocket server
+    this.server = new WebSocketServer(
+      Number(Deno.env.get("DENO_APP_WEBSOCKET_PORT")!),
+    );
 
+    // Read the powerpoint files into an array
+    this.files = this.readFiles();
+
+    this.server.on("connection", this.clientConnect.bind(this));
+    this.emitter.on("update_clients", this.clientUpdate.bind(this));
+  }
+
+  async startPowerpoint() {
     // Start PowerPoint if it isn't running
     const path = Deno.env.get("DENO_APP_POWERPOINT_LOCATION")!;
     await Deno.run({
@@ -47,59 +49,6 @@ class Slenosafe {
         "powershell.exe",
         `if (! (ps | ? {$_.path -eq "${path}"})) { & "${path}"}`,
       ],
-    });
-
-    console.log("Starting WebSocket server");
-
-    // Start the websocket server
-    this.server = new WebSocketServer(
-      Number(Deno.env.get("DENO_APP_WEBSOCKET_PORT")!),
-    );
-
-    this.files = this.readFiles();
-    this.server.on("connection", this.clientConnect.bind(this));
-    this.events.on("update_clients", this.clientUpdate.bind(this));
-  }
-
-  private async request<T>(command: string): Promise<T | void> {
-    const encoder = new TextEncoder();
-    const decoder = new TextDecoder();
-
-    // Start the connector script
-    const process = Deno.run({
-      cmd: ["scripts/connector-win-ppt2010.bat"],
-      stdin: "piped",
-      stdout: "piped",
-    });
-
-    // Write the command to the script process
-    console.log(`${command}\n`);
-    await process.stdin.write(encoder.encode(`${command}\n`));
-    await process.stdin.close();
-
-    // Parse the output back into an object
-    const buffer = await process.output();
-    const parsed = decoder.decode(buffer);
-    console.log(parsed);
-    const object = JSON.parse(parsed);
-
-    // console.log(object);
-
-    // Close the process after fetching the output
-    process.close();
-
-    // Return the error message if it exists
-    return new Promise(function (resolve, reject) {
-      if (object.error) {
-        reject(object.error);
-      }
-
-      if (object.response === "OK") {
-        resolve();
-      }
-
-      // Only return the response if it's not an error message nor an "OK" message
-      resolve(object.response);
     });
   }
 
@@ -133,6 +82,7 @@ class Slenosafe {
   }
 
   async unloadFile(filename: string | null) {
+    // Only unload the file if there is a Powerpoint playing
     if (this.current && this.current === filename) {
       await this.request(`CLOSE`);
 
@@ -178,8 +128,6 @@ class Slenosafe {
 
       await this.request(`GOTO ${this.position + 1}`);
     }
-
-    // TODO: throw error if no presentation is loaded
   }
 
   setInterval(interval: number) {
@@ -193,8 +141,6 @@ class Slenosafe {
         this.interval * 1000,
       );
     }
-
-    // TODO: refactor interval logic to timeout to account for delay in moving to the next slide
   }
 
   setPlaying(playing: boolean) {
@@ -213,6 +159,44 @@ class Slenosafe {
 
       this.playing = playing;
     }
+  }
+
+  private async request<T>(command: string): Promise<T | void> {
+    const encoder = new TextEncoder();
+    const decoder = new TextDecoder();
+
+    // Start the connector script
+    const process = Deno.run({
+      cmd: ["scripts/connector-win-ppt2010.bat"],
+      stdin: "piped",
+      stdout: "piped",
+    });
+
+    // Write the command to the script process
+    await process.stdin.write(encoder.encode(`${command}\n`));
+    await process.stdin.close();
+
+    // Parse the output back into an object
+    const buffer = await process.output();
+    const parsed = decoder.decode(buffer);
+    const object = JSON.parse(parsed);
+
+    // Close the process after fetching the output
+    process.close();
+
+    // Return the error message if it exists
+    return new Promise(function (resolve, reject) {
+      if (object.error) {
+        reject(object.error);
+      }
+
+      if (object.response === "OK") {
+        resolve();
+      }
+
+      // Only return the response if it's not an error message nor an "OK" message
+      resolve(object.response);
+    });
   }
 
   private async nextIndex() {
@@ -269,4 +253,4 @@ class Slenosafe {
   }
 }
 
-export default new Slenosafe();
+export default Sleno;

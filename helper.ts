@@ -1,3 +1,8 @@
+import {
+  create,
+  getNumericDate,
+  Payload,
+} from "https://deno.land/x/djwt@v2.2/mod.ts";
 import { config } from "https://deno.land/x/dotenv@v2.0.0/mod.ts";
 
 export function isEmail(email: string): boolean {
@@ -43,3 +48,12 @@ export function initializeEnv(variables: Array<string>) {
     }
   });
 }
+
+export const generateToken = (payload: Payload) => {
+  // Add expiration time in seconds as NumericDate
+  return create(
+    { alg: "HS512", typ: "JWT" },
+    Object.assign(payload, { exp: getNumericDate(60 * 60 * 24 * 7) }),
+    Deno.env.get("DENO_APP_JWT_SECRET")!,
+  );
+};

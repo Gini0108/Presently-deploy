@@ -20,6 +20,7 @@ import {
 const database = new Database<User>("database/user.json");
 
 const cleanUser = (user: User): Partial<User> => {
+  // Filter out the password hash for safety
   return {
     email: user.email,
     firstname: user.firstname,
@@ -39,22 +40,28 @@ const getUsers = async (
 const addUser = async (
   { request, response }: { request: Request; response: Response },
 ) => {
+  // Make sure a body is provided
   if (!request.hasBody) throw new BodyError("missing");
+
+  // Make sure the body is valid JSON
   const body = await request.body({ type: "json" });
   const value = await body.value.catch(() => {
     throw new BodyError("invalid");
   });
 
-  const email = value.email;
-  const password = value.password;
-  const lastname = value.lastname;
-  const firstname = value.firstname;
+  // Transfer properties to constants
+  const {
+    email,
+    password,
+    lastname,
+    firstname,
+  } = value;
 
   // Make sure all required values are provided
-  if (!email) throw new PropertyError("missing", "email");
-  if (!password) throw new PropertyError("missing", "password");
-  if (!lastname) throw new PropertyError("missing", "lastname");
-  if (!firstname) throw new PropertyError("missing", "firstname");
+  if (typeof email === "undefined") throw new PropertyError("missing", "email");
+  if (typeof password === "undefined") throw new PropertyError("missing", "password");
+  if (typeof lastname === "undefined") throw new PropertyError("missing", "lastname");
+  if (typeof firstname === "undefined") throw new PropertyError("missing", "firstname");
 
   // Make sure the properties are valid
   if (!isEmail(email)) throw new PropertyError("email", "email");
@@ -92,18 +99,24 @@ const getUser = async (
 const loginUser = async (
   { request, response }: { request: Request; response: Response },
 ) => {
+  // Make sure a body is provided
   if (!request.hasBody) throw new BodyError("missing");
+
+  // Make sure the body is valid JSON
   const body = await request.body({ type: "json" });
   const value = await body.value.catch(() => {
     throw new BodyError("invalid");
   });
 
-  const email = value.email;
-  const password = value.password;
+  // Transfer properties to constants
+  const {
+    email,
+    password,
+  } = value;
 
   // Make sure all required values are provided
-  if (!email) throw new PropertyError("missing", "email");
-  if (!password) throw new PropertyError("missing", "password");
+  if (typeof email === "undefined") throw new PropertyError("missing", "email");
+  if (typeof password === "undefined") throw new PropertyError("missing", "password");
 
   // Make sure the properties are valid
   if (!isEmail(email)) throw new PropertyError("email", "email");
@@ -126,6 +139,7 @@ const loginUser = async (
 const deleteUser = async (
   { params, response }: { params: { email: string }; response: Response },
 ) => {
+  // Fetch the email from the URL
   const email = params.email;
 
   // Remove the user using the email from the URL

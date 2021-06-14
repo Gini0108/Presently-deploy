@@ -1,5 +1,3 @@
-import { Context } from "https://deno.land/x/oak@v7.3.0/mod.ts";
-
 export class ResourceError extends Error {
   // Set default status to "Not Found"
   public statusError = 404;
@@ -80,24 +78,3 @@ export class BodyError extends Error {
     super("Request is missing a valid JSON body.");
   }
 }
-
-export const errorHandler = async (
-  { response }: Context,
-  next: () => Promise<void>,
-) => {
-  await next().catch(
-    (
-      error:
-        | BodyError
-        | AuthenticationError
-        | PropertyError
-        | TypeError
-        | ResourceError,
-    ) => {
-      response.status = error.statusError;
-      response.body = {
-        message: error.message,
-      };
-    },
-  );
-};

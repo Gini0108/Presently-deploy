@@ -1,14 +1,12 @@
-import { AuthenticationError } from "./error.ts";
-import { initializeEnv } from "../helper.ts";
 import { Context } from "https://deno.land/x/oak@v7.3.0/mod.ts";
+import { verify } from "https://deno.land/x/djwt@v2.2/mod.ts";
 import {
-  create,
-  getNumericDate,
-  Payload,
-  verify,
-} from "https://deno.land/x/djwt@v2.2/mod.ts";
-
-initializeEnv(["DENO_APP_JWT_SECRET"]);
+  AuthenticationError,
+  BodyError,
+  PropertyError,
+  ResourceError,
+  TypeError,
+} from "./errors.ts";
 
 export const authenticationHandler = async (
   { request, state }: Context,
@@ -36,11 +34,23 @@ export const authenticationHandler = async (
   throw new AuthenticationError("missing");
 };
 
-export const generateToken = (payload: Payload) => {
-  // Add expiration time as NumericDate, expiration time is in seconds.
-  return create(
-    { alg: "HS512", typ: "JWT" },
-    Object.assign(payload, { exp: getNumericDate(60 * 60) }),
-    Deno.env.get("DENO_APP_JWT_SECRET")!,
+export const errorHandler = async (
+  { response }: Context,
+  next: () => Promise<void>,
+) => {
+  await next().catch(
+    (
+      error:
+        | TypeError
+        | BodyError
+        | PropertyError
+        | ResourceError
+        | AuthenticationError,
+    ) => {
+      response.status = error.statusError;
+      response.body = {
+        message: error.message,
+      };
+    },
   );
 };
