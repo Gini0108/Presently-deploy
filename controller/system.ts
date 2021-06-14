@@ -1,10 +1,7 @@
-import Sleno from "../sleno.ts";
+import sleno from "../sleno.ts";
 
 import { Request, Response } from "https://deno.land/x/oak@v7.3.0/mod.ts";
-import { BodyError, TypeError } from "../middleware/error.ts";
-
-// Create a Sleno instance
-const sleno = new Sleno();
+import { BodyError, TypeError } from "../errors.ts";
 
 const updateSystem = async (
   { request, response }: { request: Request; response: Response },
@@ -23,7 +20,7 @@ const updateSystem = async (
     playing,
     position,
     filename,
-    interval
+    interval,
   } = value;
 
   if (typeof playing !== "undefined") {

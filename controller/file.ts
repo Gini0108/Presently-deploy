@@ -1,10 +1,7 @@
-import Sleno from "../sleno.ts";
+import sleno from "../sleno.ts";
 
 import { Request, Response } from "https://deno.land/x/oak@v7.3.0/mod.ts";
 import { BodyError, PropertyError, TypeError } from "../errors.ts";
-
-// Create a Sleno instance
-const sleno = new Sleno();
 
 const addFile = async (
   { request, response }: { request: Request; response: Response },
@@ -25,8 +22,12 @@ const addFile = async (
   } = value;
 
   // Make sure all required properties are provided
-  if (typeof base64 === "undefined") throw new PropertyError("missing", "base64");
-  if (typeof filename === "undefined") throw new PropertyError("missing", "filename");
+  if (typeof base64 === "undefined") {
+    throw new PropertyError("missing", "base64");
+  }
+  if (typeof filename === "undefined") {
+    throw new PropertyError("missing", "filename");
+  }
 
   // Make sure all required properties are right type
   if (typeof base64 !== "string") throw new TypeError("string", "base64");

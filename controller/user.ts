@@ -1,20 +1,20 @@
 import { Request, Response } from "https://deno.land/x/oak@v7.3.0/mod.ts";
 import { Database } from "https://deno.land/x/aloedb@0.9.0/mod.ts";
 import { Payload } from "https://deno.land/x/djwt@v2.2/mod.ts";
+import { User } from "../types.ts";
 import {
   compareSync,
   hashSync,
 } from "https://deno.land/x/bcrypt@v0.2.4/mod.ts";
 
-import { isEmail, isLength, isPassword } from "../helper.ts";
-import { generateToken } from "../middleware/authentication.ts";
-import { User } from "../types.ts";
+import { generateToken, isEmail, isLength, isPassword } from "../helper.ts";
+
 import {
   AuthenticationError,
   BodyError,
   PropertyError,
   ResourceError,
-} from "../middleware/error.ts";
+} from "../errors.ts";
 
 // Construct the user database
 const database = new Database<User>("database/user.json");
@@ -59,9 +59,15 @@ const addUser = async (
 
   // Make sure all required values are provided
   if (typeof email === "undefined") throw new PropertyError("missing", "email");
-  if (typeof password === "undefined") throw new PropertyError("missing", "password");
-  if (typeof lastname === "undefined") throw new PropertyError("missing", "lastname");
-  if (typeof firstname === "undefined") throw new PropertyError("missing", "firstname");
+  if (typeof password === "undefined") {
+    throw new PropertyError("missing", "password");
+  }
+  if (typeof lastname === "undefined") {
+    throw new PropertyError("missing", "lastname");
+  }
+  if (typeof firstname === "undefined") {
+    throw new PropertyError("missing", "firstname");
+  }
 
   // Make sure the properties are valid
   if (!isEmail(email)) throw new PropertyError("email", "email");
@@ -116,7 +122,9 @@ const loginUser = async (
 
   // Make sure all required values are provided
   if (typeof email === "undefined") throw new PropertyError("missing", "email");
-  if (typeof password === "undefined") throw new PropertyError("missing", "password");
+  if (typeof password === "undefined") {
+    throw new PropertyError("missing", "password");
+  }
 
   // Make sure the properties are valid
   if (!isEmail(email)) throw new PropertyError("email", "email");

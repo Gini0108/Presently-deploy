@@ -1,5 +1,13 @@
+import { errorHandler } from "./middleware.ts";
 import { ensureDirSync } from "https://deno.land/std@0.93.0/fs/mod.ts";
 import { initializeEnv } from "./helper.ts";
+import { Application } from "https://deno.land/x/oak@v7.3.0/mod.ts";
+import { oakCors } from "https://deno.land/x/cors@v1.2.1/mod.ts";
+
+import systemRouter from "./routes/system.ts";
+import userRouter from "./routes/user.ts";
+import fileRouter from "./routes/file.ts";
+import sleno from "./sleno.ts";
 
 // Make sure the required folders exist
 ensureDirSync("./database");
@@ -14,20 +22,8 @@ initializeEnv([
   "DENO_APP_POWERPOINT_LOCATION",
 ]);
 
-import { errorHandler } from "./middleware.ts";
-import { Application } from "https://deno.land/x/oak@v7.3.0/mod.ts";
-import { oakCors } from "https://deno.land/x/cors@v1.2.1/mod.ts";
-
-import systemRouter from "./routes/system.ts";
-import userRouter from "./routes/user.ts";
-import fileRouter from "./routes/file.ts";
-
-import Sleno from "./sleno.ts";
-
-// Create Sleno instance and start Powerpoint
-const sleno = new Sleno();
-
-sleno.startPowerpoint();
+// Start Sleno
+sleno.initializeSleno();
 
 // Start the OAK REST API server
 const application = new Application();

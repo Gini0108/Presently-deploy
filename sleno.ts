@@ -28,22 +28,19 @@ class Sleno {
   private server?: WebSocketServer;
   private clients: Array<WebSocketClient> = [];
 
-  constructor() {
-    // Start the websocket server
-    this.server = new WebSocketServer(
-      Number(Deno.env.get("DENO_APP_WEBSOCKET_PORT")!),
-    );
+  async initializeSleno() {
+    // Start PowerPoint if it isn't running
+    const path = Deno.env.get("DENO_APP_POWERPOINT_LOCATION")!;
+    const port = Number(Deno.env.get("DENO_APP_WEBSOCKET_PORT")!);
 
     // Read the powerpoint files into an array
     this.files = this.readFiles();
 
+    // Start the WebSocket and add listeners
+    this.server = new WebSocketServer(port);
     this.server.on("connection", this.clientConnect.bind(this));
     this.emitter.on("update_clients", this.clientUpdate.bind(this));
-  }
 
-  async startPowerpoint() {
-    // Start PowerPoint if it isn't running
-    const path = Deno.env.get("DENO_APP_POWERPOINT_LOCATION")!;
     await Deno.run({
       cmd: [
         "powershell.exe",
@@ -253,4 +250,4 @@ class Sleno {
   }
 }
 
-export default Sleno;
+export default new Sleno();
