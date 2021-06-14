@@ -51,7 +51,7 @@ class Sleno {
   }
 
   async removeFile(filename: string) {
-    const folder = Deno.env.get("DENO_APP_POWERPOINT_FOLDER")!
+    const folder = Deno.env.get("DENO_APP_POWERPOINT_FOLDER")!;
     const encoded = filename.replace(/ /g, "%20");
 
     // Make sure the file exists
@@ -70,7 +70,7 @@ class Sleno {
   }
 
   async createFile(filename: string, base64: string) {
-    const folder = Deno.env.get("DENO_APP_POWERPOINT_FOLDER")!
+    const folder = Deno.env.get("DENO_APP_POWERPOINT_FOLDER")!;
     const encoded = filename.replace(/ /g, "%20");
 
     // Make sure the file doesn't already exist
@@ -98,7 +98,7 @@ class Sleno {
   }
 
   async loadFile(filename: string) {
-    const folder = Deno.env.get("DENO_APP_POWERPOINT_FOLDER")!
+    const folder = Deno.env.get("DENO_APP_POWERPOINT_FOLDER")!;
     const decoded = filename.replace(/ /g, "%20");
 
     // Make sure the user is trying to add an .pptx file
@@ -223,7 +223,7 @@ class Sleno {
 
   private readFiles() {
     const files: Array<string> = [];
-    const folder = Deno.env.get("DENO_APP_POWERPOINT_FOLDER")!
+    const folder = Deno.env.get("DENO_APP_POWERPOINT_FOLDER")!;
 
     for (const entry of walkSync(folder)) {
       if (
