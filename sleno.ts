@@ -90,13 +90,15 @@ class Sleno {
   }
 
   async loadFile(filename: string) {
+    const decoded = filename.replace(/ /g, "%20");
+
     // Make sure the user is trying to add an .pptx file
-    if (!isPowerpoint(filename)) {
+    if (!isPowerpoint(decoded)) {
       throw new PropertyError("extension", "filename");
     }
 
     // Make sure the file exist
-    if (!existsSync(`./powerpoint/${filename}`)) {
+    if (!existsSync(`./powerpoint/${decoded}`)) {
       throw new ResourceError("missing", "file");
     }
 
@@ -105,7 +107,9 @@ class Sleno {
     await this.unloadFile(this.current);
 
     // Open and start the new presentation
-    await this.request(`OPEN ${Deno.cwd()}\\powerpoint\\${filename}`);
+    const path = `${Deno.cwd()}\\powerpoint\\${decoded}`;
+
+    await this.request(`OPEN ${path}`);
     await this.request(`START`);
 
     const info = await (this.request(`INFO`) as Promise<Info>);
@@ -216,7 +220,9 @@ class Sleno {
       if (
         entry.isFile && isPowerpoint(entry.name) && !isTemporary(entry.name)
       ) {
-        files.push(entry.name);
+        // Since we store the files URI encoded parse it back
+        const name = entry.name.replace(/%20/g, " ");
+        files.push(name);
       }
     }
 
