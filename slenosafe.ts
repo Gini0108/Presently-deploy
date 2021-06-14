@@ -189,6 +189,8 @@ class Slenosafe {
     } else {
       await this.setPosition(0);
     }
+
+    this.clientUpdate();
   }
 
   private readFiles() {
