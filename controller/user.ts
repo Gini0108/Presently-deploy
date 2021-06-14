@@ -3,21 +3,29 @@ import { Database } from "https://deno.land/x/aloedb@0.9.0/mod.ts";
 import { Payload } from "https://deno.land/x/djwt@v2.2/mod.ts";
 import { User } from "../types.ts";
 import {
-  compareSync,
-  hashSync,
-} from "https://deno.land/x/bcrypt@v0.2.4/mod.ts";
-
-import { generateToken, isEmail, isLength, isPassword } from "../helper.ts";
-
+  isEmail,
+  isLength,
+  isPassword,
+  initializeEnv,
+  generateToken,
+} from "../helper.ts";
 import {
   AuthenticationError,
   BodyError,
   PropertyError,
   ResourceError,
 } from "../errors.ts";
+import {
+  compareSync,
+  hashSync,
+} from "https://deno.land/x/bcrypt@v0.2.4/mod.ts";
+
+
+initializeEnv(["DENO_APP_DATABASE_FOLDER"]);
 
 // Construct the user database
-const database = new Database<User>("database/user.json");
+const folder = Deno.env.get("DENO_APP_DATABASE_FOLDER");
+const database = new Database<User>(`${folder}\\user.json`);
 
 const cleanUser = (user: User): Partial<User> => {
   // Filter out the password hash for safety

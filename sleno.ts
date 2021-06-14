@@ -50,8 +50,11 @@ class Sleno {
   }
 
   async removeFile(filename: string) {
+    const folder = Deno.env.get("DENO_APP_POWERPOINT_FOLDER")!
+    const encoded = filename.replace(/ /g, "%20");
+
     // Make sure the file exists
-    if (!existsSync(`./powerpoint/${filename}`)) {
+    if (!existsSync(`${folder}\\${encoded}`)) {
       throw new ResourceError("missing", "file");
     }
 
@@ -59,20 +62,23 @@ class Sleno {
     await this.unloadFile(filename);
 
     // Delete the file from storage
-    Deno.removeSync(`./powerpoint/${filename}`);
+    Deno.removeSync(`${folder}\\${encoded}`);
 
     // Update the files array
     this.files = this.readFiles();
   }
 
   async createFile(filename: string, base64: string) {
+    const folder = Deno.env.get("DENO_APP_POWERPOINT_FOLDER")!
+    const encoded = filename.replace(/ /g, "%20");
+
     // Make sure the file doesn't already exist
-    if (existsSync(`./powerpoint/${filename}`)) {
+    if (existsSync(`${folder}\\${encoded}`)) {
       throw new ResourceError("duplicate", "file");
     }
 
     // Write the file to storage
-    await Base64.fromBase64String(base64).toFile(`./powerpoint/${filename}`);
+    await Base64.fromBase64String(base64).toFile(`${folder}\\${encoded}`);
 
     // Update the files array
     this.files = this.readFiles();
@@ -90,6 +96,7 @@ class Sleno {
   }
 
   async loadFile(filename: string) {
+    const folder = Deno.env.get("DENO_APP_POWERPOINT_FOLDER")!
     const decoded = filename.replace(/ /g, "%20");
 
     // Make sure the user is trying to add an .pptx file
@@ -98,7 +105,7 @@ class Sleno {
     }
 
     // Make sure the file exist
-    if (!existsSync(`./powerpoint/${decoded}`)) {
+    if (!existsSync(`${folder}\\${decoded}`)) {
       throw new ResourceError("missing", "file");
     }
 
@@ -107,9 +114,7 @@ class Sleno {
     await this.unloadFile(this.current);
 
     // Open and start the new presentation
-    const path = `${Deno.cwd()}\\powerpoint\\${decoded}`;
-
-    await this.request(`OPEN ${path}`);
+    await this.request(`OPEN ${folder}\\${decoded}`);
     await this.request(`START`);
 
     const info = await (this.request(`INFO`) as Promise<Info>);
@@ -215,8 +220,9 @@ class Sleno {
 
   private readFiles() {
     const files: Array<string> = [];
+    const folder = Deno.env.get("DENO_APP_POWERPOINT_FOLDER")!
 
-    for (const entry of walkSync("./powerpoint")) {
+    for (const entry of walkSync(folder)) {
       if (
         entry.isFile && isPowerpoint(entry.name) && !isTemporary(entry.name)
       ) {
