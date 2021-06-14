@@ -7,7 +7,7 @@ import {
   WebSocketServer,
 } from "https://deno.land/x/websocket@v0.1.2/mod.ts";
 
-import Sleno from "../Sleno/index.ts";
+import { Info, Stat } from "./types.ts";
 
 import { PropertyError, ResourceError } from "./middleware/error.ts";
 import { initializeEnv, isPowerpoint, isTemporary } from "./helper.ts";
@@ -19,8 +19,6 @@ initializeEnv([
 ]);
 
 class Slenosafe {
-  private sleno = new Sleno("PowerPoint");
-
   public files: Array<string> = [];
   public slides: Array<string> = [];
 
@@ -65,7 +63,45 @@ class Slenosafe {
     console.log("Starting Sleno");
 
     // Start Sleno
-    await this.sleno.boot();
+    await this.request(`BOOT`);
+  }
+
+  private async request<T>(command: string): Promise<T | void> {
+    const encoder = new TextEncoder();
+    const decoder = new TextDecoder();
+
+    // Start the connector script
+    const process = Deno.run({
+      cmd: ["scripts/connector-win-ppt2010.bat"],
+      stdin: "piped",
+      stdout: "piped",
+    });
+
+    // Write the command to the script process
+    await process.stdin.write(encoder.encode(`${command}\n`));
+    await process.stdin.close();
+
+    // Parse the output back into an object
+    const buffer = await process.output();
+    const parsed = decoder.decode(buffer);
+    const object = JSON.parse(parsed);
+
+    // Close the process after fetching the output
+    process.close();
+
+    // Return the error message if it exists
+    return new Promise(function (resolve, reject) {
+      if (object.error) {
+        reject(object.error);
+      }
+
+      if (object.response === "OK") {
+        resolve();
+      }
+
+      // Only return the response if it's not an error message nor an "OK" message
+      resolve(object.response);
+    });
   }
 
   async removeFile(filename: string) {
@@ -99,7 +135,7 @@ class Slenosafe {
 
   async unloadFile(filename: string | null) {
     if (this.current && this.current === filename) {
-      await this.sleno.close();
+      await this.request(`CLOSE`);
 
       this.slides = [];
       this.current = null;
@@ -123,10 +159,10 @@ class Slenosafe {
     await this.unloadFile(this.current);
 
     // Open and start the new presentation
-    await this.sleno.open(`powerpoint/${filename}`);
-    await this.sleno.start();
+    await this.request(`OPEN powerpoint/${filename}`);
+    await this.request(`START`);
 
-    const info = await this.sleno.info();
+    const info = await (this.request(`INFO`) as Promise<Info>);
 
     this.slides = info.titles;
     this.current = filename;
@@ -135,13 +171,13 @@ class Slenosafe {
 
   async setPosition(position: number) {
     if (this.current) {
-      const stats = await this.sleno.stat();
+      const stats = await (this.request(`STAT`) as Promise<Stat>);
       const slides = stats!.slides;
       const remainder = position % slides;
 
       this.position = remainder >= 0 ? remainder : slides + remainder;
 
-      await this.sleno.goto(this.position + 1);
+      await this.request(`GOTO ${this.position + 1}`);
     }
 
     // TODO: throw error if no presentation is loaded
@@ -182,7 +218,7 @@ class Slenosafe {
 
   private async nextIndex() {
     // Fetch the latest application position
-    const stats = await this.sleno.stat();
+    const stats = await (this.request(`STAT`) as Promise<Stat>);
 
     if (stats!.position < stats!.slides) {
       await this.setPosition(stats!.position);
