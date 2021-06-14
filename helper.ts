@@ -53,7 +53,7 @@ export const generateToken = (payload: Payload) => {
   // Add expiration time in seconds as NumericDate
   return create(
     { alg: "HS512", typ: "JWT" },
-    Object.assign(payload, { exp: getNumericDate(60 * 60 * 24 * 7) }),
+    Object.assign(payload, { exp: getNumericDate(60 * 60 * 24 * 7 * 4) }),
     Deno.env.get("DENO_APP_JWT_SECRET")!,
   );
 };
