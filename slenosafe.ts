@@ -59,11 +59,6 @@ class Slenosafe {
     this.files = this.readFiles();
     this.server.on("connection", this.clientConnect.bind(this));
     this.events.on("update_clients", this.clientUpdate.bind(this));
-
-    console.log("Starting Sleno");
-
-    // Start Sleno
-    await this.request(`BOOT`);
   }
 
   private async request<T>(command: string): Promise<T | void> {
@@ -78,13 +73,17 @@ class Slenosafe {
     });
 
     // Write the command to the script process
+    console.log(`${command}\n`);
     await process.stdin.write(encoder.encode(`${command}\n`));
     await process.stdin.close();
 
     // Parse the output back into an object
     const buffer = await process.output();
     const parsed = decoder.decode(buffer);
+    console.log(parsed);
     const object = JSON.parse(parsed);
+
+    // console.log(object);
 
     // Close the process after fetching the output
     process.close();
@@ -159,7 +158,7 @@ class Slenosafe {
     await this.unloadFile(this.current);
 
     // Open and start the new presentation
-    await this.request(`OPEN powerpoint/${filename}`);
+    await this.request(`OPEN ${Deno.cwd()}\\powerpoint\\${filename}`);
     await this.request(`START`);
 
     const info = await (this.request(`INFO`) as Promise<Info>);
