@@ -12,6 +12,7 @@ import {
 } from "https://deno.land/x/websocket@v0.1.2/mod.ts";
 
 class Sleno {
+  public notes: Array<string> = [];
   public files: Array<string> = [];
   public slides: Array<string> = [];
 
@@ -89,6 +90,7 @@ class Sleno {
     if (this.current && this.current === filename) {
       await this.request(`CLOSE`);
 
+      this.notes = [];
       this.slides = [];
       this.current = null;
       this.position = null;
@@ -119,6 +121,7 @@ class Sleno {
 
     const info = await (this.request(`INFO`) as Promise<Info>);
 
+    this.notes = info.notes;
     this.slides = info.titles;
     this.current = filename;
     this.position = 0;
@@ -238,6 +241,7 @@ class Sleno {
   private generateJSON() {
     return JSON.stringify({
       files: this.files,
+      notes: this.notes,
       slides: this.slides,
       playing: this.playing,
       current: this.current,
