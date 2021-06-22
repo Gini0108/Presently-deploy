@@ -12,10 +12,10 @@ import sleno from "./sleno.ts";
 // Load. env file
 initializeEnv([
   "DENO_APP_JWT_SECRET",
-  "DENO_APP_REST_PORT",
+  "DENO_PORT_REST",
   "DENO_APP_JWT_SECRET",
-  "DENO_APP_WEBSOCKET_PORT",
-  "DENO_APP_POWERPOINT_FOLDER",
+  "DENO_PORT_SOCKET",
+  "DENO_FOLDER_POWERPOINT",
   "DENO_APP_POWERPOINT_LOCATION",
 ]);
 
@@ -30,7 +30,7 @@ application.addEventListener("error", (error) => {
 });
 
 application.addEventListener("listen", () => {
-  console.log(`Listening on port ${Deno.env.get("DENO_APP_REST_PORT")!}`);
+  console.log(`Listening on port ${Deno.env.get("DENO_PORT_REST")!}`);
 });
 
 application.use(oakCors());
@@ -46,4 +46,4 @@ application.use(fileRouter.allowedMethods());
 application.use(oauthRouter.allowedMethods());
 application.use(systemRouter.allowedMethods());
 
-application.listen({ port: Number(Deno.env.get("DENO_APP_REST_PORT")!) });
+application.listen({ port: Number(Deno.env.get("DENO_PORT_REST")!) });

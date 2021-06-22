@@ -32,7 +32,7 @@ class Sleno {
   async initializeSleno() {
     // Start PowerPoint if it isn't running
     const path = Deno.env.get("DENO_APP_POWERPOINT_LOCATION")!;
-    const port = Number(Deno.env.get("DENO_APP_WEBSOCKET_PORT")!);
+    const port = Number(Deno.env.get("DENO_PORT_SOCKET")!);
 
     // Read the powerpoint files into an array
     this.files = this.readFiles();
@@ -51,7 +51,7 @@ class Sleno {
   }
 
   async removeFile(filename: string) {
-    const folder = Deno.env.get("DENO_APP_POWERPOINT_FOLDER")!;
+    const folder = Deno.env.get("DENO_FOLDER_POWERPOINT")!;
     const encoded = filename.replace(/ /g, "%20");
 
     // Make sure the file exists
@@ -70,7 +70,7 @@ class Sleno {
   }
 
   async createFile(filename: string, base64: string) {
-    const folder = Deno.env.get("DENO_APP_POWERPOINT_FOLDER")!;
+    const folder = Deno.env.get("DENO_FOLDER_POWERPOINT")!;
     const encoded = filename.replace(/ /g, "%20");
 
     // Make sure the file doesn't already exist
@@ -98,7 +98,7 @@ class Sleno {
   }
 
   async loadFile(filename: string) {
-    const folder = Deno.env.get("DENO_APP_POWERPOINT_FOLDER")!;
+    const folder = Deno.env.get("DENO_FOLDER_POWERPOINT")!;
     const decoded = filename.replace(/ /g, "%20");
 
     // Make sure the user is trying to add an .pptx file
@@ -223,7 +223,7 @@ class Sleno {
 
   private readFiles() {
     const files: Array<string> = [];
-    const folder = Deno.env.get("DENO_APP_POWERPOINT_FOLDER")!;
+    const folder = Deno.env.get("DENO_FOLDER_POWERPOINT")!;
 
     for (const entry of walkSync(folder)) {
       if (

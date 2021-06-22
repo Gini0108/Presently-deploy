@@ -21,10 +21,10 @@ import {
 } from "https://deno.land/x/bcrypt@v0.2.4/mod.ts";
 
 
-initializeEnv(["DENO_APP_DATABASE_FOLDER"]);
+initializeEnv(["DENO_FOLDER_DATABASE"]);
 
 // Construct the user database
-const folder = Deno.env.get("DENO_APP_DATABASE_FOLDER");
+const folder = Deno.env.get("DENO_FOLDER_DATABASE");
 const database = new Database<User>(`${folder}\\user.json`);
 
 const cleanUser = (user: User): Partial<User> => {
