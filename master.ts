@@ -51,7 +51,7 @@ export default class Master {
       this.current = parsed.current;
       this.position = parsed.position;
       this.interval = parsed.interval;
-    } catch (error) {
+    } catch {
       setTimeout(this.initialize.bind(this), 5000);
       console.log(`Attempting ${this.slave} initialization again in 5 second`);
     }
