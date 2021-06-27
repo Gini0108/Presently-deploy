@@ -4,6 +4,5 @@ export default class baseCollection {
   public offset = 0;
 
   constructor() {
-
   }
 }

@@ -3,19 +3,21 @@ import { Context } from "https://deno.land/x/oak@v7.6.3/mod.ts";
 import { initializeEnv } from "./helper.ts";
 import {
   AuthenticationError,
-  BodyError,
   PropertyError,
   ResourceError,
   TypeError,
 } from "./errors.ts";
 
 // Initialize .env variables and make sure they are set
-initializeEnv(['PRESENTLY_SERVER_JWT_SECRET']);
+initializeEnv(["PRESENTLY_SERVER_JWT_SECRET"]);
 
 // Fetch the variables and convert them to right datatype
 const secret = Deno.env.get("PRESENTLY_SERVER_JWT_SECRET")!;
 
-export const authenticationHandler = async (ctx: Context, next: () => Promise<unknown>) => {
+export const authenticationHandler = async (
+  ctx: Context,
+  next: () => Promise<unknown>,
+) => {
   // Get the JWT token from the Authorization header
   const header = ctx.request.headers.get("Authorization");
   const token = header?.split(" ")[1];
@@ -40,12 +42,14 @@ export const authenticationHandler = async (ctx: Context, next: () => Promise<un
   throw new AuthenticationError("missing");
 };
 
-export const errorHandler = async (ctx: Context, next: () => Promise<unknown>) => {
+export const errorHandler = async (
+  ctx: Context,
+  next: () => Promise<unknown>,
+) => {
   await next().catch(
     (
       error:
         | TypeError
-        | BodyError
         | PropertyError
         | ResourceError
         | AuthenticationError,

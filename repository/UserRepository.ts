@@ -67,7 +67,7 @@ export default class UserRepository implements InterfaceRepository {
     ).catch((error: Error) => {
       const message = error.message;
       const ending = message.slice(-21);
-      
+
       // If the email is a duplicate
       if (ending === "for key 'users.email'") {
         throw new ResourceError("duplicate", "user");

@@ -3,15 +3,15 @@ import { compareSync } from "https://deno.land/x/bcrypt@v0.2.4/mod.ts";
 import { create, Payload } from "https://deno.land/x/djwt@v2.2/mod.ts";
 import { Request, Response } from "https://deno.land/x/oak@v7.6.3/mod.ts";
 
-import { isEmail, isPassword, isLength, initializeEnv } from "../helper.ts"; 
-import { TypeError, PropertyError, AuthenticationError } from "../errors.ts";
+import { initializeEnv, isEmail, isLength, isPassword } from "../helper.ts";
+import { AuthenticationError, PropertyError, TypeError } from "../errors.ts";
 
 import UserEntity from "../entity/UserEntity.ts";
 import UserRepository from "../repository/UserRepository.ts";
 import InterfaceController from "./InterfaceController.ts";
 
 // Initialize .env variables and make sure they are set
-initializeEnv(['PRESENTLY_SERVER_JWT_SECRET']);
+initializeEnv(["PRESENTLY_SERVER_JWT_SECRET"]);
 
 // Fetch the variables and convert them to right datatype
 const secret = Deno.env.get("PRESENTLY_SERVER_JWT_SECRET")!;
@@ -54,22 +54,42 @@ export default class UserController implements InterfaceController {
     const value = await body.value;
 
     // Make sure the required properties are provided
-    if (typeof value.email === "undefined") throw new PropertyError("missing", "email");
-    if (typeof value.password === "undefined") throw new PropertyError("missing", "password");
-    if (typeof value.lastname === "undefined") throw new PropertyError("missing", "lastname");
-    if (typeof value.firstname === "undefined") throw new PropertyError("missing", "firstname");
+    if (typeof value.email === "undefined") {
+      throw new PropertyError("missing", "email");
+    }
+    if (typeof value.password === "undefined") {
+      throw new PropertyError("missing", "password");
+    }
+    if (typeof value.lastname === "undefined") {
+      throw new PropertyError("missing", "lastname");
+    }
+    if (typeof value.firstname === "undefined") {
+      throw new PropertyError("missing", "firstname");
+    }
 
     // Make sure the required properties are the right type
     if (typeof value.email !== "string") throw new TypeError("string", "email");
-    if (typeof value.password !== "string") throw new TypeError("string", "password");
-    if (typeof value.lastname !== "string") throw new TypeError("string", "lastname");
-    if (typeof value.firstname !== "string") throw new TypeError("string", "firstname");
+    if (typeof value.password !== "string") {
+      throw new TypeError("string", "password");
+    }
+    if (typeof value.lastname !== "string") {
+      throw new TypeError("string", "lastname");
+    }
+    if (typeof value.firstname !== "string") {
+      throw new TypeError("string", "firstname");
+    }
 
     // Make sure the properties are valid
     if (!isEmail(value.email)) throw new PropertyError("email", "email");
-    if (!isLength(value.lastname)) throw new PropertyError("length", "lastname");
-    if (!isLength(value.firstname)) throw new PropertyError("length", "firstname");
-    if (!isPassword(value.password)) throw new PropertyError("password", "password");
+    if (!isLength(value.lastname)) {
+      throw new PropertyError("length", "lastname");
+    }
+    if (!isLength(value.firstname)) {
+      throw new PropertyError("length", "firstname");
+    }
+    if (!isPassword(value.password)) {
+      throw new PropertyError("password", "password");
+    }
 
     // Create the UserEntity object
     const user = new UserEntity();
@@ -110,7 +130,7 @@ export default class UserController implements InterfaceController {
     // Filter out the hash and password from the UserEntity
     const result = await this.userRepository.getCollection(offset, limit);
     const total = result.total;
-    const users = result.users.map(user => cleanUser(user));
+    const users = result.users.map((user) => cleanUser(user));
 
     // Return results to the user
     response.status = 200;
@@ -139,12 +159,18 @@ export default class UserController implements InterfaceController {
     const value = await body.value;
 
     // Make sure all required values are provided
-    if (typeof value.email === "undefined") throw new PropertyError("missing", "email");
-    if (typeof value.password === "undefined") throw new PropertyError("missing", "password");
-  
+    if (typeof value.email === "undefined") {
+      throw new PropertyError("missing", "email");
+    }
+    if (typeof value.password === "undefined") {
+      throw new PropertyError("missing", "password");
+    }
+
     // Make sure the required properties are the right type
     if (typeof value.email !== "string") throw new TypeError("string", "email");
-    if (typeof value.password !== "string") throw new TypeError("string", "password");
+    if (typeof value.password !== "string") {
+      throw new TypeError("string", "password");
+    }
 
     const user = await this.userRepository.getObjectByEmail(value.email);
     const clean = cleanUser(user);
@@ -156,7 +182,7 @@ export default class UserController implements InterfaceController {
 
     // Generate token using public user properties
     const token = await generateToken(clean as Payload);
-  
+
     // Send relevant information back to the user
     response.status = 200;
     response.body = {
