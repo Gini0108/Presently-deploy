@@ -78,52 +78,53 @@ export default class UserController implements InterfaceController {
     // Fetch the body parameters
     const body = await request.body();
     const value = await body.value;
+    const parsed = JSON.parse(value);
 
     // Make sure the required properties are provided
-    if (typeof value.email === "undefined") {
+    if (typeof parsed.email === "undefined") {
       throw new PropertyError("missing", "email");
     }
-    if (typeof value.password === "undefined") {
+    if (typeof parsed.password === "undefined") {
       throw new PropertyError("missing", "password");
     }
-    if (typeof value.lastname === "undefined") {
+    if (typeof parsed.lastname === "undefined") {
       throw new PropertyError("missing", "lastname");
     }
-    if (typeof value.firstname === "undefined") {
+    if (typeof parsed.firstname === "undefined") {
       throw new PropertyError("missing", "firstname");
     }
 
     // Make sure the required properties are the right type
-    if (typeof value.email !== "string") throw new TypeError("string", "email");
-    if (typeof value.password !== "string") {
+    if (typeof parsed.email !== "string") throw new TypeError("string", "email");
+    if (typeof parsed.password !== "string") {
       throw new TypeError("string", "password");
     }
-    if (typeof value.lastname !== "string") {
+    if (typeof parsed.lastname !== "string") {
       throw new TypeError("string", "lastname");
     }
-    if (typeof value.firstname !== "string") {
+    if (typeof parsed.firstname !== "string") {
       throw new TypeError("string", "firstname");
     }
 
     // Make sure the properties are valid
-    if (!isEmail(value.email)) throw new PropertyError("email", "email");
-    if (!isLength(value.lastname)) {
+    if (!isEmail(parsed.email)) throw new PropertyError("email", "email");
+    if (!isLength(parsed.lastname)) {
       throw new PropertyError("length", "lastname");
     }
-    if (!isLength(value.firstname)) {
+    if (!isLength(parsed.firstname)) {
       throw new PropertyError("length", "firstname");
     }
-    if (!isPassword(value.password)) {
+    if (!isPassword(parsed.password)) {
       throw new PropertyError("password", "password");
     }
 
     // Create the UserEntity object
     const user = new UserEntity();
 
-    user.email = value.email;
-    user.password = value.password;
-    user.lastname = value.lastname;
-    user.firstname = value.firstname;
+    user.email = parsed.email;
+    user.password = parsed.password;
+    user.lastname = parsed.lastname;
+    user.firstname = parsed.firstname;
 
     // Insert into the database the store the result
     const result = await this.userRepository.addObject(user);
@@ -183,26 +184,30 @@ export default class UserController implements InterfaceController {
     // Fetch the body parameters
     const body = await request.body();
     const value = await body.value;
+    const parsed = JSON.parse(value);
+
+    console.log('bruh');
+    console.log(parsed);
 
     // Make sure all required values are provided
-    if (typeof value.email === "undefined") {
+    if (typeof parsed.email === "undefined") {
       throw new PropertyError("missing", "email");
     }
-    if (typeof value.password === "undefined") {
+    if (typeof parsed.password === "undefined") {
       throw new PropertyError("missing", "password");
     }
 
     // Make sure the required properties are the right type
-    if (typeof value.email !== "string") throw new TypeError("string", "email");
-    if (typeof value.password !== "string") {
+    if (typeof parsed.email !== "string") throw new TypeError("string", "email");
+    if (typeof parsed.password !== "string") {
       throw new TypeError("string", "password");
     }
 
-    const user = await this.userRepository.getObjectByEmail(value.email);
+    const user = await this.userRepository.getObjectByEmail(parsed.email);
     const clean = cleanUser(user);
 
     // If user couldn't be found or the password is incorrect
-    if (!user || !compareSync(value.password, user.hash)) {
+    if (!user || !compareSync(parsed.password, user.hash)) {
       throw new AuthenticationError("incorrect");
     }
 
