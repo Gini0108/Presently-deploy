@@ -6,20 +6,25 @@ import { oakCors } from "https://deno.land/x/cors@v1.2.2/mod.ts";
 
 import router from "./router.ts";
 
-const application = new Application();
-
 // Initialize .env variables and make sure they are set
 initializeEnv([
-  "PRESENTLY_SERVER_OAK_PORT",
+  "PRESENTLY_SERVER_PORT_OAK",
 ]);
 
-// Fetch the variables and convert them to right datatype
-const port = +Deno.env.get("PRESENTLY_SERVER_OAK_PORT")!;
+// Start the OAK REST API server
+const port = +Deno.env.get("PRESENTLY_SERVER_PORT_OAK")!;
+const application = new Application();
 
-// Add error handler to Oak
+application.addEventListener("error", (error) => {
+  console.log(error);
+});
+
+application.addEventListener("listen", () => {
+  console.log(`Listening on port ${port}`);
+});
+
+application.use(oakCors());
 application.use(errorHandler);
-application.use(oakCors({ origin: "*" }));
-application.use(router.allowedMethods());
 application.use(router.routes());
 
 application.listen({ port });
