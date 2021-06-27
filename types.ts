@@ -1,7 +1,6 @@
 export interface User {
   hash: string;
   email: string;
-
   lastname: string;
   firstname: string;
 }

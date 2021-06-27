@@ -1,8 +1,3 @@
-import {
-  create,
-  getNumericDate,
-  Payload,
-} from "https://deno.land/x/djwt@v2.2/mod.ts";
 import { config } from "https://deno.land/x/dotenv@v2.0.0/mod.ts";
 
 export function isEmail(email: string): boolean {
@@ -19,17 +14,6 @@ export function isPassword(password: string): boolean {
     /^(?=.*[A-Z].*[A-Z])(?=.*[!@#$&*])(?=.*[0-9].*[0-9])(?=.*[a-z].*[a-z].*[a-z]).{8,}$/,
   );
   return regex.test(password);
-}
-
-export function isPowerpoint(filename: string): boolean {
-  // Copied RegExp from https://stackoverflow.com/a/374956
-  const regex = new RegExp(/^.*\.(pptx)$/);
-  return regex.test(filename);
-}
-
-export function isTemporary(filename: string): boolean {
-  const regex = new RegExp(/^~\$/);
-  return regex.test(filename);
 }
 
 export function isLength(input: string): boolean {
@@ -49,11 +33,12 @@ export function initializeEnv(variables: Array<string>) {
   });
 }
 
-export const generateToken = (payload: Payload) => {
-  // Add expiration time in seconds as NumericDate
-  return create(
-    { alg: "HS512", typ: "JWT" },
-    Object.assign(payload, { exp: getNumericDate(60 * 60 * 24 * 7 * 4) }),
-    Deno.env.get("DENO_APP_JWT_SECRET")!,
-  );
-};
+export function cleanHex(hex: string): string {
+  // Re-add the dashes and turn the string into lowercase
+  const dashed = `${hex.substr(0, 8)}-${hex.substr(8, 4)}-${
+    hex.substr(12, 4)
+  }-${hex.substr(16, 4)}-${hex.substr(20)}`;
+  const lower = dashed.toLowerCase();
+
+  return lower;
+}

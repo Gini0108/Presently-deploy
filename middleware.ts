@@ -1,5 +1,6 @@
-import { Context } from "https://deno.land/x/oak@v7.3.0/mod.ts";
 import { verify } from "https://deno.land/x/djwt@v2.2/mod.ts";
+import { Context } from "https://deno.land/x/oak@v7.6.3/mod.ts";
+import { initializeEnv } from "./helper.ts";
 import {
   AuthenticationError,
   BodyError,
@@ -8,24 +9,29 @@ import {
   TypeError,
 } from "./errors.ts";
 
-export const authenticationHandler = async (
-  { request, state }: Context,
-  next: () => Promise<void>,
-) => {
-  const secret = Deno.env.get("DENO_APP_JWT_SECRET")!;
-  const header = request.headers.get("Authorization");
+// Initialize .env variables and make sure they are set
+initializeEnv(['PRESENTLY_SERVER_JWT_SECRET']);
+
+// Fetch the variables and convert them to right datatype
+const secret = Deno.env.get("PRESENTLY_SERVER_JWT_SECRET")!;
+
+export const authenticationHandler = async (ctx: Context, next: () => Promise<unknown>) => {
+  // Get the JWT token from the Authorization header
+  const header = ctx.request.headers.get("Authorization");
   const token = header?.split(" ")[1];
 
   if (token) {
+    // Verify and decrypt the payload
     const payload = await verify(
       token,
       secret,
       "HS512",
     ).catch(() => {
-      throw new AuthenticationError("expired");
+      throw new AuthenticationError("incorrect");
     });
 
-    state.email = payload.email;
+    // Store the users UUID
+    ctx.state.uuid = payload.uuid;
 
     await next();
     return;
@@ -34,10 +40,7 @@ export const authenticationHandler = async (
   throw new AuthenticationError("missing");
 };
 
-export const errorHandler = async (
-  { response }: Context,
-  next: () => Promise<void>,
-) => {
+export const errorHandler = async (ctx: Context, next: () => Promise<unknown>) => {
   await next().catch(
     (
       error:
@@ -47,8 +50,8 @@ export const errorHandler = async (
         | ResourceError
         | AuthenticationError,
     ) => {
-      response.status = error.statusError;
-      response.body = {
+      ctx.response.status = error.statusError;
+      ctx.response.body = {
         message: error.message,
       };
     },
