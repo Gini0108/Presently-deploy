@@ -8,10 +8,12 @@ import {
 // Initialize .env variables and make sure they are set
 initializeEnv([
   "PRESENTLY_SERVER_PORT_SOCKET",
+  "PRESENTLY_SERVER_SLAVE_ADDRESS",
 ]);
 
 // Fetch the variables and convert them to right datatype
 const port = +Deno.env.get("PRESENTLY_SERVER_PORT_SOCKET")!;
+const slave = Deno.env.get("PRESENTLY_SERVER_SLAVE_ADDRESS")!;
 
 export default class Master {
   public notes: Array<string> = [];
@@ -27,7 +29,6 @@ export default class Master {
     update_clients(): void;
   }>();
 
-  private slave = "192.168.2.32:8393";
   private server?: WebSocketServer;
   private clients: Array<WebSocketClient> = [];
 
@@ -40,7 +41,7 @@ export default class Master {
 
   async initialize() {
     try {
-      const response = await fetch(`http://${this.slave}`);
+      const response = await fetch(`http://${slave}`);
       const parsed = await response.json();
 
       this.notes = parsed.notes;
@@ -53,13 +54,13 @@ export default class Master {
       this.interval = parsed.interval;
     } catch {
       setTimeout(this.initialize.bind(this), 5000);
-      console.log(`Attempting ${this.slave} initialization again in 5 second`);
+      console.log(`Attempting ${slave} initialization again in 5 second`);
     }
   }
 
   async propagate(body: string) {
     const method = "POST";
-    const response = await fetch(`http://${this.slave}`, { method, body });
+    const response = await fetch(`http://${slave}`, { method, body });
     const parsed = await response.json();
 
     this.notes = parsed.notes;
