@@ -5,11 +5,15 @@ import { Application } from "https://deno.land/x/oak@v7.6.3/mod.ts";
 import { oakCors } from "https://deno.land/x/cors@v1.2.2/mod.ts";
 
 import router from "./router.ts";
+import master from "./master.ts";
 
 // Initialize .env variables and make sure they are set
 initializeEnv([
   "PRESENTLY_SERVER_PORT_OAK",
 ]);
+
+// Initialize the master to manage slaves
+master.initialize();
 
 // Start the OAK REST API server
 const port = +Deno.env.get("PRESENTLY_SERVER_PORT_OAK")!;

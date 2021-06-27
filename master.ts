@@ -15,7 +15,7 @@ initializeEnv([
 const port = +Deno.env.get("PRESENTLY_SERVER_PORT_SOCKET")!;
 const slave = Deno.env.get("PRESENTLY_SERVER_SLAVE_ADDRESS")!;
 
-export default class Master {
+export class Master {
   public notes: Array<string> = [];
   public files: Array<string> = [];
   public slides: Array<string> = [];
@@ -41,28 +41,47 @@ export default class Master {
 
   async initialize() {
     try {
+      // Get the latest information from the slave
       const response = await fetch(`http://${slave}`);
       const parsed = await response.json();
 
-      this.notes = parsed.notes;
-      this.files = parsed.files;
-      this.slides = parsed.slides;
-
-      this.playing = parsed.playing;
-      this.current = parsed.current;
-      this.position = parsed.position;
-      this.interval = parsed.interval;
+      this.storeResponse(parsed);
+      this.clientUpdate();
     } catch {
       setTimeout(this.initialize.bind(this), 5000);
       console.log(`Attempting ${slave} initialization again in 5 second`);
     }
   }
 
-  async propagate(body: string) {
+  async postSystem(body: string) {
     const method = "POST";
     const response = await fetch(`http://${slave}`, { method, body });
     const parsed = await response.json();
 
+    this.storeResponse(parsed);
+    this.clientUpdate();
+  }
+
+  async postFile(body: string) {
+    const method = "POST";
+    const response = await fetch(`http://${slave}/file`, { method, body });
+    const parsed = await response.json();
+
+    this.storeResponse(parsed);
+    this.clientUpdate();
+  }
+
+  async deleteFile(filename: string) {
+    const method = "DELETE";
+    const response = await fetch(`http://${slave}/file/${filename}`, { method });
+    const parsed = await response.json();
+
+    this.storeResponse(parsed);
+    this.clientUpdate();
+  }
+
+
+  private storeResponse(parsed: any) {
     this.notes = parsed.notes;
     this.files = parsed.files;
     this.slides = parsed.slides;
@@ -71,8 +90,6 @@ export default class Master {
     this.current = parsed.current;
     this.position = parsed.position;
     this.interval = parsed.interval;
-
-    this.clientUpdate();
   }
 
   private generateJSON() {
@@ -102,3 +119,5 @@ export default class Master {
     }
   }
 }
+
+export default new Master();

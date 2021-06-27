@@ -4,6 +4,7 @@ import { Client } from "https://deno.land/x/mysql@v2.9.0/mod.ts";
 import { initializeEnv } from "./helper.ts";
 import { authenticationHandler } from "./middleware.ts";
 
+import FileController from "./controller/FileController.ts";
 import UserController from "./controller/UserController.ts";
 import SystemController from "./controller/SystemController.ts";
 
@@ -35,6 +36,7 @@ await client.connect({
   db,
 });
 
+const fileController = new FileController();
 const userController = new UserController(client);
 const systemController = new SystemController();
 
@@ -51,16 +53,28 @@ router.post(
   userController.addObject.bind(userController),
 );
 
-router.post(
-  "/system",
-  authenticationHandler,
-  systemController.addObject.bind(systemController),
-);
-
 router.delete(
   "/user/:uuid",
   authenticationHandler,
   userController.removeObject.bind(userController),
+);
+
+router.post(
+  "/file",
+  authenticationHandler,
+  fileController.addObject.bind(fileController),
+);
+
+router.delete(
+  "/file/:filename",
+  authenticationHandler,
+  fileController.removeObject.bind(fileController),
+);
+
+router.post(
+  "/system",
+  authenticationHandler,
+  systemController.addObject.bind(systemController),
 );
 
 // Public routes

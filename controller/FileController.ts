@@ -2,7 +2,7 @@ import master from "../master.ts";
 
 import { Request, Response } from "https://deno.land/x/oak@v7.6.3/mod.ts";
 
-export default class SystemController {
+export default class FileController {
   constructor() { }
 
   async addObject(
@@ -13,7 +13,17 @@ export default class SystemController {
     const value = await body.value;
 
     // Propegate the request body to all slaves
-    await master.postSystem(value);
+    await master.postFile(value);
+
+    // Unless an error is thrown just return 200 OK
+    response.status = 200;
+  }
+
+  async removeObject(
+    { params, response }: { params: { filename: string }; response: Response },
+  ) {
+    // Propegate the request body to all slaves
+    await master.deleteFile(params.filename);
 
     // Unless an error is thrown just return 200 OK
     response.status = 200;
