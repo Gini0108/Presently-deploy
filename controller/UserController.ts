@@ -23,9 +23,9 @@ initializeEnv([
 // Fetch the variables and convert them to right datatype
 const secret = Deno.env.get("PRESENTLY_SERVER_JWT_SECRET")!;
 const clientId = Deno.env.get("PRESENTLY_SERVER_GOOGLE_ID")!;
-const clientSecret = Deno.env.get("PRESENTLY_SERVER_GOOGLE_SECRET")!;
 const targetUri = Deno.env.get("PRESENTLY_SERVER_OAUTH_TARGET")!;
 const redirectUri = Deno.env.get("PRESENTLY_SERVER_OAUTH_REDIRECT")!;
+const clientSecret = Deno.env.get("PRESENTLY_SERVER_GOOGLE_SECRET")!;
 
 // These variables are somewhat fixed so just hardcode them
 const oauthConfig = {

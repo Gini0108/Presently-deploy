@@ -4,7 +4,7 @@ import { Client } from "https://deno.land/x/mysql@v2.9.0/mod.ts";
 import { initializeEnv } from "./helper.ts";
 import { authenticationHandler } from "./middleware.ts";
 
-import UserController from "./classes/controller/UserController.ts";
+import UserController from "./controller/UserController.ts";
 
 // Initialize .env variables and make sure they are set
 initializeEnv([
