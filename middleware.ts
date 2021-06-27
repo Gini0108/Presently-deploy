@@ -54,6 +54,10 @@ export const errorHandler = async (
         | ResourceError
         | AuthenticationError,
     ) => {
+      // Log error to server
+      console.log(error.message);
+
+      // Send error to user
       ctx.response.status = error.statusError;
       ctx.response.body = {
         message: error.message,

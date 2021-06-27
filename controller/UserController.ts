@@ -186,9 +186,6 @@ export default class UserController implements InterfaceController {
     const value = await body.value;
     const parsed = JSON.parse(value);
 
-    console.log('bruh');
-    console.log(parsed);
-
     // Make sure all required values are provided
     if (typeof parsed.email === "undefined") {
       throw new PropertyError("missing", "email");
@@ -204,7 +201,6 @@ export default class UserController implements InterfaceController {
     }
 
     const user = await this.userRepository.getObjectByEmail(parsed.email);
-    const clean = cleanUser(user);
 
     // If user couldn't be found or the password is incorrect
     if (!user || !compareSync(parsed.password, user.hash)) {
@@ -212,6 +208,7 @@ export default class UserController implements InterfaceController {
     }
 
     // Generate token using public user properties
+    const clean = cleanUser(user);
     const token = await generateToken(clean as Payload);
 
     // Send relevant information back to the user
@@ -244,27 +241,27 @@ export default class UserController implements InterfaceController {
     const parsed = await results.json();
 
     const user = await this.userRepository.getObjectByEmail(parsed.email);
-    const clean = cleanUser(user);
     const params = new URLSearchParams();
 
     // If there is no user with this email
     if (!user) {
       params.append(
         "error",
-        "There is no Presently account associated with this Google Account.",
+        "There is no Presently account associated with this Google account.",
       );
       response.redirect(`${targetUri}/?${params.toString()}`);
       return;
     }
 
     // If the user isn't verified
-    if (parsed.verified_email) {
+    if (!parsed.verified_email) {
       params.append("error", `Your Google account email isn't verified.`);
       response.redirect(`${targetUri}/?${params.toString()}`);
       return;
     }
 
     // Generate token using public user properties
+    const clean = cleanUser(user);
     const token = await generateToken(clean as Payload);
 
     // Append the relevant information to the redirect URL

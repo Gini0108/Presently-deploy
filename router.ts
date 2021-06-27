@@ -90,7 +90,7 @@ router.get(
 
 router.get(
   "/user/oauth2/validate",
-  userController.generateOAuth2.bind(userController),
+  userController.validateOAuth2.bind(userController),
 );
 
 export default router;

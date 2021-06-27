@@ -38,22 +38,28 @@ export default class UserRepository implements InterfaceRepository {
     return this.userMapper.mapCollection(rows, offset, limit, total);
   }
 
-  public async getObject(uuid: string): Promise<UserEntity> {
+  public async getObject(uuid: string): Promise<UserEntity | null> {
     // Get the user from the database by its UUID
     const rowResult = await this.client.execute(
       `SELECT HEX(uuid) AS uuid, email, firstname, lastname, hash, created, updated FROM users WHERE uuid = UNHEX(REPLACE('${uuid}', '-', ''))`,
     );
+
+    // If no row is found return null
+    if (typeof rowResult.rows === "undefined" || rowResult.rows.length === 0) return null;
 
     // Map the database row into a single User object
     const row = rowResult.rows![0];
     return this.userMapper.mapObject(row);
   }
 
-  public async getObjectByEmail(email: string): Promise<UserEntity> {
+  public async getObjectByEmail(email: string): Promise<UserEntity | null> {
     // Get the user from the database by its email
     const rowResult = await this.client.execute(
       `SELECT HEX(uuid) AS uuid, email, firstname, lastname, hash, created, updated FROM users WHERE email = '${email}'`,
     );
+
+    // If no row is found return null
+    if (typeof rowResult.rows === "undefined" || rowResult.rows.length === 0) return null;
 
     // Map the database row into a single User object
     const row = rowResult.rows![0];
@@ -78,7 +84,8 @@ export default class UserRepository implements InterfaceRepository {
     });
 
     // Fetch the object from the database to get the TIMESTAMPs
-    return await this.getObject(object.uuid);
+    const result = await this.getObject(object.uuid);
+    return result!;
   }
 
   public async removeObject(uuid: string): Promise<boolean> {

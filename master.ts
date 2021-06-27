@@ -1,3 +1,5 @@
+// deno-lint-ignore-file no-explicit-any
+
 import { initializeEnv } from "./helper.ts";
 import { EventEmitter } from "https://deno.land/x/eventemitter@1.2.1/mod.ts";
 import {
@@ -73,13 +75,14 @@ export class Master {
 
   async deleteFile(filename: string) {
     const method = "DELETE";
-    const response = await fetch(`http://${slave}/file/${filename}`, { method });
+    const response = await fetch(`http://${slave}/file/${filename}`, {
+      method,
+    });
     const parsed = await response.json();
 
     this.storeResponse(parsed);
     this.clientUpdate();
   }
-
 
   private storeResponse(parsed: any) {
     this.notes = parsed.notes;
