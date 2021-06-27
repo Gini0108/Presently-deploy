@@ -5,6 +5,7 @@ import { initializeEnv } from "./helper.ts";
 import { authenticationHandler } from "./middleware.ts";
 
 import UserController from "./controller/UserController.ts";
+import SystemController from "./controller/SystemController.ts";
 
 // Initialize .env variables and make sure they are set
 initializeEnv([
@@ -35,41 +36,46 @@ await client.connect({
 });
 
 const userController = new UserController(client);
-
-router.prefix("/user");
+const systemController = new SystemController();
 
 // "Protected" routes
 router.get(
-  "/",
+  "/user",
   authenticationHandler,
   userController.getCollection.bind(userController),
 );
 
 router.post(
-  "/",
+  "/user",
   authenticationHandler,
   userController.addObject.bind(userController),
 );
 
+router.post(
+  "/system",
+  authenticationHandler,
+  systemController.addObject.bind(systemController),
+)
+
 router.delete(
-  "/:uuid",
+  "/user/:uuid",
   authenticationHandler,
   userController.removeObject.bind(userController),
 );
 
 // Public routes
 router.post(
-  "/login",
+  "/user/login",
   userController.loginUser.bind(userController),
 );
 
 router.get(
-  "/oauth2/generate",
+  "/user/oauth2/generate",
   userController.generateOAuth2.bind(userController),
 );
 
 router.get(
-  "/oauth2/validate",
+  "/user/oauth2/validate",
   userController.generateOAuth2.bind(userController),
 );
 
