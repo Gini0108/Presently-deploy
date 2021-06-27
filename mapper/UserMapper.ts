@@ -1,3 +1,5 @@
+// deno-lint-ignore-file no-explicit-any
+
 import { cleanHex } from "../helper.ts";
 
 import UserEntity from "../entity/UserEntity.ts";
