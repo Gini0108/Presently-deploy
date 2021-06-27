@@ -60,7 +60,17 @@ router.delete(
 // Public routes
 router.post(
   "/login",
-  userController.loginUser.bind(userController)
+  userController.loginUser.bind(userController),
+);
+
+router.get(
+  "/oauth2/generate",
+  userController.generateOAuth2.bind(userController),
+);
+
+router.get(
+  "/oauth2/validate",
+  userController.generateOAuth2.bind(userController),
 );
 
 export default router;

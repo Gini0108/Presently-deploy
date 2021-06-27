@@ -1,5 +1,6 @@
 import { Client } from "https://deno.land/x/mysql@v2.9.0/mod.ts";
 import { compareSync } from "https://deno.land/x/bcrypt@v0.2.4/mod.ts";
+import { OAuth2Client } from "https://deno.land/x/oauth2_client@v0.2.1/mod.ts";
 import { create, Payload } from "https://deno.land/x/djwt@v2.2/mod.ts";
 import { Request, Response } from "https://deno.land/x/oak@v7.6.3/mod.ts";
 
@@ -11,12 +12,30 @@ import UserRepository from "../repository/UserRepository.ts";
 import InterfaceController from "./InterfaceController.ts";
 
 // Initialize .env variables and make sure they are set
-initializeEnv(["PRESENTLY_SERVER_JWT_SECRET"]);
+initializeEnv([
+  "PRESENTLY_SERVER_JWT_SECRET",
+  "PRESENTLY_SERVER_OAUTH_TARGET",
+  "PRESENTLY_SERVER_OAUTH_REDIRECT",
+  "PRESENTLY_SERVER_GOOGLE_ID",
+  "PRESENTLY_SERVER_GOOGLE_SECRET",
+]);
 
 // Fetch the variables and convert them to right datatype
 const secret = Deno.env.get("PRESENTLY_SERVER_JWT_SECRET")!;
+const clientId = Deno.env.get("PRESENTLY_SERVER_GOOGLE_ID")!;
+const clientSecret = Deno.env.get("PRESENTLY_SERVER_GOOGLE_SECRET")!;
+const targetUri = Deno.env.get("PRESENTLY_SERVER_OAUTH_TARGET")!;
+const redirectUri = Deno.env.get("PRESENTLY_SERVER_OAUTH_REDIRECT")!;
 
-// Filter out the password hash for safety
+// These variables are somewhat fixed so just hardcode them
+const oauthConfig = {
+  tokenUri: "https://www.googleapis.com/oauth2/v4/token",
+  authorizationEndpointUri: "https://accounts.google.com/o/oauth2/v2/auth",
+  defaults: {
+    scope: "openid email",
+  },
+};
+
 const cleanUser = (user: UserEntity): Partial<UserEntity> => {
   return {
     uuid: user.uuid,
@@ -41,9 +60,16 @@ const generateToken = (payload: Payload) => {
 
 export default class UserController implements InterfaceController {
   private userRepository: UserRepository;
+  private oauth2Client: OAuth2Client;
 
   constructor(client: Client) {
     this.userRepository = new UserRepository(client);
+    this.oauth2Client = new OAuth2Client({
+      clientId,
+      redirectUri,
+      clientSecret,
+      ...oauthConfig,
+    });
   }
 
   async addObject(
@@ -189,5 +215,61 @@ export default class UserController implements InterfaceController {
       token,
       ...clean,
     };
+  }
+
+  generateOAuth2(
+    { response }: { request: Request; response: Response },
+  ) {
+    const url = this.oauth2Client.code.getAuthorizationUri();
+
+    response.status = 200;
+    response.body = { url };
+  }
+
+  async validateOAuth2(
+    { request, response }: { request: Request; response: Response },
+  ) {
+    // Exchange the authorization code for an access token
+    const tokens = await this.oauth2Client.code.getToken(request.url);
+
+    // Find the user using the ID from the URL
+    const results = await fetch(
+      `https://www.googleapis.com/oauth2/v1/userinfo?access_token=${tokens.accessToken}`,
+    );
+    const parsed = await results.json();
+
+    const user = await this.userRepository.getObjectByEmail(parsed.email);
+    const clean = cleanUser(user);
+    const params = new URLSearchParams();
+
+    // If there is no user with this email
+    if (!user) {
+      params.append(
+        "error",
+        "There is no Presently account associated with this Google Account.",
+      );
+      response.redirect(`${targetUri}/?${params.toString()}`);
+      return;
+    }
+
+    // If the user isn't verified
+    if (parsed.verified_email) {
+      params.append("error", `Your Google account email isn't verified.`);
+      response.redirect(`${targetUri}/?${params.toString()}`);
+      return;
+    }
+
+    // Generate token using public user properties
+    const token = await generateToken(clean as Payload);
+
+    // Append the relevant information to the redirect URL
+    params.append("uuid", user.uuid);
+    params.append("token", token);
+    params.append("email", user.email);
+    params.append("lastname", user.lastname);
+    params.append("firstname", user.firstname);
+
+    response.redirect(`${targetUri}/?${params.toString()}`);
+    return;
   }
 }
