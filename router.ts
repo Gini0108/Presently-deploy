@@ -55,7 +55,7 @@ router.post(
   "/system",
   authenticationHandler,
   systemController.addObject.bind(systemController),
-)
+);
 
 router.delete(
   "/user/:uuid",

@@ -1,6 +1,9 @@
 import { initializeEnv } from "./helper.ts";
 import { EventEmitter } from "https://deno.land/x/eventemitter@1.2.1/mod.ts";
-import { WebSocketClient, WebSocketServer } from "https://deno.land/x/websocket@v0.1.2/mod.ts";
+import {
+  WebSocketClient,
+  WebSocketServer,
+} from "https://deno.land/x/websocket@v0.1.2/mod.ts";
 
 // Initialize .env variables and make sure they are set
 initializeEnv([
@@ -39,11 +42,11 @@ export default class Master {
     try {
       const response = await fetch(`http://${this.slave}`);
       const parsed = await response.json();
-  
+
       this.notes = parsed.notes;
       this.files = parsed.files;
       this.slides = parsed.slides;
-  
+
       this.playing = parsed.playing;
       this.current = parsed.current;
       this.position = parsed.position;
