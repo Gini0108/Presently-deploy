@@ -14,7 +14,7 @@ initializeEnv([
 ]);
 
 // Fetch the variables and convert them to right datatype
-const port = parseInt(Deno.env.get("PRESENTLY_SERVER_OAK_PORT")!);
+const port = +Deno.env.get("PRESENTLY_SERVER_OAK_PORT")!;
 
 // Add error handler to Oak
 application.use(errorHandler);

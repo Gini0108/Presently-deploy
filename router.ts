@@ -19,7 +19,7 @@ initializeEnv([
 const hostname = Deno.env.get("PRESENTLY_SERVER_MYSQL_HOST")!;
 const username = Deno.env.get("PRESENTLY_SERVER_MYSQL_USER")!;
 const password = Deno.env.get("PRESENTLY_SERVER_MYSQL_PASS")!;
-const port = parseInt(Deno.env.get("PRESENTLY_SERVER_MYSQL_PORT")!);
+const port = +Deno.env.get("PRESENTLY_SERVER_MYSQL_PORT")!;
 const db = Deno.env.get("PRESENTLY_SERVER_MYSQL_BASE")!;
 
 const router = new Router();
