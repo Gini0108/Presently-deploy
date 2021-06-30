@@ -22,7 +22,7 @@ export class Master {
   public files: Array<string> = [];
   public slides: Array<string> = [];
 
-  public current: string | null = null;
+  public filename: string | null = null;
   public position: number | null = null;
 
   public interval = 30;
@@ -43,6 +43,8 @@ export class Master {
 
   async initialize() {
     try {
+      console.log(`Attempting ${slave} initialization`);
+
       // Get the latest information from the slave
       const response = await fetch(`http://${slave}`);
       const parsed = await response.json();
@@ -90,7 +92,7 @@ export class Master {
     this.slides = parsed.slides;
 
     this.playing = parsed.playing;
-    this.current = parsed.current;
+    this.filename = parsed.filename;
     this.position = parsed.position;
     this.interval = parsed.interval;
   }
@@ -101,7 +103,7 @@ export class Master {
       notes: this.notes,
       slides: this.slides,
       playing: this.playing,
-      current: this.current,
+      filename: this.filename,
       position: this.position,
       interval: this.interval,
     });
