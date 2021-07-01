@@ -3,6 +3,7 @@ import { Context } from "https://deno.land/x/oak@v7.6.3/mod.ts";
 import { initializeEnv } from "./helper.ts";
 import {
   AuthenticationError,
+  BodyError,
   PropertyError,
   ResourceError,
   TypeError,
@@ -40,6 +41,25 @@ export const authenticationHandler = async (
   }
 
   throw new AuthenticationError("missing");
+};
+
+export const bodyValidation = async (
+  ctx: Context,
+  next: () => Promise<unknown>,
+) => {
+  if (ctx.request.method === "POST") {
+    // Make sure every POST request has a body
+    if (!ctx.request.hasBody) throw new BodyError("missing");
+
+    // Make sure every POST body is valid JSON
+    const body = ctx.request.body({ type: "json" });
+    await body.value.catch(() => {
+      throw new BodyError("invalid");
+    });
+  }
+
+  await next();
+  return;
 };
 
 export const errorHandler = async (

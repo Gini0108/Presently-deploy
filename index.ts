@@ -1,4 +1,4 @@
-import { errorHandler } from "./middleware.ts";
+import { bodyValidation, errorHandler } from "./middleware.ts";
 import { initializeEnv } from "./helper.ts";
 
 import { Application } from "https://deno.land/x/oak@v7.6.3/mod.ts";
@@ -27,8 +27,11 @@ application.addEventListener("listen", () => {
   console.log(`Listening on port ${port}`);
 });
 
-application.use(oakCors());
 application.use(errorHandler);
+application.use(bodyValidation);
+
+application.use(oakCors());
 application.use(router.routes());
+application.use(router.allowedMethods());
 
 application.listen({ port });
