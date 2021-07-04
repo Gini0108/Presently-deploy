@@ -45,7 +45,9 @@ export default class UserRepository implements InterfaceRepository {
     );
 
     // If no row is found return null
-    if (typeof rowResult.rows === "undefined" || rowResult.rows.length === 0) return null;
+    if (typeof rowResult.rows === "undefined" || rowResult.rows.length === 0) {
+      return null;
+    }
 
     // Map the database row into a single User object
     const row = rowResult.rows![0];
@@ -59,7 +61,9 @@ export default class UserRepository implements InterfaceRepository {
     );
 
     // If no row is found return null
-    if (typeof rowResult.rows === "undefined" || rowResult.rows.length === 0) return null;
+    if (typeof rowResult.rows === "undefined" || rowResult.rows.length === 0) {
+      return null;
+    }
 
     // Map the database row into a single User object
     const row = rowResult.rows![0];

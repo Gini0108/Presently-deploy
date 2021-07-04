@@ -3,7 +3,7 @@ import master from "../master.ts";
 import { Request, Response } from "https://deno.land/x/oak@v7.6.3/mod.ts";
 
 export default class FileController {
-  constructor() { }
+  constructor() {}
 
   async addObject(
     { request, response }: { request: Request; response: Response },
