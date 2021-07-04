@@ -78,53 +78,52 @@ export default class UserController implements InterfaceController {
     // Fetch the body parameters
     const body = await request.body();
     const value = await body.value;
-    const parsed = JSON.parse(value);
 
     // Make sure the required properties are provided
-    if (typeof parsed.email === "undefined") {
+    if (typeof value.email === "undefined") {
       throw new PropertyError("missing", "email");
     }
-    if (typeof parsed.password === "undefined") {
+    if (typeof value.password === "undefined") {
       throw new PropertyError("missing", "password");
     }
-    if (typeof parsed.lastname === "undefined") {
+    if (typeof value.lastname === "undefined") {
       throw new PropertyError("missing", "lastname");
     }
-    if (typeof parsed.firstname === "undefined") {
+    if (typeof value.firstname === "undefined") {
       throw new PropertyError("missing", "firstname");
     }
 
     // Make sure the required properties are the right type
-    if (typeof parsed.email !== "string") throw new TypeError("string", "email");
-    if (typeof parsed.password !== "string") {
+    if (typeof value.email !== "string") throw new TypeError("string", "email");
+    if (typeof value.password !== "string") {
       throw new TypeError("string", "password");
     }
-    if (typeof parsed.lastname !== "string") {
+    if (typeof value.lastname !== "string") {
       throw new TypeError("string", "lastname");
     }
-    if (typeof parsed.firstname !== "string") {
+    if (typeof value.firstname !== "string") {
       throw new TypeError("string", "firstname");
     }
 
     // Make sure the properties are valid
-    if (!isEmail(parsed.email)) throw new PropertyError("email", "email");
-    if (!isLength(parsed.lastname)) {
+    if (!isEmail(value.email)) throw new PropertyError("email", "email");
+    if (!isLength(value.lastname)) {
       throw new PropertyError("length", "lastname");
     }
-    if (!isLength(parsed.firstname)) {
+    if (!isLength(value.firstname)) {
       throw new PropertyError("length", "firstname");
     }
-    if (!isPassword(parsed.password)) {
+    if (!isPassword(value.password)) {
       throw new PropertyError("password", "password");
     }
 
     // Create the UserEntity object
     const user = new UserEntity();
 
-    user.email = parsed.email;
-    user.password = parsed.password;
-    user.lastname = parsed.lastname;
-    user.firstname = parsed.firstname;
+    user.email = value.email;
+    user.password = value.password;
+    user.lastname = value.lastname;
+    user.firstname = value.firstname;
 
     // Insert into the database the store the result
     const result = await this.userRepository.addObject(user);
@@ -184,26 +183,25 @@ export default class UserController implements InterfaceController {
     // Fetch the body parameters
     const body = await request.body();
     const value = await body.value;
-    const parsed = JSON.parse(value);
 
     // Make sure all required values are provided
-    if (typeof parsed.email === "undefined") {
+    if (typeof value.email === "undefined") {
       throw new PropertyError("missing", "email");
     }
-    if (typeof parsed.password === "undefined") {
+    if (typeof value.password === "undefined") {
       throw new PropertyError("missing", "password");
     }
 
     // Make sure the required properties are the right type
-    if (typeof parsed.email !== "string") throw new TypeError("string", "email");
-    if (typeof parsed.password !== "string") {
+    if (typeof value.email !== "string") throw new TypeError("string", "email");
+    if (typeof value.password !== "string") {
       throw new TypeError("string", "password");
     }
 
-    const user = await this.userRepository.getObjectByEmail(parsed.email);
+    const user = await this.userRepository.getObjectByEmail(value.email);
 
     // If user couldn't be found or the password is incorrect
-    if (!user || !compareSync(parsed.password, user.hash)) {
+    if (!user || !compareSync(value.password, user.hash)) {
       throw new AuthenticationError("incorrect");
     }
 
