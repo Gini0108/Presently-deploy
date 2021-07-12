@@ -20,7 +20,7 @@ export class PropertyError extends Error {
   public statusError = 400;
 
   constructor(
-    type: "missing" | "email" | "length" | "password" | "extension",
+    type: "missing" | "email" | "length" | "password" | "extension" | "date",
     property: string,
   ) {
     // If type is missing update the error message
