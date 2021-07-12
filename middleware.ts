@@ -74,9 +74,6 @@ export const errorHandler = async (
         | ResourceError
         | AuthenticationError,
     ) => {
-      // Log error to server
-      console.log(error.stack);
-
       // Send error to user
       ctx.response.status = error.statusError;
       ctx.response.body = {
