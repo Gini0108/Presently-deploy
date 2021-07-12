@@ -4,7 +4,7 @@ import { ResourceError } from "../errors.ts";
 import UserEntity from "../entity/UserEntity.ts";
 import UserMapper from "../mapper/UserMapper.ts";
 import UserCollection from "../collection/UserCollection.ts";
-import InterfaceRepository from "./RepositoryInterface.ts";
+import InterfaceRepository from "./InterfaceRepository.ts";
 
 export default class UserRepository implements InterfaceRepository {
   private userMapper: UserMapper;
