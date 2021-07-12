@@ -51,7 +51,7 @@ export class AuthenticationError extends Error {
   // Set status error to "Unauthorized"
   public statusError = 401;
 
-  constructor(error: "expired" | "missing" | "incorrect") {
+  constructor(error: "expired" | "missing" | "incorrect" | "origin") {
     if (error === "expired") {
       super("JWT token has expired.");
       return;
@@ -59,6 +59,11 @@ export class AuthenticationError extends Error {
 
     if (error === "missing") {
       super("JWT token is missing");
+      return;
+    }
+
+    if (error === "origin") {
+      super("Unauthorized IP address");
       return;
     }
 
