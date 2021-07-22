@@ -1,5 +1,3 @@
-// deno-lint-ignore-file no-explicit-any
-
 import BaseEntity from "../entity/BaseEntity.ts";
 import BaseCollection from "../collection/BaseCollection.ts";
 

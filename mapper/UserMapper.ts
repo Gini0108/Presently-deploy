@@ -1,5 +1,3 @@
-// deno-lint-ignore-file no-explicit-any
-
 import { cleanHex } from "../helper.ts";
 
 import UserEntity from "../entity/UserEntity.ts";
@@ -7,7 +5,7 @@ import InterfaceMapper from "./InterfaceMapper.ts";
 import UserCollection from "../collection/UserCollection.ts";
 
 export default class UserMapper implements InterfaceMapper {
-  public mapObject(row: any): UserEntity {
+  public mapObject(row: Record<string, never>): UserEntity {
     const user = new UserEntity();
 
     // Re-add the dashes to the UUID and lowercase the string
