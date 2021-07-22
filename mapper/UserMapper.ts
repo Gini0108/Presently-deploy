@@ -27,15 +27,15 @@ export default class UserMapper implements InterfaceMapper {
   }
 
   public mapArray(
-    rows: Array<any>,
-  ): Array<UserEntity> {
+    rows: Record<string, never>[],
+  ): UserEntity[] {
     const users = rows.map((row) => this.mapObject(row));
 
     return users;
   }
 
   public mapCollection(
-    rows: Array<any>,
+    rows: Record<string, never>[],
     offset: number,
     limit: number,
     total: number,

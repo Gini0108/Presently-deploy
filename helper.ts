@@ -21,7 +21,7 @@ export function isLength(input: string): boolean {
   return result;
 }
 
-export function initializeEnv(variables: Array<string>) {
+export function initializeEnv(variables: string[]) {
   // Load .env file
   config({ export: true });
 

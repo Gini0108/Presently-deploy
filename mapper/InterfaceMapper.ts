@@ -4,10 +4,10 @@ import BaseEntity from "../entity/BaseEntity.ts";
 import BaseCollection from "../collection/BaseCollection.ts";
 
 export default interface InterfaceMapper {
-  mapObject(row: any): Promise<BaseEntity> | BaseEntity;
-  mapArray(rows: Array<any>): Promise<Array<BaseEntity>> | Array<BaseEntity>;
+  mapObject(row: Record<string, never>): Promise<BaseEntity> | BaseEntity;
+  mapArray(rows: Record<string, never>[]): Promise<BaseEntity[]> | BaseEntity[];
   mapCollection(
-    rows: Array<any>,
+    rows: Record<string, never>[],
     offset: number,
     limit: number,
     total: number,

@@ -18,9 +18,9 @@ const port = +Deno.env.get("PRESENTLY_SERVER_PORT_SOCKET")!;
 const slave = Deno.env.get("PRESENTLY_SERVER_SLAVE_ADDRESS")!;
 
 export class Master {
-  public notes: Array<string> = [];
-  public files: Array<string> = [];
-  public slides: Array<string> = [];
+  public notes: string[] = [];
+  public files: string[] = [];
+  public slides: string[] = [];
 
   public filename: string | null = null;
   public position: number | null = null;
@@ -32,7 +32,7 @@ export class Master {
   }>();
 
   private server?: WebSocketServer;
-  private clients: Array<WebSocketClient> = [];
+  private clients: WebSocketClient[] = [];
 
   constructor() {
     // Start the WebSocket and add listeners

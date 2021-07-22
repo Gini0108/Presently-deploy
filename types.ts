@@ -19,6 +19,6 @@ export interface Stat {
 }
 
 export interface Info {
-  notes: Array<string>;
-  titles: Array<string>;
+  notes: string[];
+  titles: string[];
 }
