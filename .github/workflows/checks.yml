@@ -1,9 +1,13 @@
 name: Checks
 
-on: [push, pull_request]
+on:
+  push:
+    branches:
+      - main
 
 jobs:
-  Lint:
+  quality:
+    name: Quality
     runs-on: ubuntu-latest
 
     steps:
@@ -15,8 +19,24 @@ jobs:
         with:
           deno-version: v1.x
 
-      - name: Run deno fmt
-        run: deno fmt --check *.ts
+      - name: Run Deno fmt
+        run: deno fmt --check
 
-      - name: Run deno lint
-        run: deno lint --unstable *.ts
+      - name: Run Deno lint
+        run: deno lint
+
+  # Test:
+  #   name: Test
+  #   runs-on: ubuntu-latest
+
+  #   steps:
+  #     - name: Checkout sources
+  #       uses: actions/checkout@v2
+
+  #     - name: Setup latest deno version
+  #       uses: denolib/setup-deno@v2
+  #       with:
+  #         deno-version: v1.x
+
+  #     - name: Run Deno test
+  #       run: deno test -A
