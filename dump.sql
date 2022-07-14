@@ -1,14 +1,20 @@
-CREATE TABLE presently.users (
+CREATE TABLE client (
 	uuid BINARY(16) NOT NULL,
-	email varchar(320) NOT NULL,
-	firstname varchar(255) NOT NULL,
-	lastname varchar(255) NOT NULL,
-	hash BINARY(60) NOT NULL,
-	created TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-	updated TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-	PRIMARY KEY (uuid),
-	UNIQUE INDEX (email)
+
+	title VARCHAR(255),
+	serial VARCHAR(255) NOT NULL,
+
+	heard timestamp,
+	called timestamp,
+
+	online TINYINT(1) NOT NULL DEFAULT 0,
+
+	created timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+	updated timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+
+	PRIMARY KEY (uuid)
 )
+
 ENGINE=InnoDB
 DEFAULT CHARSET=utf8mb4
 COLLATE=utf8mb4_0900_ai_ci;
