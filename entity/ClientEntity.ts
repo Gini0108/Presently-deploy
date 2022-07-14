@@ -1,8 +1,8 @@
 import BaseEntity from "https://raw.githubusercontent.com/Schotsl/Uberdeno/main/entity/BaseEntity.ts";
 import {
   BooleanColumn,
-  VarcharColumn,
   TimestampColumn,
+  VarcharColumn,
 } from "https://raw.githubusercontent.com/Schotsl/Uberdeno/main/other/Columns.ts";
 
 export default class ClientEntity extends BaseEntity {

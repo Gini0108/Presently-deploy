@@ -4,7 +4,7 @@ export interface Client {
   socket: WebSocket;
   entity?: ClientEntity;
   serial?: string;
-  interval?: number,
+  interval?: number;
 }
 
 export enum Action {
@@ -96,4 +96,3 @@ export class RespondPing extends RespondAbstract {
 //   interval: number;
 //   powerpoint: string;
 // }
-

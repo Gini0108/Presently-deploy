@@ -32,7 +32,10 @@ export default class ClientRepository implements InterfaceRepository {
     offset: number,
     limit: number,
   ): Promise<ClientCollection> {
-    return await this.generalRepository.getCollection(offset, limit) as ClientCollection;
+    return await this.generalRepository.getCollection(
+      offset,
+      limit,
+    ) as ClientCollection;
   }
 
   public async removeObject(uuid: string): Promise<void> {
@@ -54,7 +57,8 @@ export default class ClientRepository implements InterfaceRepository {
   public async getObjectBySerial(
     serial: string,
   ): Promise<ClientEntity> {
-    const query = "SELECT HEX(uuid) AS uuid, title, serial, heard, called, online, created, updated FROM client WHERE serial = ? ORDER BY created LIMIT 1";
+    const query =
+      "SELECT HEX(uuid) AS uuid, title, serial, heard, called, online, created, updated FROM client WHERE serial = ? ORDER BY created LIMIT 1";
     const data = await mysqlClient.execute(query, [serial]);
 
     if (typeof data.rows === "undefined" || data.rows.length === 0) {

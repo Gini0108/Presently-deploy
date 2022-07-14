@@ -1,4 +1,13 @@
-import { Client, Action, RequestAbstract, RequestPing, RespondAbstract,RespondPing, RequestIdentity, RespondIdentity } from "./types.ts";
+import {
+  Action,
+  Client,
+  RequestAbstract,
+  RequestIdentity,
+  RequestPing,
+  RespondAbstract,
+  RespondIdentity,
+  RespondPing,
+} from "./types.ts";
 
 import ClientEntity from "./entity/ClientEntity.ts";
 import ClientRepository from "./repository/ClientRepository.ts";
@@ -22,11 +31,11 @@ class Manager {
 
     socket.onclose = () => {
       this.onClose(client);
-    }
+    };
 
     socket.onopen = () => {
       this.requestIdentity(client);
-    }
+    };
   }
 
   async onMessage(client: Client, event: MessageEvent) {
@@ -38,7 +47,7 @@ class Manager {
       await this.handleIdentity(client, body as RespondIdentity);
 
       client.interval = setInterval(() => {
-        this.requestPing(client)
+        this.requestPing(client);
       }, 1000);
 
       return;
@@ -58,18 +67,18 @@ class Manager {
     const {
       socket,
       entity,
-      interval
+      interval,
     } = client;
 
-    socket.onmessage = () => {}
-    socket.onclose = () => {}
-    socket.onopen = () => {}
+    socket.onmessage = () => {};
+    socket.onclose = () => {};
+    socket.onopen = () => {};
 
     clearTimeout(interval);
 
     if (entity) {
       entity.online.setValue(false);
-      
+
       this.repository.updateObject(entity);
     }
 
@@ -97,10 +106,9 @@ class Manager {
     try {
       client.entity = await this.repository.addObject(entity);
     } catch {
-      client.entity = await this.repository.getObjectBySerial(serial)
+      client.entity = await this.repository.getObjectBySerial(serial);
     }
   }
-
 
   private async requestPing(client: Client) {
     const request = new RequestPing();
@@ -120,7 +128,8 @@ class Manager {
     const entity = client.entity!;
 
     const called = entity.called.getValue();
-    const online = typeof called === "undefined" || heard.getTime() - called.getTime() < 1000;
+    const online = typeof called === "undefined" ||
+      heard.getTime() - called.getTime() < 1000;
 
     entity.heard.setValue(heard);
     entity.online.setValue(online);
