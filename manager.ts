@@ -25,13 +25,7 @@ class Manager {
     }
 
     socket.onopen = () => {
-      const request = new RequestIdentity();
-      this.sendRequest(client, request);
-    
-      setInterval(() => {
-        const request = new RequestPing();
-        this.sendRequest(client, request);
-      }, 1000);
+      this.requestIdentity(client);
     }
   }
 
@@ -40,35 +34,19 @@ class Manager {
     const body = JSON.parse(data) as RespondAbstract;
     const action = body.action;
 
+    if (action === Action.RespondIdentity) {
+      await this.handleIdentity(client, body as RespondIdentity);
+
+      client.interval = setInterval(() => {
+        this.requestPing(client)
+      }, 1000);
+
+      return;
+    }
+
     switch (action) {
-      case Action.RespondIdentity: {
-        const respond = body as RespondIdentity;
-        const serial = respond.serial;
-
-        console.log(`Serial: ${respond.serial}`);
-
-        try {
-          const entity = new ClientEntity();
-
-          entity.serial.setValue(respond.serial);
-          
-          client.entity = await this.repository.addObject(entity);
-        } catch {
-          client.entity = await this.repository.getObjectBySerial(serial)
-        }
-
-        break;
-      }
       case Action.RespondPing: {
-        const response = body as RespondPing;
-        const current = Date.now();
-        const heard = new Date(response.heard);
-        if (client.entity) {
-        client.entity?.heard.setValue(heard);
-        this.repository.updateObject(client.entity!);
-
-        console.log(`Ping: ${current - response.heard}ms`);
-        }
+        this.handlePing(client, body as RespondPing);
         break;
       }
     }
@@ -77,6 +55,24 @@ class Manager {
   onClose(client: Client) {
     const index = this.clients.indexOf(client);
 
+    const {
+      socket,
+      entity,
+      interval
+    } = client;
+
+    socket.onmessage = () => {}
+    socket.onclose = () => {}
+    socket.onopen = () => {}
+
+    clearTimeout(interval);
+
+    if (entity) {
+      entity.online.setValue(false);
+      
+      this.repository.updateObject(entity);
+    }
+
     this.clients.splice(index, 1);
   }
 
@@ -84,6 +80,54 @@ class Manager {
     const body = JSON.stringify(update);
 
     client.socket.send(body);
+  }
+
+  private requestIdentity(client: Client) {
+    const request = new RequestIdentity();
+
+    this.sendRequest(client, request);
+  }
+
+  private async handleIdentity(client: Client, response: RespondIdentity) {
+    const serial = response.serial;
+    const entity = new ClientEntity();
+
+    entity.serial.setValue(serial);
+
+    try {
+      client.entity = await this.repository.addObject(entity);
+    } catch {
+      client.entity = await this.repository.getObjectBySerial(serial)
+    }
+  }
+
+
+  private async requestPing(client: Client) {
+    const request = new RequestPing();
+
+    this.sendRequest(client, request);
+
+    const called = new Date();
+    const entity = client.entity!;
+
+    entity.called.setValue(called);
+
+    client.entity = await this.repository.updateObject(entity);
+  }
+
+  private async handlePing(client: Client, response: RespondPing) {
+    const heard = new Date(response.heard);
+    const entity = client.entity!;
+
+    const called = entity.called.getValue();
+    const online = typeof called === "undefined" || heard.getTime() - called.getTime() < 1000;
+
+    entity.heard.setValue(heard);
+    entity.online.setValue(online);
+
+    client.entity = await this.repository.updateObject(entity);
+
+    console.log("Recieved ping update");
   }
 }
 

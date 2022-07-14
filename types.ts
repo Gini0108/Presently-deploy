@@ -4,6 +4,7 @@ export interface Client {
   socket: WebSocket;
   entity?: ClientEntity;
   serial?: string;
+  interval?: number,
 }
 
 export enum Action {
