@@ -14,6 +14,8 @@ export enum Action {
   RespondPing = 3,
   RequestOpen = 4,
   RespondOpen = 5,
+  RequestGoto = 6,
+  RespondGoto = 7,
 }
 
 export class RequestAbstract {
@@ -48,6 +50,18 @@ export class RespondIdentity extends RespondAbstract {
   }
 }
 
+export class RequestPing extends RequestAbstract {
+  constructor() {
+    super(Action.RequestPing);
+  }
+}
+
+export class RespondPing extends RespondAbstract {
+  constructor() {
+    super(Action.RespondPing);
+  }
+}
+
 export class RequestOpen extends RequestAbstract {
   filename: string;
   location: string;
@@ -66,14 +80,18 @@ export class RespondOpen extends RespondAbstract {
   }
 }
 
-export class RequestPing extends RequestAbstract {
-  constructor() {
-    super(Action.RequestPing);
+export class RequestGoto extends RequestAbstract {
+  index: number;
+
+  constructor(index: number) {
+    super(Action.RequestGoto);
+
+    this.index = index;
   }
 }
 
-export class RespondPing extends RespondAbstract {
+export class RespondGoto extends RespondAbstract {
   constructor() {
-    super(Action.RespondPing);
+    super(Action.RespondGoto);
   }
 }
