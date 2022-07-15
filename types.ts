@@ -12,6 +12,8 @@ export enum Action {
   RespondIdentity = 1,
   RequestPing = 2,
   RespondPing = 3,
+  RequestOpen = 4,
+  RespondOpen = 5,
 }
 
 export class RequestAbstract {
@@ -45,6 +47,25 @@ export class RespondIdentity extends RespondAbstract {
     this.serial = serial;
   }
 }
+
+export class RequestOpen extends RequestAbstract {
+  filename: string;
+  location: string;
+
+  constructor(filename: string, location: string) {
+    super(Action.RequestOpen);
+
+    this.filename = filename;
+    this.location = location;
+  }
+}
+
+export class RespondOpen extends RespondAbstract {
+  constructor() {
+    super(Action.RespondOpen);
+  }
+}
+
 
 export class RequestPing extends RequestAbstract {
   constructor() {

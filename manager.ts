@@ -1,10 +1,12 @@
-import { Action, Worker } from "./types.ts";
+import { Action, Worker, RequestOpen } from "./types.ts";
 
+import OpenManager from "./manager/OpenManager.ts";
 import PingManager from "./manager/PingManager.ts";
 import IdentityManager from "./manager/IdentityManager.ts";
 import WorkerRepository from "./repository/WorkerRepository.ts";
 
 class Manager {
+  openManager: OpenManager;
   pingManager: PingManager;
   identityManager: IdentityManager;
 
@@ -14,6 +16,7 @@ class Manager {
   constructor() {
     this.repository = new WorkerRepository("worker");
 
+    this.openManager = new OpenManager(this.repository);
     this.pingManager = new PingManager(this.repository);
     this.identityManager = new IdentityManager(this.repository);
   }
@@ -48,6 +51,10 @@ class Manager {
       }
       case Action.RespondPing: {
         await this.pingManager.handleRespond(worker, parse);
+        break;
+      }
+      case Action.RespondOpen: {
+        await this.openManager.handleRespond(worker, parse);
         break;
       }
     }
@@ -87,6 +94,7 @@ class Manager {
 
     // Request the identity once the WebSocket has been opened
     this.identityManager.handleRequest(worker);
+    this.openManager.handleRequest(worker);
 
     // We'll thing the worker every 10 seconds to ensure the connection stays open
     worker.interval = setInterval(() => {
