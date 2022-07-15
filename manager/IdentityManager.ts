@@ -1,4 +1,4 @@
-import { Worker, RequestIdentity, RespondIdentity } from "../types.ts";
+import { RequestIdentity, RespondIdentity, Worker } from "../types.ts";
 import { magenta } from "https://deno.land/std@0.148.0/fmt/colors.ts";
 
 import WorkerEntity from "../entity/WorkerEntity.ts";
@@ -27,9 +27,9 @@ export default class IdentityManager extends AbstractManager {
     entity.serial.setValue(serial);
 
     // try {
-      worker.entity = await this.repository.addObject(entity);
+    worker.entity = await this.repository.addObject(entity);
     // } catch {
-      // worker.entity = await this.repository.getObjectBySerial(serial);
+    // worker.entity = await this.repository.getObjectBySerial(serial);
     // }
   }
 }

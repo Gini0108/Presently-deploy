@@ -1,7 +1,6 @@
 import BaseEntity from "https://raw.githubusercontent.com/Schotsl/Uberdeno/main/entity/BaseEntity.ts";
 import {
   BooleanColumn,
-  TimestampColumn,
   VarcharColumn,
 } from "https://raw.githubusercontent.com/Schotsl/Uberdeno/main/other/Columns.ts";
 

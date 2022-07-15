@@ -1,4 +1,4 @@
-import { Worker, RequestPing, RespondIdentity } from "../types.ts";
+import { RequestPing, RespondIdentity, Worker } from "../types.ts";
 import { blue } from "https://deno.land/std@0.148.0/fmt/colors.ts";
 
 import WorkerRepository from "../repository/WorkerRepository.ts";
