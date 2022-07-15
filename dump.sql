@@ -3,10 +3,6 @@ CREATE TABLE client (
 
 	title VARCHAR(255),
 	serial VARCHAR(255) NOT NULL,
-
-	heard timestamp,
-	called timestamp,
-
 	online TINYINT(1) NOT NULL DEFAULT 0,
 
 	created timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,

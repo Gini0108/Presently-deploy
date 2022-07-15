@@ -53,46 +53,7 @@ export class RequestPing extends RequestAbstract {
 }
 
 export class RespondPing extends RespondAbstract {
-  heard: number;
-
-  constructor(heard: number) {
+  constructor() {
     super(Action.RespondPing);
-
-    this.heard = heard;
   }
 }
-
-// export interface Open extends Update {
-//   action: Action.Goto;
-//   powerpoint: string;
-// }
-
-// export interface Ping extends Update {
-//   time: number;
-//   action: Action.Goto;
-// }
-
-// export interface Playing extends Update {
-//   action: Action.Goto;
-//   playing: boolean;
-//   powerpoint: string;
-// }
-
-// export interface Subscribe extends Update {
-//   action: Action.Goto;
-//   unique: string;
-// }
-
-// export interface Goto extends Update {
-//   index: number;
-//   action: Action.Goto;
-//   powerpoint: string;
-// }
-
-// export interface Interval extends Update {
-//   time: number;
-//   index: number;
-//   action: Action.Goto;
-//   interval: number;
-//   powerpoint: string;
-// }

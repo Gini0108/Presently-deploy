@@ -1,23 +1,24 @@
 import {
   Action,
   Client,
-  RequestAbstract,
-  RequestIdentity,
-  RequestPing,
-  RespondAbstract,
-  RespondIdentity,
-  RespondPing,
 } from "./types.ts";
 
-import ClientEntity from "./entity/ClientEntity.ts";
+import PingManager from "./manager/PingManager.ts";
+import IdentityManager from "./manager/IdentityManager.ts";
 import ClientRepository from "./repository/ClientRepository.ts";
 
 class Manager {
+  pingManager: PingManager;
+  identityManager: IdentityManager;
+
   clients: Client[] = [];
   repository: ClientRepository;
 
   constructor() {
     this.repository = new ClientRepository("client");
+
+    this.pingManager = new PingManager(this.repository);
+    this.identityManager = new IdentityManager(this.repository);
   }
 
   addClient(socket: WebSocket) {
@@ -34,109 +35,70 @@ class Manager {
     };
 
     socket.onopen = () => {
-      this.requestIdentity(client);
+      this.onOpen(client);
     };
   }
 
   async onMessage(client: Client, event: MessageEvent) {
     const data = event.data;
-    const body = JSON.parse(data) as RespondAbstract;
-    const action = body.action;
-
-    if (action === Action.RespondIdentity) {
-      await this.handleIdentity(client, body as RespondIdentity);
-
-      client.interval = setInterval(() => {
-        this.requestPing(client);
-      }, 1000);
-
-      return;
-    }
+    const parse = JSON.parse(data);
+    const action = parse.action;
 
     switch (action) {
+      case Action.RespondIdentity: {
+        await this.identityManager.handleRespond(client, parse);
+        break;
+      }
       case Action.RespondPing: {
-        this.handlePing(client, body as RespondPing);
+        await this.pingManager.handleRequest(client);
         break;
       }
     }
   }
 
-  onClose(client: Client) {
+  async onClose(client: Client) {
     const index = this.clients.indexOf(client);
-
     const {
       socket,
       entity,
       interval,
     } = client;
 
-    socket.onmessage = () => {};
-    socket.onclose = () => {};
+    // Remove every websocket callback to prevent errors and overhead 
     socket.onopen = () => {};
+    socket.onclose = () => {};
+    socket.onmessage = () => {};
 
+    // Since we can't reach the machine anymore we'll stop pinging it
     clearTimeout(interval);
 
+    // Remove the client from the clients array
+    this.clients.splice(index, 1);
+
+    // Set the client status to offline in the database
     if (entity) {
       entity.online.setValue(false);
-
-      this.repository.updateObject(entity);
-    }
-
-    this.clients.splice(index, 1);
-  }
-
-  sendRequest(client: Client, update: RequestAbstract) {
-    const body = JSON.stringify(update);
-
-    client.socket.send(body);
-  }
-
-  private requestIdentity(client: Client) {
-    const request = new RequestIdentity();
-
-    this.sendRequest(client, request);
-  }
-
-  private async handleIdentity(client: Client, response: RespondIdentity) {
-    const serial = response.serial;
-    const entity = new ClientEntity();
-
-    entity.serial.setValue(serial);
-
-    try {
-      client.entity = await this.repository.addObject(entity);
-    } catch {
-      client.entity = await this.repository.getObjectBySerial(serial);
+      await this.repository.updateObject(entity);
     }
   }
 
-  private async requestPing(client: Client) {
-    const request = new RequestPing();
+  async onOpen(client: Client) {
+    const {
+      socket,
+      entity,
+    } = client;
 
-    this.sendRequest(client, request);
+    // Request the identity once the WebSocket has been opened
+    this.identityManager.handleRequest(client);
 
-    const called = new Date();
-    const entity = client.entity!;
+    // We'll thing the client every 10 seconds to ensure the connection stays open
+    client.interval = setInterval(() => this.pingManager.handleRequest({ socket }), 10000);
 
-    entity.called.setValue(called);
-
-    client.entity = await this.repository.updateObject(entity);
-  }
-
-  private async handlePing(client: Client, response: RespondPing) {
-    const heard = new Date(response.heard);
-    const entity = client.entity!;
-
-    const called = entity.called.getValue();
-    const online = typeof called === "undefined" ||
-      heard.getTime() - called.getTime() < 1000;
-
-    entity.heard.setValue(heard);
-    entity.online.setValue(online);
-
-    client.entity = await this.repository.updateObject(entity);
-
-    console.log("Recieved ping update");
+    // Set the client status to online in the database
+    if (entity) {
+      entity.online.setValue(true);
+      await this.repository.updateObject(entity);
+    }
   }
 }
 
