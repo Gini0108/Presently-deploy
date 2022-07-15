@@ -11,14 +11,16 @@ export default class IdentityManager extends AbstractManager {
   }
 
   handleRequest(client: Client) {
+    console.log(`${magenta("[Identity]")} Identity update requested`);
+
     const request = new RequestIdentity();
 
-    this.handleMessage(client, request, false);
-  
-    console.log(`${magenta("[Identity]")} Identity update requested`);
+    this.handleMessage(client, request);
   }
 
   async handleRespond(client: Client, response: RespondIdentity) {
+    console.log(`${magenta("[Identity]")} Identity update received`);
+
     const serial = response.serial;
     const entity = new ClientEntity();
   
@@ -29,7 +31,5 @@ export default class IdentityManager extends AbstractManager {
     } catch {
       client.entity = await this.repository.getObjectBySerial(serial);
     }
-  
-    console.log(`${magenta("[Identity]")} Identity update received`);
   }
 }

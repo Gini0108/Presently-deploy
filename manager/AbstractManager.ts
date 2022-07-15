@@ -13,17 +13,12 @@ export default class AbstractManager {
     this.repository  = repository;
   }
 
-  protected handleMessage(client: Client, update: RequestAbstract, persistent = true) {
+  protected handleMessage(client: Client, update: RequestAbstract) {
     const body = JSON.stringify(update);
     const socket = client.socket;
 
-    const socketReady = socket.readyState === WebSocket.OPEN;
-    const entityReady = client.entity !== undefined || !persistent;
-
-    if (socketReady && entityReady) {
-      client.socket.send(body);
-
-      console.log(`${red("[Abstract]")} Abstract update sent`);
+    if (socket.readyState === WebSocket.OPEN) {
+      socket.send(body);
     } else {
       console.log(`${red("[Abstract]")} Abstract update not ready`);
     }

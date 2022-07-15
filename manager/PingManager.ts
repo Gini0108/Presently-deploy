@@ -10,11 +10,11 @@ export default class PingManager extends AbstractManager {
   }
 
   handleRequest(client: Client) {
+    console.log(`${blue("[Ping]")} Ping update requested`);
+    
     const request = new RequestPing();
 
     this.handleMessage(client, request);
-  
-    console.log(`${blue("[Ping]")} Ping update requested`);
   }
 
   async handleRespond(client: Client, response: RespondIdentity) {

@@ -50,7 +50,7 @@ class Manager {
         break;
       }
       case Action.RespondPing: {
-        await this.pingManager.handleRequest(client);
+        await this.pingManager.handleRespond(client, parse);
         break;
       }
     }
@@ -92,7 +92,7 @@ class Manager {
     this.identityManager.handleRequest(client);
 
     // We'll thing the client every 10 seconds to ensure the connection stays open
-    client.interval = setInterval(() => this.pingManager.handleRequest({ socket }), 10000);
+    client.interval = setInterval(() => { this.pingManager.handleRequest({ socket }) }, 10000);
 
     // Set the client status to online in the database
     if (entity) {
