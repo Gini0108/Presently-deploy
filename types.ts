@@ -66,7 +66,6 @@ export class RespondOpen extends RespondAbstract {
   }
 }
 
-
 export class RequestPing extends RequestAbstract {
   constructor() {
     super(Action.RequestPing);
