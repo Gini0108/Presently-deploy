@@ -1,4 +1,4 @@
-CREATE TABLE client (
+CREATE TABLE worker (
 	uuid BINARY(16) NOT NULL,
 
 	title VARCHAR(255),
@@ -8,7 +8,8 @@ CREATE TABLE client (
 	created timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
 	updated timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 
-	PRIMARY KEY (uuid)
+	PRIMARY KEY (uuid),
+	UNIUQUE KEY (serial)
 )
 
 CREATE TABLE file (

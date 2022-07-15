@@ -1,18 +1,18 @@
-import ClientRepository from "../repository/ClientRepository.ts";
+import WorkerRepository from "../repository/WorkerRepository.ts";
 
 import { red } from "https://deno.land/std@0.148.0/fmt/colors.ts";
-import { Client, RequestAbstract } from "../types.ts";
+import { Worker, RequestAbstract } from "../types.ts";
 
 export default class AbstractManager {
-  protected repository: ClientRepository;
+  protected repository: WorkerRepository;
 
-  protected constructor(repository: ClientRepository) {
+  protected constructor(repository: WorkerRepository) {
     this.repository = repository;
   }
 
-  protected handleMessage(client: Client, update: RequestAbstract) {
+  protected handleMessage(worker: Worker, update: RequestAbstract) {
     const body = JSON.stringify(update);
-    const socket = client.socket;
+    const socket = worker.socket;
 
     if (socket.readyState === WebSocket.OPEN) {
       socket.send(body);

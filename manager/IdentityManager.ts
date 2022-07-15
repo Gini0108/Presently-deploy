@@ -1,35 +1,35 @@
-import { Client, RequestIdentity, RespondIdentity } from "../types.ts";
+import { Worker, RequestIdentity, RespondIdentity } from "../types.ts";
 import { magenta } from "https://deno.land/std@0.148.0/fmt/colors.ts";
 
-import ClientEntity from "../entity/ClientEntity.ts";
-import ClientRepository from "../repository/ClientRepository.ts";
+import WorkerEntity from "../entity/WorkerEntity.ts";
+import WorkerRepository from "../repository/WorkerRepository.ts";
 import AbstractManager from "./AbstractManager.ts";
 
 export default class IdentityManager extends AbstractManager {
-  constructor(repository: ClientRepository) {
+  constructor(repository: WorkerRepository) {
     super(repository);
   }
 
-  handleRequest(client: Client) {
+  handleRequest(worker: Worker) {
     console.log(`${magenta("[Identity]")} Identity update requested`);
 
     const request = new RequestIdentity();
 
-    this.handleMessage(client, request);
+    this.handleMessage(worker, request);
   }
 
-  async handleRespond(client: Client, response: RespondIdentity) {
+  async handleRespond(worker: Worker, response: RespondIdentity) {
     console.log(`${magenta("[Identity]")} Identity update received`);
 
     const serial = response.serial;
-    const entity = new ClientEntity();
+    const entity = new WorkerEntity();
 
     entity.serial.setValue(serial);
 
-    try {
-      client.entity = await this.repository.addObject(entity);
-    } catch {
-      client.entity = await this.repository.getObjectBySerial(serial);
-    }
+    // try {
+      worker.entity = await this.repository.addObject(entity);
+    // } catch {
+      // worker.entity = await this.repository.getObjectBySerial(serial);
+    // }
   }
 }

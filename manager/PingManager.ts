@@ -1,23 +1,23 @@
-import { Client, RequestPing, RespondIdentity } from "../types.ts";
+import { Worker, RequestPing, RespondIdentity } from "../types.ts";
 import { blue } from "https://deno.land/std@0.148.0/fmt/colors.ts";
 
-import ClientRepository from "../repository/ClientRepository.ts";
+import WorkerRepository from "../repository/WorkerRepository.ts";
 import AbstractManager from "./AbstractManager.ts";
 
 export default class PingManager extends AbstractManager {
-  constructor(repository: ClientRepository) {
+  constructor(repository: WorkerRepository) {
     super(repository);
   }
 
-  handleRequest(client: Client) {
+  handleRequest(worker: Worker) {
     console.log(`${blue("[Ping]")} Ping update requested`);
 
     const request = new RequestPing();
 
-    this.handleMessage(client, request);
+    this.handleMessage(worker, request);
   }
 
-  handleRespond(_client: Client, _response: RespondIdentity) {
+  handleRespond(_worker: Worker, _response: RespondIdentity) {
     console.log(`${blue("[Ping]")} Ping update received`);
   }
 }

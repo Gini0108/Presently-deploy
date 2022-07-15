@@ -1,8 +1,8 @@
-import ClientEntity from "./entity/ClientEntity.ts";
+import WorkerEntity from "./entity/WorkerEntity.ts";
 
-export interface Client {
+export interface Worker {
   socket: WebSocket;
-  entity?: ClientEntity;
+  entity?: WorkerEntity;
   serial?: string;
   interval?: number;
 }

@@ -1,65 +1,65 @@
-import { Action, Client } from "./types.ts";
+import { Action, Worker } from "./types.ts";
 
 import PingManager from "./manager/PingManager.ts";
 import IdentityManager from "./manager/IdentityManager.ts";
-import ClientRepository from "./repository/ClientRepository.ts";
+import WorkerRepository from "./repository/WorkerRepository.ts";
 
 class Manager {
   pingManager: PingManager;
   identityManager: IdentityManager;
 
-  clients: Client[] = [];
-  repository: ClientRepository;
+  workers: Worker[] = [];
+  repository: WorkerRepository;
 
   constructor() {
-    this.repository = new ClientRepository("client");
+    this.repository = new WorkerRepository("worker");
 
     this.pingManager = new PingManager(this.repository);
     this.identityManager = new IdentityManager(this.repository);
   }
 
-  addClient(socket: WebSocket) {
-    const client = { socket };
+  addWorker(socket: WebSocket) {
+    const worker = { socket };
 
-    this.clients.push(client);
+    this.workers.push(worker);
 
     socket.onmessage = (event) => {
-      this.onMessage(client, event);
+      this.onMessage(worker, event);
     };
 
     socket.onclose = () => {
-      this.onClose(client);
+      this.onClose(worker);
     };
 
     socket.onopen = () => {
-      this.onOpen(client);
+      this.onOpen(worker);
     };
   }
 
-  async onMessage(client: Client, event: MessageEvent) {
+  async onMessage(worker: Worker, event: MessageEvent) {
     const data = event.data;
     const parse = JSON.parse(data);
     const action = parse.action;
 
     switch (action) {
       case Action.RespondIdentity: {
-        await this.identityManager.handleRespond(client, parse);
+        await this.identityManager.handleRespond(worker, parse);
         break;
       }
       case Action.RespondPing: {
-        await this.pingManager.handleRespond(client, parse);
+        await this.pingManager.handleRespond(worker, parse);
         break;
       }
     }
   }
 
-  async onClose(client: Client) {
-    const index = this.clients.indexOf(client);
+  async onClose(worker: Worker) {
+    const index = this.workers.indexOf(worker);
     const {
       socket,
       entity,
       interval,
-    } = client;
+    } = worker;
 
     // Remove every websocket callback to prevent errors and overhead
     socket.onopen = () => {};
@@ -69,31 +69,31 @@ class Manager {
     // Since we can't reach the machine anymore we'll stop pinging it
     clearTimeout(interval);
 
-    // Remove the client from the clients array
-    this.clients.splice(index, 1);
+    // Remove the worker from the workers array
+    this.workers.splice(index, 1);
 
-    // Set the client status to offline in the database
+    // Set the worker status to offline in the database
     if (entity) {
       entity.online.setValue(false);
       await this.repository.updateObject(entity);
     }
   }
 
-  async onOpen(client: Client) {
+  async onOpen(worker: Worker) {
     const {
       socket,
       entity,
-    } = client;
+    } = worker;
 
     // Request the identity once the WebSocket has been opened
-    this.identityManager.handleRequest(client);
+    this.identityManager.handleRequest(worker);
 
-    // We'll thing the client every 10 seconds to ensure the connection stays open
-    client.interval = setInterval(() => {
+    // We'll thing the worker every 10 seconds to ensure the connection stays open
+    worker.interval = setInterval(() => {
       this.pingManager.handleRequest({ socket });
     }, 10000);
 
-    // Set the client status to online in the database
+    // Set the worker status to online in the database
     if (entity) {
       entity.online.setValue(true);
       await this.repository.updateObject(entity);
