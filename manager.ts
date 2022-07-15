@@ -1,4 +1,4 @@
-import { Action, RequestOpen, Worker } from "./types.ts";
+import { Action, Worker } from "./types.ts";
 
 import OpenManager from "./manager/OpenManager.ts";
 import PingManager from "./manager/PingManager.ts";
