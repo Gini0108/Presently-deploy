@@ -26,10 +26,10 @@ export default class IdentityManager extends AbstractManager {
 
     entity.serial.setValue(serial);
 
-    // try {
-    worker.entity = await this.repository.addObject(entity);
-    // } catch {
-    // worker.entity = await this.repository.getObjectBySerial(serial);
-    // }
+    try {
+      worker.entity = await this.repository.addObject(entity);
+    } catch {
+      worker.entity = await this.repository.getObjectBySerial(serial);
+    }
   }
 }
