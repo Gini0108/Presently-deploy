@@ -1,7 +1,4 @@
-import {
-  Action,
-  Client,
-} from "./types.ts";
+import { Action, Client } from "./types.ts";
 
 import PingManager from "./manager/PingManager.ts";
 import IdentityManager from "./manager/IdentityManager.ts";
@@ -64,7 +61,7 @@ class Manager {
       interval,
     } = client;
 
-    // Remove every websocket callback to prevent errors and overhead 
+    // Remove every websocket callback to prevent errors and overhead
     socket.onopen = () => {};
     socket.onclose = () => {};
     socket.onmessage = () => {};
@@ -92,7 +89,9 @@ class Manager {
     this.identityManager.handleRequest(client);
 
     // We'll thing the client every 10 seconds to ensure the connection stays open
-    client.interval = setInterval(() => { this.pingManager.handleRequest({ socket }) }, 10000);
+    client.interval = setInterval(() => {
+      this.pingManager.handleRequest({ socket });
+    }, 10000);
 
     // Set the client status to online in the database
     if (entity) {

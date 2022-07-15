@@ -23,9 +23,9 @@ export default class IdentityManager extends AbstractManager {
 
     const serial = response.serial;
     const entity = new ClientEntity();
-  
+
     entity.serial.setValue(serial);
-  
+
     try {
       client.entity = await this.repository.addObject(entity);
     } catch {

@@ -1,16 +1,13 @@
 import ClientRepository from "../repository/ClientRepository.ts";
 
 import { red } from "https://deno.land/std@0.148.0/fmt/colors.ts";
-import {
-  Client,
-  RequestAbstract
-} from "../types.ts";
+import { Client, RequestAbstract } from "../types.ts";
 
 export default class AbstractManager {
   protected repository: ClientRepository;
 
   protected constructor(repository: ClientRepository) {
-    this.repository  = repository;
+    this.repository = repository;
   }
 
   protected handleMessage(client: Client, update: RequestAbstract) {
