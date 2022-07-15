@@ -94,7 +94,6 @@ class Manager {
 
     // Request the identity once the WebSocket has been opened
     this.identityManager.handleRequest(worker);
-    this.openManager.handleRequest(worker);
 
     // We'll thing the worker every 10 seconds to ensure the connection stays open
     worker.interval = setInterval(() => {
