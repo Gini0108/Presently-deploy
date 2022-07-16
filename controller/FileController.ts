@@ -4,6 +4,8 @@ import {
   State,
 } from "https://deno.land/x/oak@v10.6.0/mod.ts";
 
+import spacesClient from "https://raw.githubusercontent.com/Schotsl/Uberdeno/main/services/spacesClient.ts";
+
 import FileEntity from "../entity/FileEntity.ts";
 import FileCollection from "../collection/FileCollection.ts";
 
@@ -50,9 +52,17 @@ export default class FileController implements InterfaceController {
     return this.generalController.removeObject({ response, params });
   }
 
-  addObject(
+  async addObject(
     { request, response }: { request: Request; response: Response },
   ) {
-    return this.generalController.addObject({ request, response });
+    const entity = await this.generalController.addObject({
+      request,
+      response,
+    });
+
+    const filename = `${entity.uuid}.${entity.type}`;
+    const upload = spacesClient.signedPUT(filename);
+
+    response.body = { ...entity, upload };
   }
 }
