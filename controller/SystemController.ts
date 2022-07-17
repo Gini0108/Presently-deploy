@@ -1,7 +1,8 @@
-import { Request, Response } from "https://deno.land/x/oak@v10.6.0/mod.ts";
 import manager from "../manager.ts";
-import spacesClient from "https://raw.githubusercontent.com/Schotsl/Uberdeno/main/services/spacesClient.ts";
+
 import { MissingImplementation } from "https://raw.githubusercontent.com/Schotsl/Uberdeno/main/errors.ts";
+import { Request, Response } from "https://deno.land/x/oak@v10.6.0/mod.ts";
+
 import InterfaceController from "https://raw.githubusercontent.com/Schotsl/Uberdeno/main/controller/InterfaceController.ts";
 
 export default class SystemController implements InterfaceController {
