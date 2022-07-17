@@ -3,6 +3,7 @@ import { Action, Worker } from "./types.ts";
 import OpenManager from "./manager/OpenManager.ts";
 import PingManager from "./manager/PingManager.ts";
 import StateManager from "./manager/StateManager.ts";
+import IntervalManager from "./manager/IntervalManager.ts";
 import IdentityManager from "./manager/IdentityManager.ts";
 
 import WorkerRepository from "./repository/WorkerRepository.ts";
@@ -11,6 +12,7 @@ class Manager {
   openManager: OpenManager;
   pingManager: PingManager;
   stateManager: StateManager;
+  intervalManager: IntervalManager;
   identityManager: IdentityManager;
 
   workers: Worker[] = [];
@@ -22,6 +24,7 @@ class Manager {
     this.openManager = new OpenManager(this.repository);
     this.pingManager = new PingManager(this.repository);
     this.stateManager = new StateManager(this.repository);
+    this.intervalManager = new IntervalManager(this.repository);
     this.identityManager = new IdentityManager(this.repository);
   }
 
@@ -34,6 +37,12 @@ class Manager {
   systemState(playing: boolean) {
     this.workers.forEach((worker) => {
       this.stateManager.handleRequest(worker, playing);
+    });
+  }
+
+  systemInterval(interval: number) {
+    this.workers.forEach((worker) => {
+      this.intervalManager.handleRequest(worker, interval);
     });
   }
 

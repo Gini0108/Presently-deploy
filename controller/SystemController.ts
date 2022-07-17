@@ -27,6 +27,7 @@ export default class SystemController implements InterfaceController {
     const {
       file,
       playing,
+      interval,
     } = value;
 
     if (file) {
@@ -35,6 +36,10 @@ export default class SystemController implements InterfaceController {
 
     if (playing) {
       manager.systemState(playing);
+    }
+
+    if (interval) {
+      manager.systemInterval(interval);
     }
 
     response.body = value;

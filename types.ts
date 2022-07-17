@@ -16,6 +16,8 @@ export enum Action {
   RespondOpen = 5,
   RequestState = 6,
   RespondState = 7,
+  RequestInterval = 7,
+  RespondInterval = 8,
 }
 
 export class RequestAbstract {
@@ -91,5 +93,23 @@ export class RequestState extends RequestAbstract {
 export class RespondState extends RespondAbstract {
   constructor() {
     super(Action.RespondState);
+  }
+}
+
+export class RequestInterval extends RequestAbstract {
+  interval: number;
+  starting: number;
+
+  constructor(interval: number) {
+    super(Action.RequestInterval);
+
+    this.interval = interval;
+    this.starting = Date.now();
+  }
+}
+
+export class RespondInterval extends RespondAbstract {
+  constructor() {
+    super(Action.RespondInterval);
   }
 }
