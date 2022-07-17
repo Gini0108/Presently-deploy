@@ -6,6 +6,7 @@ import {
   postHandler,
 } from "https://raw.githubusercontent.com/Schotsl/Uberdeno/main/middleware.ts";
 
+import systemRouter from "./router/systemRouter.ts";
 import socketRouter from "./router/socketRouter.ts";
 import fileRouter from "./router/fileRouter.ts";
 
@@ -18,9 +19,11 @@ application.use(limitHandler);
 application.use(postHandler);
 
 application.use(fileRouter.routes());
+application.use(systemRouter.routes());
 application.use(socketRouter.routes());
 
 application.use(fileRouter.allowedMethods());
+application.use(systemRouter.allowedMethods());
 application.use(socketRouter.allowedMethods());
 
 application.listen({ port: 8080 });

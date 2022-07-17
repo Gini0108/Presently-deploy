@@ -63,14 +63,12 @@ export class RespondPing extends RespondAbstract {
 }
 
 export class RequestOpen extends RequestAbstract {
-  filename: string;
-  location: string;
+  file: string;
 
-  constructor(filename: string, location: string) {
+  constructor(file: string) {
     super(Action.RequestOpen);
 
-    this.filename = filename;
-    this.location = location;
+    this.file = file;
   }
 }
 

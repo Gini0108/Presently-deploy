@@ -24,6 +24,18 @@ class Manager {
     this.identityManager = new IdentityManager(this.repository);
   }
 
+  systemOpen(file: string) {
+    this.workers.forEach((worker) => {
+      this.openManager.handleRequest(worker, file);
+    });
+  }
+
+  systemGoto(index: number) {
+    this.workers.forEach((worker) => {
+      this.gotoManager.handleRequest(worker, index);
+    });
+  }
+
   addWorker(socket: WebSocket) {
     const worker = { socket };
 

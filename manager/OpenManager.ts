@@ -9,10 +9,10 @@ export default class OpenManager extends AbstractManager {
     super(repository);
   }
 
-  handleRequest(worker: Worker, filename: string, location: string) {
+  handleRequest(worker: Worker, file: string) {
     console.log(`${yellow("[Open]")} Open update requested`);
 
-    const request = new RequestOpen(filename, location);
+    const request = new RequestOpen(file);
 
     this.handleMessage(worker, request);
   }

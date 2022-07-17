@@ -34,13 +34,19 @@ export default class FileController implements InterfaceController {
     return this.generalController.getCollection({ response, state });
   }
 
-  getObject(
+  async getObject(
     { response, params }: {
       response: Response;
       params: { uuid: string };
     },
   ) {
-    return this.generalController.getObject({ response, params });
+    console.log("ASDF");
+    const entity = await this.generalController.getObject({ response, params }) as FileEntity;
+
+    const filename = `${entity.uuid}.${entity.type}`;
+    const download = spacesClient.signedGET(filename);
+    console.log(download);
+    response.body = { ...entity, download };
   }
 
   removeObject(
@@ -49,6 +55,8 @@ export default class FileController implements InterfaceController {
       params: { uuid: string };
     },
   ) {
+    // TODO: Remove file from S3 storage
+
     return this.generalController.removeObject({ response, params });
   }
 
