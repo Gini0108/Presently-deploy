@@ -25,7 +25,7 @@ export default class SystemController implements InterfaceController {
 
     const {
       file,
-      goto
+      goto,
     } = value;
 
     if (file) {

@@ -41,11 +41,14 @@ export default class FileController implements InterfaceController {
     },
   ) {
     console.log("ASDF");
-    const entity = await this.generalController.getObject({ response, params }) as FileEntity;
+    const entity = await this.generalController.getObject({
+      response,
+      params,
+    });
 
     const filename = `${entity.uuid}.${entity.type}`;
     const download = spacesClient.signedGET(filename);
-    console.log(download);
+
     response.body = { ...entity, download };
   }
 
