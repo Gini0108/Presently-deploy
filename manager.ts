@@ -2,14 +2,12 @@ import { Action, Worker } from "./types.ts";
 
 import OpenManager from "./manager/OpenManager.ts";
 import PingManager from "./manager/PingManager.ts";
-import GotoManager from "./manager/GotoManager.ts";
 import IdentityManager from "./manager/IdentityManager.ts";
 import WorkerRepository from "./repository/WorkerRepository.ts";
 
 class Manager {
   openManager: OpenManager;
   pingManager: PingManager;
-  gotoManager: GotoManager;
   identityManager: IdentityManager;
 
   workers: Worker[] = [];
@@ -20,19 +18,12 @@ class Manager {
 
     this.openManager = new OpenManager(this.repository);
     this.pingManager = new PingManager(this.repository);
-    this.gotoManager = new GotoManager(this.repository);
     this.identityManager = new IdentityManager(this.repository);
   }
 
   systemOpen(file: string) {
     this.workers.forEach((worker) => {
       this.openManager.handleRequest(worker, file);
-    });
-  }
-
-  systemGoto(index: number) {
-    this.workers.forEach((worker) => {
-      this.gotoManager.handleRequest(worker, index);
     });
   }
 
@@ -70,10 +61,6 @@ class Manager {
       }
       case Action.RespondOpen: {
         await this.openManager.handleRespond(worker, parse);
-        break;
-      }
-      case Action.RespondGoto: {
-        await this.gotoManager.handleRespond(worker, parse);
         break;
       }
     }

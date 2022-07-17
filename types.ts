@@ -14,8 +14,6 @@ export enum Action {
   RespondPing = 3,
   RequestOpen = 4,
   RespondOpen = 5,
-  RequestGoto = 6,
-  RespondGoto = 7,
 }
 
 export class RequestAbstract {
@@ -75,21 +73,5 @@ export class RequestOpen extends RequestAbstract {
 export class RespondOpen extends RespondAbstract {
   constructor() {
     super(Action.RespondOpen);
-  }
-}
-
-export class RequestGoto extends RequestAbstract {
-  index: number;
-
-  constructor(index: number) {
-    super(Action.RequestGoto);
-
-    this.index = index;
-  }
-}
-
-export class RespondGoto extends RespondAbstract {
-  constructor() {
-    super(Action.RespondGoto);
   }
 }

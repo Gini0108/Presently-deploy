@@ -25,15 +25,10 @@ export default class SystemController implements InterfaceController {
 
     const {
       file,
-      goto,
     } = value;
 
     if (file) {
       manager.systemOpen(file);
-    }
-
-    if (goto) {
-      manager.systemGoto(goto);
     }
 
     response.body = value;
