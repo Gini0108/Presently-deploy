@@ -14,6 +14,8 @@ export enum Action {
   RespondPing = 3,
   RequestOpen = 4,
   RespondOpen = 5,
+  RequestState = 6,
+  RespondState = 7,
 }
 
 export class RequestAbstract {
@@ -73,5 +75,21 @@ export class RequestOpen extends RequestAbstract {
 export class RespondOpen extends RespondAbstract {
   constructor() {
     super(Action.RespondOpen);
+  }
+}
+
+export class RequestState extends RequestAbstract {
+  playing: boolean;
+
+  constructor(playing: boolean) {
+    super(Action.RequestState);
+
+    this.playing = playing;
+  }
+}
+
+export class RespondState extends RespondAbstract {
+  constructor() {
+    super(Action.RespondState);
   }
 }

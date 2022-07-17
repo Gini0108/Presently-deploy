@@ -2,12 +2,15 @@ import { Action, Worker } from "./types.ts";
 
 import OpenManager from "./manager/OpenManager.ts";
 import PingManager from "./manager/PingManager.ts";
+import StateManager from "./manager/StateManager.ts";
 import IdentityManager from "./manager/IdentityManager.ts";
+
 import WorkerRepository from "./repository/WorkerRepository.ts";
 
 class Manager {
   openManager: OpenManager;
   pingManager: PingManager;
+  stateManager: StateManager;
   identityManager: IdentityManager;
 
   workers: Worker[] = [];
@@ -18,12 +21,19 @@ class Manager {
 
     this.openManager = new OpenManager(this.repository);
     this.pingManager = new PingManager(this.repository);
+    this.stateManager = new StateManager(this.repository);
     this.identityManager = new IdentityManager(this.repository);
   }
 
   systemOpen(file: string) {
     this.workers.forEach((worker) => {
       this.openManager.handleRequest(worker, file);
+    });
+  }
+
+  systemState(playing: boolean) {
+    this.workers.forEach((worker) => {
+      this.stateManager.handleRequest(worker, playing);
     });
   }
 
@@ -61,6 +71,10 @@ class Manager {
       }
       case Action.RespondOpen: {
         await this.openManager.handleRespond(worker, parse);
+        break;
+      }
+      case Action.RespondState: {
+        await this.stateManager.handleRespond(worker, parse);
         break;
       }
     }

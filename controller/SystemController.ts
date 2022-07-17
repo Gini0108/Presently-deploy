@@ -26,10 +26,15 @@ export default class SystemController implements InterfaceController {
 
     const {
       file,
+      playing,
     } = value;
 
     if (file) {
       manager.systemOpen(file);
+    }
+
+    if (playing) {
+      manager.systemState(playing);
     }
 
     response.body = value;
