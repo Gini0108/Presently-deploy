@@ -1,3 +1,4 @@
+import { MissingImplementation } from "https://raw.githubusercontent.com/Schotsl/Uberdeno/main/errors.ts";
 import {
   Request,
   Response,
@@ -5,7 +6,6 @@ import {
 } from "https://deno.land/x/oak@v10.6.0/mod.ts";
 
 import spacesClient from "https://raw.githubusercontent.com/Schotsl/Uberdeno/main/services/spacesClient.ts";
-
 import FileEntity from "../entity/FileEntity.ts";
 import FileCollection from "../collection/FileCollection.ts";
 
@@ -34,13 +34,16 @@ export default class FileController implements InterfaceController {
     return this.generalController.getCollection({ response, state });
   }
 
+  updateObject(){
+    throw new MissingImplementation();
+  }
+
   async getObject(
     { response, params }: {
       response: Response;
       params: { uuid: string };
     },
   ) {
-    console.log("ASDF");
     const entity = await this.generalController.getObject({
       response,
       params,
