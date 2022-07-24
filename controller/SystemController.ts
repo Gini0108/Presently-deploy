@@ -14,7 +14,7 @@ export default class SystemController implements InterfaceController {
     throw new MissingImplementation();
   }
 
-  updateObject(){
+  updateObject() {
     throw new MissingImplementation();
   }
 

@@ -34,7 +34,7 @@ export default class FileController implements InterfaceController {
     return this.generalController.getCollection({ response, state });
   }
 
-  updateObject(){
+  updateObject() {
     throw new MissingImplementation();
   }
 
