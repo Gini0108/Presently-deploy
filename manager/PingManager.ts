@@ -1,5 +1,5 @@
 import { RequestPing, RespondIdentity, Worker } from "../types.ts";
-import { blue } from "https://deno.land/std@0.151.0/fmt/colors.ts";
+import { blue } from "https://deno.land/std@0.152.0/fmt/colors.ts";
 
 import WorkerRepository from "../repository/WorkerRepository.ts";
 import AbstractManager from "./AbstractManager.ts";
