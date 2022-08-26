@@ -3,7 +3,7 @@ import {
   Request,
   Response,
   State,
-} from "https://deno.land/x/oak@v11.0.0/mod.ts";
+} from "https://deno.land/x/oak@v11.1.0/mod.ts";
 
 import spacesClient from "https://raw.githubusercontent.com/Schotsl/Uberdeno/main/services/spacesClient.ts";
 import FileEntity from "../entity/FileEntity.ts";

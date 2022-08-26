@@ -1,6 +1,6 @@
 import manager from "../manager.ts";
 
-import { Request, Response } from "https://deno.land/x/oak@v11.0.0/mod.ts";
+import { Request, Response } from "https://deno.land/x/oak@v11.1.0/mod.ts";
 import { MissingImplementation } from "https://raw.githubusercontent.com/Schotsl/Uberdeno/main/errors.ts";
 
 import InterfaceController from "https://raw.githubusercontent.com/Schotsl/Uberdeno/main/controller/InterfaceController.ts";
