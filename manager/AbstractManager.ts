@@ -1,6 +1,6 @@
 import WorkerRepository from "../repository/WorkerRepository.ts";
 
-import { red } from "https://deno.land/std@0.156.0/fmt/colors.ts";
+import { red } from "https://deno.land/std@0.157.0/fmt/colors.ts";
 import { RequestAbstract, Worker } from "../types.ts";
 
 export default class AbstractManager {
