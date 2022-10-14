@@ -55,14 +55,25 @@ export default class FileController implements InterfaceController {
     response.body = { ...entity, download };
   }
 
-  removeObject(
+  async removeObject(
     { response, params }: {
       response: Response;
       params: { uuid: string };
     },
   ) {
-    // TODO: Remove file from S3 storage
+    const entity = await this.generalController.getObject({
+      response,
+      params,
+    });
 
+    // Remove the file from S3 storage
+    const filename = `${entity.uuid}.${entity.type}`;
+    const foldername = `${entity.uuid}`;
+    
+    await spacesClient.deleteFile(filename);
+    await spacesClient.deleteFile(foldername);
+
+    // Remove the file from the database
     return this.generalController.removeObject({ response, params });
   }
 
