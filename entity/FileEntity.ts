@@ -9,7 +9,7 @@ import {
 export default class FileEntity extends BaseEntity {
   public size = new IntColumn("size");
   public name = new VarcharColumn("name");
-  
-  public status = new VarcharColumn("status", false, "uploading")
+
+  public status = new VarcharColumn("status", false, "uploading");
   public reference = new UUIDColumn("process", false);
 }

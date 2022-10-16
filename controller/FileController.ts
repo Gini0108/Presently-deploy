@@ -5,8 +5,8 @@ import {
   State,
 } from "https://deno.land/x/oak@v11.1.0/mod.ts";
 
-import spacesClient from "https://raw.githubusercontent.com/Schotsl/Uberdeno/main/services/spacesClient.ts"
-import convertClient from "https://raw.githubusercontent.com/Schotsl/Uberdeno/main/services/convertClient.ts"
+import spacesClient from "https://raw.githubusercontent.com/Schotsl/Uberdeno/main/services/spacesClient.ts";
+import convertClient from "https://raw.githubusercontent.com/Schotsl/Uberdeno/main/services/convertClient.ts";
 
 import FileEntity from "../entity/FileEntity.ts";
 import FileCollection from "../collection/FileCollection.ts";
@@ -61,13 +61,17 @@ export default class FileController implements InterfaceController {
     // const fileName = `${fileUuid}.pptx`;
     // const fileSigned = spacesClient.signedGET(fileName);
 
-    const fileEntity = await this.generalRepository.getObject(fileUuid) as FileEntity;
+    const fileEntity = await this.generalRepository.getObject(
+      fileUuid,
+    ) as FileEntity;
     const fileStatus = fileEntity.status.getValue();
     const fileReference = fileEntity.reference.getValue();
 
     if (fileReference && fileStatus !== "finished" && fileStatus !== "error") {
-      const convertStatus = await convertClient.convertPPTXStatus(fileReference);
-      
+      const convertStatus = await convertClient.convertPPTXStatus(
+        fileReference,
+      );
+
       fileEntity.status.setValue(convertStatus);
 
       this.generalRepository.updateObject(fileEntity);
@@ -83,7 +87,9 @@ export default class FileController implements InterfaceController {
     },
   ) {
     const fileUuid = params.uuid;
-    const fileEntity = await this.generalRepository.getObject(fileUuid) as FileEntity;
+    const fileEntity = await this.generalRepository.getObject(
+      fileUuid,
+    ) as FileEntity;
 
     const fileName = `${fileEntity.uuid.getValue()}.pptx`;
     const fileStatus = fileEntity.status.getValue();
@@ -91,7 +97,7 @@ export default class FileController implements InterfaceController {
     if (fileStatus === "uploading") {
       const convertUuid = await convertClient.convertPPTX(fileName);
       const convertStatus = await convertClient.convertPPTXStatus(convertUuid);
-      
+
       fileEntity.status.setValue(convertStatus);
       fileEntity.reference.setValue(convertUuid);
 
@@ -115,7 +121,7 @@ export default class FileController implements InterfaceController {
     // Remove the file from S3 storage
     const filename = `${entity.uuid}.pptx`;
     const foldername = `${entity.uuid}`;
-    
+
     await spacesClient.deleteFile(filename);
     await spacesClient.deleteFile(foldername);
 
