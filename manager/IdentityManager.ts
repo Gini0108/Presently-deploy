@@ -25,6 +25,7 @@ export default class IdentityManager extends AbstractManager {
     const entity = new WorkerEntity();
 
     entity.uuid.setValue(uuid);
+    entity.online.setValue(true);
 
     try {
       worker.entity = await this.repository.addObject(entity) as WorkerEntity;

@@ -22,7 +22,7 @@ class Manager {
   repository: GeneralRepository;
 
   constructor() {
-    this.repository = new GeneralRepository(WorkerEntity, WorkerCollection, "worker");
+    this.repository = new GeneralRepository("worker", WorkerEntity, WorkerCollection);
 
     this.openManager = new OpenManager(this.repository);
     this.pingManager = new PingManager(this.repository);
@@ -118,11 +118,8 @@ class Manager {
     }
   }
 
-  async onOpen(worker: Worker) {
-    const {
-      socket,
-      entity,
-    } = worker;
+  onOpen(worker: Worker) {
+    const { socket } = worker;
 
     // Request the identity once the WebSocket has been opened
     this.identityManager.handleRequest(worker);
@@ -131,12 +128,6 @@ class Manager {
     worker.interval = setInterval(() => {
       this.pingManager.handleRequest({ socket });
     }, 10000);
-
-    // Set the worker status to online in the database
-    if (entity) {
-      entity.online.setValue(true);
-      await this.repository.updateObject(entity);
-    }
   }
 }
 
