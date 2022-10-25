@@ -1,12 +1,15 @@
 import { Action, Worker } from "./types.ts";
 
+import WorkerEntity from "./entity/WorkerEntity.ts";
+import WorkerCollection from "./collection/WorkerCollection.ts";
+
 import OpenManager from "./manager/OpenManager.ts";
 import PingManager from "./manager/PingManager.ts";
 import StateManager from "./manager/StateManager.ts";
 import IntervalManager from "./manager/IntervalManager.ts";
 import IdentityManager from "./manager/IdentityManager.ts";
 
-import WorkerRepository from "./repository/WorkerRepository.ts";
+import GeneralRepository from "https://raw.githubusercontent.com/Schotsl/Uberdeno/main/repository/GeneralRepository.ts";
 
 class Manager {
   openManager: OpenManager;
@@ -16,10 +19,10 @@ class Manager {
   identityManager: IdentityManager;
 
   workers: Worker[] = [];
-  repository: WorkerRepository;
+  repository: GeneralRepository;
 
   constructor() {
-    this.repository = new WorkerRepository("worker");
+    this.repository = new GeneralRepository(WorkerEntity, WorkerCollection, "worker");
 
     this.openManager = new OpenManager(this.repository);
     this.pingManager = new PingManager(this.repository);

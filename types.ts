@@ -8,16 +8,20 @@ export interface Worker {
 }
 
 export enum Action {
-  RequestIdentity = 0,
-  RespondIdentity = 1,
-  RequestPing = 2,
-  RespondPing = 3,
-  RequestOpen = 4,
-  RespondOpen = 5,
-  RequestState = 6,
-  RespondState = 7,
-  RequestInterval = 7,
-  RespondInterval = 8,
+  RequestVerification = 0,
+  RespondVerification = 1,
+  RequestIdentity = 2,
+  RespondIdentity = 3,
+  RequestStatus = 4,
+  RespondStatus = 5,
+  RequestPing = 6,
+  RespondPing = 7,
+  RequestOpen = 8,
+  RespondOpen = 9,
+  RequestState = 10,
+  RespondState = 11,
+  RequestInterval = 12,
+  RespondInterval = 13,
 }
 
 export class RequestAbstract {
@@ -43,12 +47,12 @@ export class RequestIdentity extends RequestAbstract {
 }
 
 export class RespondIdentity extends RespondAbstract {
-  serial: string;
+  uuid: string;
 
-  constructor(serial: string) {
+  constructor(uuid: string) {
     super(Action.RespondIdentity);
 
-    this.serial = serial;
+    this.uuid = uuid;
   }
 }
 

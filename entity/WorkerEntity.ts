@@ -5,7 +5,7 @@ import {
 } from "https://raw.githubusercontent.com/Schotsl/Uberdeno/main/other/Columns.ts";
 
 export default class WorkerEntity extends BaseEntity {
+  public doing = new VarcharColumn("doing", false);
   public title = new VarcharColumn("title", false);
-  public serial = new VarcharColumn("serial");
   public online = new BooleanColumn("online", false, false);
 }

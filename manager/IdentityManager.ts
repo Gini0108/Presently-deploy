@@ -2,11 +2,11 @@ import { RequestIdentity, RespondIdentity, Worker } from "../types.ts";
 import { magenta } from "https://deno.land/std@0.159.0/fmt/colors.ts";
 
 import WorkerEntity from "../entity/WorkerEntity.ts";
-import WorkerRepository from "../repository/WorkerRepository.ts";
+import GeneralRepository from "https://raw.githubusercontent.com/Schotsl/Uberdeno/main/repository/GeneralRepository.ts";
 import AbstractManager from "./AbstractManager.ts";
 
 export default class IdentityManager extends AbstractManager {
-  constructor(repository: WorkerRepository) {
+  constructor(repository: GeneralRepository) {
     super(repository);
   }
 
@@ -21,15 +21,15 @@ export default class IdentityManager extends AbstractManager {
   async handleRespond(worker: Worker, response: RespondIdentity) {
     console.log(`${magenta("[Identity]")} Identity update received`);
 
-    const serial = response.serial;
+    const uuid = response.uuid;
     const entity = new WorkerEntity();
 
-    entity.serial.setValue(serial);
+    entity.uuid.setValue(uuid);
 
     try {
-      worker.entity = await this.repository.addObject(entity);
+      worker.entity = await this.repository.addObject(entity) as WorkerEntity;
     } catch {
-      worker.entity = await this.repository.getObjectBySerial(serial);
+      worker.entity = await this.repository.getObject(uuid) as WorkerEntity;
     }
   }
 }

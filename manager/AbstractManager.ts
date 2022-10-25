@@ -1,12 +1,12 @@
-import WorkerRepository from "../repository/WorkerRepository.ts";
+import GeneralRepository from "https://raw.githubusercontent.com/Schotsl/Uberdeno/main/repository/GeneralRepository.ts";
 
 import { red } from "https://deno.land/std@0.159.0/fmt/colors.ts";
 import { RequestAbstract, Worker } from "../types.ts";
 
 export default class AbstractManager {
-  protected repository: WorkerRepository;
+  protected repository: GeneralRepository;
 
-  protected constructor(repository: WorkerRepository) {
+  protected constructor(repository: GeneralRepository) {
     this.repository = repository;
   }
 

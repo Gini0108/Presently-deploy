@@ -2,10 +2,10 @@ import { RequestOpen, RespondOpen, Worker } from "../types.ts";
 import { yellow } from "https://deno.land/std@0.159.0/fmt/colors.ts";
 
 import AbstractManager from "./AbstractManager.ts";
-import WorkerRepository from "../repository/WorkerRepository.ts";
+import GeneralRepository from "https://raw.githubusercontent.com/Schotsl/Uberdeno/main/repository/GeneralRepository.ts";
 
 export default class OpenManager extends AbstractManager {
-  constructor(repository: WorkerRepository) {
+  constructor(repository: GeneralRepository) {
     super(repository);
   }
 

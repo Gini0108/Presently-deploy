@@ -1,11 +1,11 @@
 import { RequestPing, RespondIdentity, Worker } from "../types.ts";
 import { blue } from "https://deno.land/std@0.159.0/fmt/colors.ts";
 
-import WorkerRepository from "../repository/WorkerRepository.ts";
 import AbstractManager from "./AbstractManager.ts";
+import GeneralRepository from "https://raw.githubusercontent.com/Schotsl/Uberdeno/main/repository/GeneralRepository.ts";
 
 export default class PingManager extends AbstractManager {
-  constructor(repository: WorkerRepository) {
+  constructor(repository: GeneralRepository) {
     super(repository);
   }
 
