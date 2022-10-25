@@ -34,15 +34,15 @@ export default class SystemController implements InterfaceController {
       interval,
     } = value;
 
-    if (file) {
+    if (typeof file !== "undefined") {
       manager.systemOpen(file);
     }
 
-    if (playing) {
+    if (typeof playing !== "undefined") {
       manager.systemState(playing);
     }
 
-    if (interval) {
+    if (typeof interval !== "undefined") {
       manager.systemInterval(interval);
     }
 
