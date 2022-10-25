@@ -1,5 +1,5 @@
 import { RequestInterval, RespondInterval, Worker } from "../types.ts";
-import { gray } from "https://deno.land/std@0.159.0/fmt/colors.ts";
+import { gray } from "https://deno.land/std@0.160.0/fmt/colors.ts";
 
 import AbstractManager from "./AbstractManager.ts";
 import GeneralRepository from "https://raw.githubusercontent.com/Schotsl/Uberdeno/main/repository/GeneralRepository.ts";
