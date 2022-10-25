@@ -35,9 +35,9 @@ class Manager {
     this.identityManager = new IdentityManager(this.repository);
   }
 
-  systemOpen(file: string) {
+  systemOpen(uuid: string) {
     this.workers.forEach((worker) => {
-      this.openManager.handleRequest(worker, file);
+      this.openManager.handleRequest(worker, uuid);
     });
   }
 

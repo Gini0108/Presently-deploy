@@ -91,11 +91,10 @@ export default class FileController implements InterfaceController {
       fileUuid,
     ) as FileEntity;
 
-    const fileName = `${fileEntity.uuid.getValue()}.pptx`;
     const fileStatus = fileEntity.status.getValue();
 
     if (fileStatus === "uploading") {
-      const convertUuid = await convertClient.convertPPTX(fileName);
+      const convertUuid = await convertClient.convertPPTX(fileUuid);
       const convertStatus = await convertClient.convertPPTXStatus(convertUuid);
 
       fileEntity.status.setValue(convertStatus);
