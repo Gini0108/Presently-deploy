@@ -17,7 +17,7 @@ export default class AbstractManager {
     if (socket.readyState === WebSocket.OPEN) {
       socket.send(body);
     } else {
-      console.log(`${red("[Abstract]")} Abstract update not ready`);
+      console.log(`${red("[Abstract]")} Couldn't send the message to worker`);
     }
   }
 }

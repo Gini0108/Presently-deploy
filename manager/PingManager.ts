@@ -10,7 +10,7 @@ export default class PingManager extends AbstractManager {
   }
 
   handleRequest(worker: Worker) {
-    console.log(`${blue("[Ping]")} Ping update requested`);
+    console.log(`${blue("[Ping]")} An ping update has been requested by the server`);
 
     const request = new RequestPing();
 
@@ -18,6 +18,6 @@ export default class PingManager extends AbstractManager {
   }
 
   handleRespond(_worker: Worker, _response: RespondIdentity) {
-    console.log(`${blue("[Ping]")} Ping update received`);
+    console.log(`${blue("[Ping]")} An ping update has been received by the server`);
   }
 }
