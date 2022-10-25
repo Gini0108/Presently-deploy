@@ -1,6 +1,7 @@
 import { RequestOpen, RespondOpen, Worker } from "../types.ts";
 import { yellow } from "https://deno.land/std@0.160.0/fmt/colors.ts";
 
+import spacesClient from "../../Uberdeno/services/spacesClient.ts";
 import AbstractManager from "./AbstractManager.ts";
 import GeneralRepository from "https://raw.githubusercontent.com/Schotsl/Uberdeno/main/repository/GeneralRepository.ts";
 
@@ -9,12 +10,18 @@ export default class OpenManager extends AbstractManager {
     super(repository);
   }
 
-  handleRequest(worker: Worker, file: string) {
+  async handleRequest(worker: Worker, uuid: string) {
     console.log(
       `${yellow("[Open]")} An open update has been requested by the server`,
     );
 
-    const request = new RequestOpen(file);
+    const spacesResponse = await spacesClient.listFiles(`${uuid}/`);
+    const spacesContent = spacesResponse?.contents; 
+    const spacesSigned = spacesContent?.map((spacesItem) => {
+      return spacesClient.signedGET(spacesItem.key!);
+    })    
+
+    const request = new RequestOpen(uuid, spacesSigned);
 
     this.handleMessage(worker, request);
   }

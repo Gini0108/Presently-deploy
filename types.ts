@@ -70,11 +70,13 @@ export class RespondPing extends RespondAbstract {
 
 export class RequestOpen extends RequestAbstract {
   file: string;
+  signed: string[];
 
-  constructor(file: string) {
+  constructor(file: string, signed: string[]) {
     super(Action.RequestOpen);
 
     this.file = file;
+    this.signed = signed;
   }
 }
 
