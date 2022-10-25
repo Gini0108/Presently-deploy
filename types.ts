@@ -1,5 +1,12 @@
 import WorkerEntity from "./entity/WorkerEntity.ts";
 
+export interface Slide {
+  key: string,
+  size: number,
+  updated: string,
+  download: string,
+}
+
 export interface Worker {
   socket: WebSocket;
   entity?: WorkerEntity;
@@ -69,14 +76,14 @@ export class RespondPing extends RespondAbstract {
 }
 
 export class RequestOpen extends RequestAbstract {
-  file: string;
-  signed: string[];
+  uuid: string;
+  slides: any[];
 
-  constructor(file: string, signed: string[]) {
+  constructor(uuid: string, slides: any[]) {
     super(Action.RequestOpen);
 
-    this.file = file;
-    this.signed = signed;
+    this.uuid = uuid;
+    this.slides = slides;
   }
 }
 
