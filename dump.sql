@@ -2,7 +2,6 @@ CREATE TABLE worker (
 	uuid BINARY(16) NOT NULL,
 
 	title VARCHAR(255),
-	serial VARCHAR(255) NOT NULL,
 	online TINYINT(1) NOT NULL DEFAULT 0,
 
 	created timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
