@@ -11,7 +11,11 @@ export default class IdentityManager extends AbstractManager {
   }
 
   handleRequest(worker: Worker) {
-    console.log(`${magenta("[Identity]")} An identity update has been requested by the server`);
+    console.log(
+      `${
+        magenta("[Identity]")
+      } An identity update has been requested by the server`,
+    );
 
     const request = new RequestIdentity();
 
@@ -19,7 +23,11 @@ export default class IdentityManager extends AbstractManager {
   }
 
   async handleRespond(worker: Worker, response: RespondIdentity) {
-    console.log(`${magenta("[Identity]")} An identity update has been received by the server`);
+    console.log(
+      `${
+        magenta("[Identity]")
+      } An identity update has been received by the server`,
+    );
 
     const uuid = response.uuid;
     const entity = new WorkerEntity();

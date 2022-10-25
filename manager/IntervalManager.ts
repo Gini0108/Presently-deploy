@@ -10,7 +10,11 @@ export default class IntervalManager extends AbstractManager {
   }
 
   handleRequest(worker: Worker, interval: number) {
-    console.log(`${gray("[Interval]")} An interval update has been requested by the server`);
+    console.log(
+      `${
+        gray("[Interval]")
+      } An interval update has been requested by the server`,
+    );
 
     const request = new RequestInterval(interval);
 
@@ -18,6 +22,10 @@ export default class IntervalManager extends AbstractManager {
   }
 
   handleRespond(_worker: Worker, _response: RespondInterval) {
-    console.log(`${gray("[Interval]")} An interval update has been received by the server`);
+    console.log(
+      `${
+        gray("[Interval]")
+      } An interval update has been received by the server`,
+    );
   }
 }

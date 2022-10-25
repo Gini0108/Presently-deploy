@@ -22,7 +22,11 @@ class Manager {
   repository: GeneralRepository;
 
   constructor() {
-    this.repository = new GeneralRepository("worker", WorkerEntity, WorkerCollection);
+    this.repository = new GeneralRepository(
+      "worker",
+      WorkerEntity,
+      WorkerCollection,
+    );
 
     this.openManager = new OpenManager(this.repository);
     this.pingManager = new PingManager(this.repository);

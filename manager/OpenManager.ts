@@ -10,7 +10,9 @@ export default class OpenManager extends AbstractManager {
   }
 
   handleRequest(worker: Worker, file: string) {
-    console.log(`${yellow("[Open]")} An open update has been requested by the server`);
+    console.log(
+      `${yellow("[Open]")} An open update has been requested by the server`,
+    );
 
     const request = new RequestOpen(file);
 
@@ -18,6 +20,8 @@ export default class OpenManager extends AbstractManager {
   }
 
   handleRespond(_worker: Worker, _response: RespondOpen) {
-    console.log(`${yellow("[Open]")} An open update has been received by the server`);
+    console.log(
+      `${yellow("[Open]")} An open update has been received by the server`,
+    );
   }
 }
