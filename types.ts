@@ -1,10 +1,10 @@
 import WorkerEntity from "./entity/WorkerEntity.ts";
 
 export interface Slide {
-  key: string,
-  size: number,
-  updated: string,
-  download: string,
+  key: string;
+  size: number;
+  updated: string;
+  download: string;
 }
 
 export interface Worker {
@@ -77,9 +77,9 @@ export class RespondPing extends RespondAbstract {
 
 export class RequestOpen extends RequestAbstract {
   uuid: string;
-  slides: any[];
+  slides: Slide[];
 
-  constructor(uuid: string, slides: any[]) {
+  constructor(uuid: string, slides: Slide[]) {
     super(Action.RequestOpen);
 
     this.uuid = uuid;

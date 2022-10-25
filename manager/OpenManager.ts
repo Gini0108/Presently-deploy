@@ -23,7 +23,7 @@ export default class OpenManager extends AbstractManager {
         size: spacesItem.size,
         updated: spacesItem.lastModified,
         download: spacesClient.signedGET(spacesItem.key!),
-      }
+      };
     });
 
     const request = new RequestOpen(uuid, spacesSigned!);
