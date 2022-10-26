@@ -111,13 +111,11 @@ export class RespondState extends RespondAbstract {
 
 export class RequestInterval extends RequestAbstract {
   interval: number;
-  starting: number;
 
   constructor(interval: number) {
     super(Action.RequestInterval);
 
     this.interval = interval;
-    this.starting = Date.now();
   }
 }
 
