@@ -2,12 +2,12 @@ import Server from "https://raw.githubusercontent.com/Schotsl/Uberdeno/main/othe
 
 import fileRouter from "./router/fileRouter.ts";
 import socketRouter from "./router/socketRouter.ts";
-import systemRouter from "./router/systemRouter.ts";
+import networkRouter from "./router/networkRouter.ts";
 
 const server = new Server();
 
 server.add(fileRouter);
 server.add(socketRouter);
-server.add(systemRouter);
+server.add(networkRouter);
 
 server.listen();

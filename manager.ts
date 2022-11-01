@@ -35,19 +35,19 @@ class Manager {
     this.identityManager = new IdentityManager(this.repository);
   }
 
-  systemOpen(uuid: string) {
+  networkOpen(uuid: string) {
     this.workers.forEach((worker) => {
       this.openManager.handleRequest(worker, uuid);
     });
   }
 
-  systemState(playing: boolean) {
+  networkState(playing: boolean) {
     this.workers.forEach((worker) => {
       this.stateManager.handleRequest(worker, playing);
     });
   }
 
-  systemInterval(spacing: number) {
+  networkInterval(spacing: number) {
     this.workers.forEach((worker) => {
       this.spacingManager.handleRequest(worker, spacing);
     });

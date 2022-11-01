@@ -11,12 +11,12 @@ CREATE TABLE worker (
 	UNIUQUE KEY (serial)
 )
 
-CREATE TABLE system (
+CREATE TABLE network (
 	uuid BINARY(16) NOT NULL,
 	name VARCHAR(255) NOT NULL,
 	
 	file VARCHAR(255),
-	playing TINYINT(1),
+	playing TINYINT(1) NOT NULL DEFAULT 0,
 	spacing INT,
 
 	created timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,

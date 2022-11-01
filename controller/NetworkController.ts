@@ -6,13 +6,13 @@ import {
   State,
 } from "https://deno.land/x/oak@v11.1.0/mod.ts";
 
-import SystemEntity from "../entity/SystemEntity.ts";
-import SystemCollection from "../collection/SystemCollection.ts";
+import NetworkEntity from "../entity/NetworkEntity.ts";
+import NetworkCollection from "../collection/NetworkCollection.ts";
 
 import GeneralController from "https://raw.githubusercontent.com/Schotsl/Uberdeno/main/controller/GeneralController.ts";
 import InterfaceController from "https://raw.githubusercontent.com/Schotsl/Uberdeno/main/controller/InterfaceController.ts";
 
-export default class SystemController implements InterfaceController {
+export default class NetworkController implements InterfaceController {
   private generalController: GeneralController;
 
   constructor(
@@ -20,8 +20,8 @@ export default class SystemController implements InterfaceController {
   ) {
     this.generalController = new GeneralController(
       name,
-      SystemEntity,
-      SystemCollection,
+      NetworkEntity,
+      NetworkCollection,
     );
   }
 
@@ -66,15 +66,15 @@ export default class SystemController implements InterfaceController {
     });
 
     if (typeof file !== "undefined") {
-      manager.systemOpen(file);
+      manager.networkOpen(file);
     }
 
     if (typeof playing !== "undefined") {
-      manager.systemState(playing);
+      manager.networkState(playing);
     }
 
     if (typeof spacing !== "undefined") {
-      manager.systemInterval(spacing);
+      manager.networkInterval(spacing);
     }
   }
 
