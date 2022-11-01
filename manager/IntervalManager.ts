@@ -9,23 +9,21 @@ export default class IntervalManager extends AbstractManager {
     super(repository);
   }
 
-  handleRequest(worker: Worker, interval: number) {
+  handleRequest(worker: Worker, spacing: number) {
     console.log(
       `${
         gray("[Interval]")
-      } An interval update has been requested by the server`,
+      } An spacing update has been requested by the server`,
     );
 
-    const request = new RequestInterval(interval);
+    const request = new RequestInterval(spacing);
 
     this.handleMessage(worker, request);
   }
 
   handleRespond(_worker: Worker, _response: RespondInterval) {
     console.log(
-      `${
-        gray("[Interval]")
-      } An interval update has been received by the server`,
+      `${gray("[Interval]")} An spacing update has been received by the server`,
     );
   }
 }

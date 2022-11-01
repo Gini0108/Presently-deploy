@@ -1,38 +1,69 @@
 import manager from "../manager.ts";
 
-import { Request, Response } from "https://deno.land/x/oak@v11.1.0/mod.ts";
-import { MissingImplementation } from "https://raw.githubusercontent.com/Schotsl/Uberdeno/main/errors.ts";
+import {
+  Request,
+  Response,
+  State,
+} from "https://deno.land/x/oak@v11.1.0/mod.ts";
 
+import SystemEntity from "../entity/SystemEntity.ts";
+import SystemCollection from "../collection/SystemCollection.ts";
+
+import GeneralController from "https://raw.githubusercontent.com/Schotsl/Uberdeno/main/controller/GeneralController.ts";
 import InterfaceController from "https://raw.githubusercontent.com/Schotsl/Uberdeno/main/controller/InterfaceController.ts";
 
 export default class SystemController implements InterfaceController {
-  getCollection() {
-    throw new MissingImplementation();
+  private generalController: GeneralController;
+
+  constructor(
+    name: string,
+  ) {
+    this.generalController = new GeneralController(
+      name,
+      SystemEntity,
+      SystemCollection,
+    );
   }
 
-  getObject() {
-    throw new MissingImplementation();
+  getCollection(
+    { response, state }: {
+      response: Response;
+      state: State;
+    },
+  ) {
+    return this.generalController.getCollection({ response, state });
   }
 
-  updateObject() {
-    throw new MissingImplementation();
+  getObject(
+    { response, params }: {
+      response: Response;
+      params: { uuid: string };
+    },
+  ) {
+    return this.generalController.getObject({ response, params });
   }
 
-  removeObject() {
-    throw new MissingImplementation();
-  }
-
-  async addObject(
-    { request, response }: { request: Request; response: Response },
+  async updateObject(
+    { request, response, params }: {
+      request: Request;
+      response: Response;
+      params: { uuid: string };
+    },
   ) {
     const body = await request.body();
     const value = await body.value;
-
     const {
       file,
       playing,
-      interval,
+      spacing,
     } = value;
+
+    await this.generalController.updateObject({
+      request,
+      response,
+      params,
+      value,
+    });
 
     if (typeof file !== "undefined") {
       manager.systemOpen(file);
@@ -42,10 +73,23 @@ export default class SystemController implements InterfaceController {
       manager.systemState(playing);
     }
 
-    if (typeof interval !== "undefined") {
-      manager.systemInterval(interval);
+    if (typeof spacing !== "undefined") {
+      manager.systemInterval(spacing);
     }
+  }
 
-    response.body = value;
+  removeObject(
+    { response, params }: {
+      response: Response;
+      params: { uuid: string };
+    },
+  ) {
+    return this.generalController.removeObject({ response, params });
+  }
+
+  async addObject(
+    { request, response }: { request: Request; response: Response },
+  ) {
+    await this.generalController.addObject({ request, response });
   }
 }

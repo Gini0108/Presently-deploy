@@ -15,7 +15,7 @@ class Manager {
   openManager: OpenManager;
   pingManager: PingManager;
   stateManager: StateManager;
-  intervalManager: IntervalManager;
+  spacingManager: IntervalManager;
   identityManager: IdentityManager;
 
   workers: Worker[] = [];
@@ -31,7 +31,7 @@ class Manager {
     this.openManager = new OpenManager(this.repository);
     this.pingManager = new PingManager(this.repository);
     this.stateManager = new StateManager(this.repository);
-    this.intervalManager = new IntervalManager(this.repository);
+    this.spacingManager = new IntervalManager(this.repository);
     this.identityManager = new IdentityManager(this.repository);
   }
 
@@ -47,9 +47,9 @@ class Manager {
     });
   }
 
-  systemInterval(interval: number) {
+  systemInterval(spacing: number) {
     this.workers.forEach((worker) => {
-      this.intervalManager.handleRequest(worker, interval);
+      this.spacingManager.handleRequest(worker, spacing);
     });
   }
 
@@ -101,7 +101,7 @@ class Manager {
     const {
       socket,
       entity,
-      interval,
+      spacing,
     } = worker;
 
     // Remove every websocket callback to prevent errors and overhead
@@ -110,7 +110,7 @@ class Manager {
     socket.onmessage = () => {};
 
     // Since we can't reach the machine anymore we'll stop pinging it
-    clearTimeout(interval);
+    clearTimeout(spacing);
 
     // Remove the worker from the workers array
     this.workers.splice(index, 1);
@@ -129,7 +129,7 @@ class Manager {
     this.identityManager.handleRequest(worker);
 
     // We'll thing the worker every 10 seconds to ensure the connection stays open
-    worker.interval = setInterval(() => {
+    worker.spacing = setInterval(() => {
       this.pingManager.handleRequest({ socket });
     }, 10000);
   }

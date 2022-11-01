@@ -11,6 +11,20 @@ CREATE TABLE worker (
 	UNIUQUE KEY (serial)
 )
 
+CREATE TABLE system (
+	uuid BINARY(16) NOT NULL,
+	name VARCHAR(255) NOT NULL,
+	
+	file VARCHAR(255),
+	playing TINYINT(1),
+	spacing INT,
+
+	created timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+	updated timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+
+	PRIMARY KEY (uuid)
+)
+
 CREATE TABLE file (
 	uuid BINARY(16) NOT NULL,
 

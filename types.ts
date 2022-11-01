@@ -11,7 +11,7 @@ export interface Worker {
   socket: WebSocket;
   entity?: WorkerEntity;
   serial?: string;
-  interval?: number;
+  spacing?: number;
 }
 
 export enum Action {
@@ -110,12 +110,12 @@ export class RespondState extends RespondAbstract {
 }
 
 export class RequestInterval extends RequestAbstract {
-  interval: number;
+  spacing: number;
 
-  constructor(interval: number) {
+  constructor(spacing: number) {
     super(Action.RequestInterval);
 
-    this.interval = interval;
+    this.spacing = spacing;
   }
 }
 
