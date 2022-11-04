@@ -1,5 +1,5 @@
 import { RequestOpen, RespondOpen, Worker } from "../types.ts";
-import { yellow } from "https://deno.land/std@0.161.0/fmt/colors.ts";
+import { yellow } from "https://deno.land/std@0.162.0/fmt/colors.ts";
 
 import spacesClient from "../../Uberdeno/services/spacesClient.ts";
 import AbstractManager from "./AbstractManager.ts";
