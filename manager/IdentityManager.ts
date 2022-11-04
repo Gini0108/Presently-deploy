@@ -1,5 +1,5 @@
 import { RequestIdentity, RespondIdentity, Worker } from "../types.ts";
-import { magenta } from "https://deno.land/std@0.161.0/fmt/colors.ts";
+import { magenta } from "https://deno.land/std@0.162.0/fmt/colors.ts";
 
 import WorkerEntity from "../entity/WorkerEntity.ts";
 import AbstractManager from "./AbstractManager.ts";
