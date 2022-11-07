@@ -16,6 +16,7 @@ CREATE TABLE network (
 	name VARCHAR(255) NOT NULL,
 	
 	file VARCHAR(255),
+	
 	playing TINYINT(1) NOT NULL DEFAULT 0,
 	spacing INT,
 
