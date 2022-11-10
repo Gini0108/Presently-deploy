@@ -40,5 +40,5 @@ jobs:
       - name: Deploy to Deno Deploy
         uses: denoland/deployctl@v1
         with:
-          project: overworked
+          project: presently
           entrypoint: index.ts
