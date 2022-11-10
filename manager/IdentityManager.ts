@@ -3,7 +3,7 @@ import { magenta } from "https://deno.land/std@0.163.0/fmt/colors.ts";
 
 import WorkerEntity from "../entity/WorkerEntity.ts";
 import AbstractManager from "./AbstractManager.ts";
-import GeneralRepository from "https://raw.githubusercontent.com/Schotsl/Uberdeno/main/repository/GeneralRepository.ts";
+import GeneralRepository from "https://raw.githubusercontent.com/Schotsl/Uberdeno/v1.0.0/main/repository/GeneralRepository.ts";
 
 export default class IdentityManager extends AbstractManager {
   constructor(repository: GeneralRepository) {

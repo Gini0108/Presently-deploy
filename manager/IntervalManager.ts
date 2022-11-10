@@ -2,7 +2,7 @@ import { RequestInterval, RespondInterval, Worker } from "../types.ts";
 import { gray } from "https://deno.land/std@0.163.0/fmt/colors.ts";
 
 import AbstractManager from "./AbstractManager.ts";
-import GeneralRepository from "https://raw.githubusercontent.com/Schotsl/Uberdeno/main/repository/GeneralRepository.ts";
+import GeneralRepository from "https://raw.githubusercontent.com/Schotsl/Uberdeno/v1.0.0/main/repository/GeneralRepository.ts";
 
 export default class IntervalManager extends AbstractManager {
   constructor(repository: GeneralRepository) {
