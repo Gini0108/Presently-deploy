@@ -7,7 +7,7 @@ import WorkerCollection from "../collection/WorkerCollection.ts";
 const workerController = new GeneralController(
   "worker",
   WorkerEntity,
-  WorkerCollection
+  WorkerCollection,
 );
 
 const workerRouter = new GeneralRouter(
