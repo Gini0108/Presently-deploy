@@ -1,10 +1,10 @@
-import BaseEntity from "https://raw.githubusercontent.com/Schotsl/Uberdeno/v1.0.0/main/entity/BaseEntity.ts";
+import BaseEntity from "https://raw.githubusercontent.com/Schotsl/Uberdeno/v1.0.0/entity/BaseEntity.ts";
 
 import {
   BooleanColumn,
   IntColumn,
   VarcharColumn,
-} from "https://raw.githubusercontent.com/Schotsl/Uberdeno/v1.0.0/main/other/Columns.ts";
+} from "https://raw.githubusercontent.com/Schotsl/Uberdeno/v1.0.0/other/Columns.ts";
 
 export default class NetworkEntity extends BaseEntity {
   public name = new VarcharColumn("name");

@@ -9,7 +9,7 @@ import StateManager from "./manager/StateManager.ts";
 import IntervalManager from "./manager/IntervalManager.ts";
 import IdentityManager from "./manager/IdentityManager.ts";
 
-import GeneralRepository from "https://raw.githubusercontent.com/Schotsl/Uberdeno/v1.0.0/main/repository/GeneralRepository.ts";
+import GeneralRepository from "https://raw.githubusercontent.com/Schotsl/Uberdeno/v1.0.0/repository/GeneralRepository.ts";
 
 class Manager {
   openManager: OpenManager;
