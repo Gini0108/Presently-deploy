@@ -7,8 +7,8 @@ import {
 } from "https://raw.githubusercontent.com/Schotsl/Uberdeno/v1.0.0/other/Columns.ts";
 
 export default class NetworkEntity extends BaseEntity {
-  public name = new VarcharColumn("name");
   public file = new VarcharColumn("file", false);
+  public title = new VarcharColumn("title");
 
   public spacing = new IntColumn("spacing", false);
   public playing = new BooleanColumn("playing", false, false);
