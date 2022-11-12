@@ -3,7 +3,7 @@ import WorkerEntity from "./entity/WorkerEntity.ts";
 export interface Slide {
   key: string;
   size: number;
-  updated: string;
+  updated: Date;
   download: string;
 }
 
@@ -29,6 +29,8 @@ export enum Action {
   RespondState = 11,
   RequestInterval = 12,
   RespondInterval = 13,
+  RequestCover = 14,
+  RespondCover = 15,
 }
 
 export class RequestAbstract {
@@ -48,18 +50,24 @@ export class RespondAbstract {
 }
 
 export class RequestIdentity extends RequestAbstract {
-  constructor() {
+  uuid: string;
+  secret: string;
+
+  constructor(uuid: string, secret: string) {
     super(Action.RequestIdentity);
+
+    this.uuid = uuid;
+    this.secret = secret;
   }
 }
 
 export class RespondIdentity extends RespondAbstract {
-  uuid: string;
+  success: boolean;
 
-  constructor(uuid: string) {
+  constructor(success: boolean) {
     super(Action.RespondIdentity);
 
-    this.uuid = uuid;
+    this.success = success;
   }
 }
 
@@ -122,5 +130,25 @@ export class RequestInterval extends RequestAbstract {
 export class RespondInterval extends RespondAbstract {
   constructor() {
     super(Action.RespondInterval);
+  }
+}
+
+export class RequestCover extends RequestAbstract {
+  spacing: number;
+
+  constructor(spacing: number) {
+    super(Action.RequestInterval);
+
+    this.spacing = spacing;
+  }
+}
+
+export class RespondCover extends RespondAbstract {
+  download: string;
+
+  constructor(download: string) {
+    super(Action.RespondInterval);
+
+    this.download = download;
   }
 }
