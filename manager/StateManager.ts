@@ -10,9 +10,8 @@ export default class StateManager extends AbstractManager {
   }
 
   handleRequest(worker: Worker, playing: boolean) {
-    console.log(
-      `${green("[State]")} A state update has been requested by the server`,
-    );
+    // deno-fmt-ignore
+    console.log(`${green("[State]")} A state update has been requested by the server`);
 
     const request = new RequestState(playing);
 
@@ -20,8 +19,6 @@ export default class StateManager extends AbstractManager {
   }
 
   handleRespond(_worker: Worker, _response: RespondState) {
-    console.log(
-      `${green("[State]")} A state update has been received by the server`,
-    );
+    console.log(`${green("[State]")} A state update has been received by the server`);
   }
 }

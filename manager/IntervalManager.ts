@@ -10,11 +10,8 @@ export default class IntervalManager extends AbstractManager {
   }
 
   handleRequest(worker: Worker, spacing: number) {
-    console.log(
-      `${
-        gray("[Interval]")
-      } An spacing update has been requested by the server`,
-    );
+    // deno-fmt-ignore
+    console.log(`${gray("[Interval]")} An spacing update has been requested by the server`);
 
     const request = new RequestInterval(spacing);
 
@@ -22,8 +19,7 @@ export default class IntervalManager extends AbstractManager {
   }
 
   handleRespond(_worker: Worker, _response: RespondInterval) {
-    console.log(
-      `${gray("[Interval]")} An spacing update has been received by the server`,
-    );
+    // deno-fmt-ignore
+    console.log(`${gray("[Interval]")} An spacing update has been received by the server`);
   }
 }

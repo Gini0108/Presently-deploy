@@ -11,17 +11,16 @@ export default class OpenManager extends AbstractManager {
   }
 
   async handleRequest(worker: Worker, uuid: string) {
-    console.log(
-      `${yellow("[Open]")} An open update has been requested by the server`,
-    );
+    // deno-fmt-ignore
+    console.log(`${yellow("[Open]")} An open update has been requested by the server`);
 
     const spacesResponse = await spacesClient.listFiles(`${uuid}/`);
     const spacesContent = spacesResponse?.contents;
     const spacesSigned = spacesContent?.map((spacesItem) => {
       return {
-        key: spacesItem.key,
-        size: spacesItem.size,
-        updated: spacesItem.lastModified,
+        key: spacesItem.key!,
+        size: spacesItem.size!,
+        updated: spacesItem.lastModified!,
         download: spacesClient.signedGET(spacesItem.key!),
       };
     });
@@ -32,8 +31,6 @@ export default class OpenManager extends AbstractManager {
   }
 
   handleRespond(_worker: Worker, _response: RespondOpen) {
-    console.log(
-      `${yellow("[Open]")} An open update has been received by the server`,
-    );
+    console.log(`${yellow("[Open]")} An open update has been received by the server`);
   }
 }
