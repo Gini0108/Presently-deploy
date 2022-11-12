@@ -10,6 +10,6 @@ export default class NetworkEntity extends BaseEntity {
   public file = new VarcharColumn("file", false);
   public title = new VarcharColumn("title");
 
-  public spacing = new IntColumn("spacing", false);
+  public spacing = new IntColumn("spacing", false, 10000);
   public playing = new BooleanColumn("playing", false, false);
 }
