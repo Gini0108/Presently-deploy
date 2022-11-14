@@ -134,12 +134,8 @@ export class ResponseSpacing extends ResponseAbstract {
 }
 
 export class RequestCover extends RequestAbstract {
-  spacing: number;
-
-  constructor(spacing: number) {
-    super(Action.RequestSpacing);
-
-    this.spacing = spacing;
+  constructor() {
+    super(Action.RequestCover);
   }
 }
 
@@ -147,7 +143,7 @@ export class ResponseCover extends ResponseAbstract {
   download: string;
 
   constructor(download: string) {
-    super(Action.ResponseSpacing);
+    super(Action.ResponseCover);
 
     this.download = download;
   }
