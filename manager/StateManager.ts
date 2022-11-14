@@ -1,4 +1,4 @@
-import { green } from "https://deno.land/std@0.163.0/fmt/colors.ts";
+import { green } from "https://deno.land/std@0.164.0/fmt/colors.ts";
 import { RequestState, Worker } from "../types.ts";
 
 import AbstractManager from "./AbstractManager.ts";

@@ -1,4 +1,4 @@
-import { yellow } from "https://deno.land/std@0.163.0/fmt/colors.ts";
+import { yellow } from "https://deno.land/std@0.164.0/fmt/colors.ts";
 import { RequestOpen, Worker } from "../types.ts";
 
 import spacesClient from "https://raw.githubusercontent.com/Schotsl/Uberdeno/v1.0.0/services/spacesClient.ts";
