@@ -1,5 +1,5 @@
 import { magenta } from "https://deno.land/std@0.163.0/fmt/colors.ts";
-import { RequestIdentity, RespondIdentity, Worker } from "../types.ts";
+import { RequestIdentity, ResponseIdentity, Worker } from "../types.ts";
 
 import WorkerEntity from "../entity/WorkerEntity.ts";
 import AbstractManager from "./AbstractManager.ts";
@@ -44,10 +44,10 @@ export default class IdentityManager extends AbstractManager {
 
   sendResponse(worker: Worker, success: boolean) {
     // deno-fmt-ignore
-    console.log(`${magenta("[Identity]")} The server has responded to a identity request`);
+    console.log(`${magenta("[Identity]")} The server has responseed to a identity request`);
 
-    const respond = new RespondIdentity(success);
+    const response = new ResponseIdentity(success);
 
-    this.handleMessage(worker, respond);
+    this.handleMessage(worker, response);
   }
 }

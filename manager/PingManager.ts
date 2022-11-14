@@ -1,5 +1,5 @@
 import { blue } from "https://deno.land/std@0.163.0/fmt/colors.ts";
-import { RequestPing, RespondIdentity, Worker } from "../types.ts";
+import { RequestPing, ResponseIdentity, Worker } from "../types.ts";
 
 import AbstractManager from "./AbstractManager.ts";
 import GeneralRepository from "https://raw.githubusercontent.com/Schotsl/Uberdeno/v1.0.0/repository/GeneralRepository.ts";
@@ -18,7 +18,7 @@ export default class PingManager extends AbstractManager {
     this.handleMessage(worker, request);
   }
 
-  receiveResponse(_worker: Worker, _response: RespondIdentity) {
+  receiveResponse(_worker: Worker, _response: ResponseIdentity) {
     // deno-fmt-ignore
     console.log(`${blue("[Ping]")} The server has received a ping response`);
 

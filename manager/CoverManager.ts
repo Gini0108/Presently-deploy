@@ -1,5 +1,5 @@
 import { magenta } from "https://deno.land/std@0.163.0/fmt/colors.ts";
-import { RequestCover, RespondCover, Worker } from "../types.ts";
+import { RequestCover, ResponseCover, Worker } from "../types.ts";
 
 import spacesClient from "https://raw.githubusercontent.com/Schotsl/Uberdeno/v1.0.0/services/spacesClient.ts";
 import AbstractManager from "./AbstractManager.ts";
@@ -22,11 +22,11 @@ export default class CoverManager extends AbstractManager {
 
   sendResponse(worker: Worker, network: string) {
     // deno-fmt-ignore
-    console.log(`${magenta("[Cover]")} The server has responded to a cover request`);
+    console.log(`${magenta("[Cover]")} The server has responseed to a cover request`);
 
     const download = spacesClient.signedGET(`cover/${network}.png`);
-    const respond = new RespondCover(download);
+    const response = new ResponseCover(download);
 
-    this.handleMessage(worker, respond);
+    this.handleMessage(worker, response);
   }
 }

@@ -80,7 +80,7 @@ class Manager {
     const action = parse.action;
 
     switch (action) {
-      case Action.RespondPing: {
+      case Action.ResponsePing: {
         await this.pingManager.receiveResponse(worker, parse);
         break;
       }

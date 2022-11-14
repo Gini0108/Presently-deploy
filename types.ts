@@ -16,21 +16,21 @@ export interface Worker {
 
 export enum Action {
   RequestVerification = 0,
-  RespondVerification = 1,
+  ResponseVerification = 1,
   RequestIdentity = 2,
-  RespondIdentity = 3,
+  ResponseIdentity = 3,
   RequestStatus = 4,
-  RespondStatus = 5,
+  ResponseStatus = 5,
   RequestPing = 6,
-  RespondPing = 7,
+  ResponsePing = 7,
   RequestOpen = 8,
-  RespondOpen = 9,
+  ResponseOpen = 9,
   RequestState = 10,
-  RespondState = 11,
+  ResponseState = 11,
   RequestSpacing = 12,
-  RespondSpacing = 13,
+  ResponseSpacing = 13,
   RequestCover = 14,
-  RespondCover = 15,
+  ResponseCover = 15,
 }
 
 export class RequestAbstract {
@@ -41,7 +41,7 @@ export class RequestAbstract {
   }
 }
 
-export class RespondAbstract {
+export class ResponseAbstract {
   public action: Action;
 
   constructor(action: Action) {
@@ -61,11 +61,11 @@ export class RequestIdentity extends RequestAbstract {
   }
 }
 
-export class RespondIdentity extends RespondAbstract {
+export class ResponseIdentity extends ResponseAbstract {
   success: boolean;
 
   constructor(success: boolean) {
-    super(Action.RespondIdentity);
+    super(Action.ResponseIdentity);
 
     this.success = success;
   }
@@ -77,9 +77,9 @@ export class RequestPing extends RequestAbstract {
   }
 }
 
-export class RespondPing extends RespondAbstract {
+export class ResponsePing extends ResponseAbstract {
   constructor() {
-    super(Action.RespondPing);
+    super(Action.ResponsePing);
   }
 }
 
@@ -95,9 +95,9 @@ export class RequestOpen extends RequestAbstract {
   }
 }
 
-export class RespondOpen extends RespondAbstract {
+export class ResponseOpen extends ResponseAbstract {
   constructor() {
-    super(Action.RespondOpen);
+    super(Action.ResponseOpen);
   }
 }
 
@@ -111,9 +111,9 @@ export class RequestState extends RequestAbstract {
   }
 }
 
-export class RespondState extends RespondAbstract {
+export class ResponseState extends ResponseAbstract {
   constructor() {
-    super(Action.RespondState);
+    super(Action.ResponseState);
   }
 }
 
@@ -127,9 +127,9 @@ export class RequestSpacing extends RequestAbstract {
   }
 }
 
-export class RespondSpacing extends RespondAbstract {
+export class ResponseSpacing extends ResponseAbstract {
   constructor() {
-    super(Action.RespondSpacing);
+    super(Action.ResponseSpacing);
   }
 }
 
@@ -143,11 +143,11 @@ export class RequestCover extends RequestAbstract {
   }
 }
 
-export class RespondCover extends RespondAbstract {
+export class ResponseCover extends ResponseAbstract {
   download: string;
 
   constructor(download: string) {
-    super(Action.RespondSpacing);
+    super(Action.ResponseSpacing);
 
     this.download = download;
   }
