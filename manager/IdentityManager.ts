@@ -44,7 +44,7 @@ export default class IdentityManager extends AbstractManager {
 
   sendResponse(worker: Worker, success: boolean) {
     // deno-fmt-ignore
-    console.log(`${magenta("[Identity]")} The server has responseed to a identity request`);
+    console.log(`${magenta("[Identity]")} The server has responded to a identity request`);
 
     const response = new ResponseIdentity(success);
 
