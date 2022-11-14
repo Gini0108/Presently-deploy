@@ -74,7 +74,7 @@ export default class NetworkController implements InterfaceController {
     }
 
     if (typeof spacing !== "undefined") {
-      manager.networkInterval(spacing);
+      manager.networkSpacing(spacing);
     }
   }
 

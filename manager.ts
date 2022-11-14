@@ -5,8 +5,9 @@ import WorkerCollection from "./collection/WorkerCollection.ts";
 
 import OpenManager from "./manager/OpenManager.ts";
 import PingManager from "./manager/PingManager.ts";
+import CoverManager from "./manager/CoverManager.ts";
 import StateManager from "./manager/StateManager.ts";
-import IntervalManager from "./manager/IntervalManager.ts";
+import SpacingManager from "./manager/SpacingManager.ts";
 import IdentityManager from "./manager/IdentityManager.ts";
 
 import GeneralRepository from "https://raw.githubusercontent.com/Schotsl/Uberdeno/v1.0.0/repository/GeneralRepository.ts";
@@ -15,7 +16,8 @@ class Manager {
   openManager: OpenManager;
   pingManager: PingManager;
   stateManager: StateManager;
-  spacingManager: IntervalManager;
+  coverManager: CoverManager;
+  spacingManager: SpacingManager;
   identityManager: IdentityManager;
 
   workers: Worker[] = [];
@@ -31,25 +33,26 @@ class Manager {
     this.openManager = new OpenManager(this.repository);
     this.pingManager = new PingManager(this.repository);
     this.stateManager = new StateManager(this.repository);
-    this.spacingManager = new IntervalManager(this.repository);
+    this.coverManager = new CoverManager(this.repository);
+    this.spacingManager = new SpacingManager(this.repository);
     this.identityManager = new IdentityManager(this.repository);
   }
 
   networkOpen(uuid: string) {
     this.workers.forEach((worker) => {
-      this.openManager.handleRequest(worker, uuid);
+      this.openManager.sendRequest(worker, uuid);
     });
   }
 
   networkState(playing: boolean) {
     this.workers.forEach((worker) => {
-      this.stateManager.handleRequest(worker, playing);
+      this.stateManager.sendRequest(worker, playing);
     });
   }
 
-  networkInterval(spacing: number) {
+  networkSpacing(spacing: number) {
     this.workers.forEach((worker) => {
-      this.spacingManager.handleRequest(worker, spacing);
+      this.spacingManager.sendRequest(worker, spacing);
     });
   }
 
@@ -77,20 +80,16 @@ class Manager {
     const action = parse.action;
 
     switch (action) {
-      case Action.RespondIdentity: {
-        await this.identityManager.handleRespond(worker, parse);
-        break;
-      }
       case Action.RespondPing: {
-        await this.pingManager.handleRespond(worker, parse);
+        await this.pingManager.receiveResponse(worker, parse);
         break;
       }
-      case Action.RespondOpen: {
-        await this.openManager.handleRespond(worker, parse);
+      case Action.RequestCover: {
+        await this.coverManager.receiveRequest(worker, parse);
         break;
       }
-      case Action.RespondState: {
-        await this.stateManager.handleRespond(worker, parse);
+      case Action.RequestIdentity: {
+        await this.identityManager.receiveRequest(worker, parse);
         break;
       }
     }
@@ -125,12 +124,9 @@ class Manager {
   onOpen(worker: Worker) {
     const { socket } = worker;
 
-    // Request the identity once the WebSocket has been opened
-    this.identityManager.handleRequest(worker);
-
     // We'll thing the worker every 10 seconds to ensure the connection stays open
     worker.spacing = setInterval(() => {
-      this.pingManager.handleRequest({ socket });
+      this.pingManager.sendRequest({ socket });
     }, 10000);
   }
 }

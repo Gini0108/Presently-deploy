@@ -27,8 +27,8 @@ export enum Action {
   RespondOpen = 9,
   RequestState = 10,
   RespondState = 11,
-  RequestInterval = 12,
-  RespondInterval = 13,
+  RequestSpacing = 12,
+  RespondSpacing = 13,
   RequestCover = 14,
   RespondCover = 15,
 }
@@ -117,19 +117,19 @@ export class RespondState extends RespondAbstract {
   }
 }
 
-export class RequestInterval extends RequestAbstract {
+export class RequestSpacing extends RequestAbstract {
   spacing: number;
 
   constructor(spacing: number) {
-    super(Action.RequestInterval);
+    super(Action.RequestSpacing);
 
     this.spacing = spacing;
   }
 }
 
-export class RespondInterval extends RespondAbstract {
+export class RespondSpacing extends RespondAbstract {
   constructor() {
-    super(Action.RespondInterval);
+    super(Action.RespondSpacing);
   }
 }
 
@@ -137,7 +137,7 @@ export class RequestCover extends RequestAbstract {
   spacing: number;
 
   constructor(spacing: number) {
-    super(Action.RequestInterval);
+    super(Action.RequestSpacing);
 
     this.spacing = spacing;
   }
@@ -147,7 +147,7 @@ export class RespondCover extends RespondAbstract {
   download: string;
 
   constructor(download: string) {
-    super(Action.RespondInterval);
+    super(Action.RespondSpacing);
 
     this.download = download;
   }

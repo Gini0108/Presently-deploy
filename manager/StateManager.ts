@@ -1,5 +1,5 @@
-import { RequestState, RespondState, Worker } from "../types.ts";
 import { green } from "https://deno.land/std@0.163.0/fmt/colors.ts";
+import { RequestState, Worker } from "../types.ts";
 
 import AbstractManager from "./AbstractManager.ts";
 import GeneralRepository from "https://raw.githubusercontent.com/Schotsl/Uberdeno/v1.0.0/repository/GeneralRepository.ts";
@@ -9,16 +9,12 @@ export default class StateManager extends AbstractManager {
     super(repository);
   }
 
-  handleRequest(worker: Worker, playing: boolean) {
+  sendRequest(worker: Worker, playing: boolean) {
     // deno-fmt-ignore
-    console.log(`${green("[State]")} A state update has been requested by the server`);
+    console.log(`${green("[State]")} The server has send a new state request`);
 
     const request = new RequestState(playing);
 
     this.handleMessage(worker, request);
-  }
-
-  handleRespond(_worker: Worker, _response: RespondState) {
-    console.log(`${green("[State]")} A state update has been received by the server`);
   }
 }
