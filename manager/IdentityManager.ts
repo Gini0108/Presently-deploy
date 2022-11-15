@@ -33,6 +33,7 @@ export default class IdentityManager extends AbstractManager {
 
     if (success) {
       worker.entity = entity;
+      worker.network = entity.network.getValue()!;
       // Set the worker to online
       // entity.online.setValue(true);
 

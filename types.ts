@@ -10,8 +10,8 @@ export interface Slide {
 export interface Worker {
   socket: WebSocket;
   entity?: WorkerEntity;
-  serial?: string;
-  spacing?: number;
+  network?: string;
+  interval?: number;
 }
 
 export enum Action {
