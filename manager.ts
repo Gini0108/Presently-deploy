@@ -3,6 +3,9 @@ import { Action, Worker } from "./types.ts";
 import WorkerEntity from "./entity/WorkerEntity.ts";
 import WorkerCollection from "./collection/WorkerCollection.ts";
 
+import NetworkEntity from "./entity/NetworkEntity.ts";
+import NetworkCollection from "./collection/NetworkCollection.ts";
+
 import OpenManager from "./manager/OpenManager.ts";
 import PingManager from "./manager/PingManager.ts";
 import CoverManager from "./manager/CoverManager.ts";
@@ -21,21 +24,28 @@ class Manager {
   identityManager: IdentityManager;
 
   workers: Worker[] = [];
-  repository: GeneralRepository;
+  workerRepository: GeneralRepository;
+  networkRepository: GeneralRepository;
 
   constructor() {
-    this.repository = new GeneralRepository(
+    this.workerRepository = new GeneralRepository(
       "worker",
       WorkerEntity,
       WorkerCollection,
     );
 
-    this.openManager = new OpenManager(this.repository);
-    this.pingManager = new PingManager(this.repository);
-    this.stateManager = new StateManager(this.repository);
-    this.coverManager = new CoverManager(this.repository);
-    this.spacingManager = new SpacingManager(this.repository);
-    this.identityManager = new IdentityManager(this.repository);
+    this.networkRepository = new GeneralRepository(
+      "network",
+      NetworkEntity,
+      NetworkCollection,
+    );
+
+    this.openManager = new OpenManager(this.workerRepository);
+    this.pingManager = new PingManager(this.workerRepository);
+    this.stateManager = new StateManager(this.workerRepository);
+    this.coverManager = new CoverManager(this.workerRepository);
+    this.spacingManager = new SpacingManager(this.workerRepository);
+    this.identityManager = new IdentityManager(this.workerRepository);
   }
 
   networkOpen(network: string, uuid: string) {
@@ -83,11 +93,10 @@ class Manager {
   }
 
   addKnown(worker: Worker) {
-    const { workers } = this;
     const { socket } = worker;
 
     // From now on the worker will be able to receive requests
-    workers.push(worker);
+    this.workers.push(worker);
 
     // Ping the worker every 10 seconds too keep it alive
     worker.interval = setInterval(() => {
@@ -95,6 +104,23 @@ class Manager {
     }, 10000);
 
     worker.socket.onclose = () => this.removeKnown(worker);
+  }
+
+  async startKnown(worker: Worker) {
+    const networkUuid = worker.entity!.network.getValue()!;
+    const networkEntity = await this.networkRepository.getObject(
+      networkUuid,
+    ) as NetworkEntity;
+
+    const networkFile = networkEntity.file.getValue();
+    const networkState = networkEntity.playing.getValue()!;
+    const networkSpacing = networkEntity.spacing.getValue()!;
+
+    if (networkFile) this.openManager.sendRequest(worker, networkFile);
+    if (networkState) this.stateManager.sendRequest(worker, networkState);
+    if (networkSpacing !== 10000) {
+      this.spacingManager.sendRequest(worker, networkSpacing);
+    }
   }
 
   removeKnown(worker: Worker) {
@@ -146,6 +172,7 @@ class Manager {
 
         if (worker.entity) {
           this.addKnown(worker);
+          this.startKnown(worker);
         } else {
           this.removeUnknown(worker);
         }

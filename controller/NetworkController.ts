@@ -50,6 +50,7 @@ export default class NetworkController implements InterfaceController {
       params: { uuid: string };
     },
   ) {
+    const uuid = params.uuid;
     const body = await request.body();
     const value = await body.value;
     const {
@@ -66,15 +67,15 @@ export default class NetworkController implements InterfaceController {
     });
 
     if (typeof file !== "undefined") {
-      manager.networkOpen(file);
+      manager.networkOpen(uuid, file);
     }
 
     if (typeof playing !== "undefined") {
-      manager.networkState(playing);
+      manager.networkState(uuid, playing);
     }
 
     if (typeof spacing !== "undefined") {
-      manager.networkSpacing(spacing);
+      manager.networkSpacing(uuid, spacing);
     }
   }
 
