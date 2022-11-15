@@ -140,11 +140,11 @@ export class RequestCover extends RequestAbstract {
 }
 
 export class ResponseCover extends ResponseAbstract {
-  download: string;
+  cover?: Slide;
 
-  constructor(download: string) {
+  constructor(cover?: Slide) {
     super(Action.ResponseCover);
 
-    this.download = download;
+    this.cover = cover;
   }
 }
