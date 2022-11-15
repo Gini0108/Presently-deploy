@@ -32,6 +32,7 @@ export default class IdentityManager extends AbstractManager {
     // TODO: Fix update for UUID's
 
     if (success) {
+      worker.entity = entity;
       // Set the worker to online
       // entity.online.setValue(true);
 

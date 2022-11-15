@@ -14,11 +14,15 @@ export default class OpenManager extends AbstractManager {
     // deno-fmt-ignore
     console.log(`${yellow("[Open]")} The server has send a new open request`);
 
-    const spacesResponse = await spacesClient.listFiles(`${uuid}/`);
+    const spacesResponse = await spacesClient.listFiles(`slides/${uuid}`);
     const spacesContent = spacesResponse?.contents;
+
+    // The first item is just the directory instead of a file so we'll remove it
+    spacesContent?.shift();
+
     const spacesSigned = spacesContent?.map((spacesItem) => {
       return {
-        key: spacesItem.key!,
+        key: spacesItem.key!.replace(/^.+?[/]/, ''),
         size: spacesItem.size!,
         updated: spacesItem.lastModified!,
         download: spacesClient.signedGET(spacesItem.key!),

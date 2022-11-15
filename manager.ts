@@ -116,8 +116,8 @@ class Manager {
 
     // Set the worker status to offline in the database
     if (entity) {
-      entity.online.setValue(false);
-      await this.repository.updateObject(entity);
+      // entity.online.setValue(false);
+      // await this.repository.updateObject(entity);
     }
   }
 
