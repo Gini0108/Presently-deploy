@@ -20,12 +20,27 @@ export default class CoverManager extends AbstractManager {
     this.sendResponse(worker, network);
   }
 
-  sendResponse(worker: Worker, network: string) {
+  async sendResponse(worker: Worker, network: string) {
     // deno-fmt-ignore
     console.log(`${brightMagenta("[Cover]")} The server has responseed to a cover request`);
 
-    const download = spacesClient.signedGET(`cover/${network}.png`);
-    const response = new ResponseCover(download);
+    const spacesResponse = await spacesClient.listFiles(`cover/${network}.png`);
+    const spacesContent = spacesResponse?.contents;
+
+    let coverObject;
+
+    if (spacesContent) {
+      const coverItem = spacesContent[0];
+
+      coverObject = {
+        key: coverItem.key!.replace(/^.+?[/]/, ""),
+        size: coverItem.size!,
+        updated: coverItem.lastModified!,
+        download: spacesClient.signedGET(coverItem.key!),
+      };
+    }
+
+    const response = new ResponseCover(coverObject);
 
     this.handleMessage(worker, response);
   }
