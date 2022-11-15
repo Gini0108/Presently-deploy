@@ -56,46 +56,42 @@ class Manager {
     });
   }
 
-  addWorker(socket: WebSocket) {
+  addUnknown(socket: WebSocket) {
     const worker = { socket };
-
-    this.workers.push(worker);
 
     socket.onmessage = (event) => {
       this.onMessage(worker, event);
     };
 
     socket.onclose = () => {
-      this.onClose(worker);
-    };
-
-    socket.onopen = () => {
-      this.onOpen(worker);
+      socket.onmessage = () => {};
     };
   }
 
-  async onMessage(worker: Worker, event: MessageEvent) {
-    const data = event.data;
-    const parse = JSON.parse(data);
-    const action = parse.action;
+  removeUnknown(worker: Worker) {
+    const { socket } = worker;
 
-    switch (action) {
-      case Action.ResponsePing: {
-        await this.pingManager.receiveResponse(worker, parse);
-        break;
-      }
-      case Action.RequestCover: {
-        await this.coverManager.receiveRequest(worker, parse);
-        break;
-      }
-      case Action.RequestIdentity: {
-        await this.identityManager.receiveRequest(worker, parse);
-        break;
-      }
-    }
+    socket.close();
+    socket.onclose = () => {};
+    socket.onmessage = () => {};
   }
 
-  onClose(worker: Worker) {
+  addKnown(worker: Worker) {
+    const { workers } = this;
+    const { socket } = worker;
+
+    // From now on the worker will be able to receive requests
+    workers.push(worker);
+
+    // Ping the worker every 10 seconds too keep it alive
+    worker.spacing = setInterval(() => {
+      this.pingManager.sendRequest({ socket });
+    }, 10000);
+
+    worker.socket.onclose = () => this.removeKnown(worker);
+  }
+
+  removeKnown(worker: Worker) {
     const index = this.workers.indexOf(worker);
     const {
       socket,
@@ -104,7 +100,6 @@ class Manager {
     } = worker;
 
     // Remove every websocket callback to prevent errors and overhead
-    socket.onopen = () => {};
     socket.onclose = () => {};
     socket.onmessage = () => {};
 
@@ -121,13 +116,37 @@ class Manager {
     }
   }
 
-  onOpen(worker: Worker) {
-    const { socket } = worker;
+  async onMessage(worker: Worker, event: MessageEvent) {
+    const data = event.data;
+    const parse = JSON.parse(data);
+    const action = parse.action;
 
-    // We'll thing the worker every 10 seconds to ensure the connection stays open
-    worker.spacing = setInterval(() => {
-      this.pingManager.sendRequest({ socket });
-    }, 10000);
+    // Only allow the worker to identify itself
+    if (!worker.entity && action !== Action.RequestIdentity) {
+      return;
+    }
+
+    switch (action) {
+      case Action.ResponsePing: {
+        await this.pingManager.receiveResponse(worker, parse);
+        break;
+      }
+      case Action.RequestCover: {
+        await this.coverManager.receiveRequest(worker, parse);
+        break;
+      }
+      case Action.RequestIdentity: {
+        await this.identityManager.receiveRequest(worker, parse);
+
+        if (worker.entity) {
+          this.addKnown(worker);
+        } else {
+          this.removeUnknown(worker);
+        }
+
+        break;
+      }
+    }
   }
 }
 

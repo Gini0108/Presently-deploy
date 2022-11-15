@@ -41,6 +41,8 @@ export default class IdentityManager extends AbstractManager {
     }
 
     this.sendResponse(worker, success);
+
+    return success;
   }
 
   sendResponse(worker: Worker, success: boolean) {
