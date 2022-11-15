@@ -95,7 +95,7 @@ class Manager {
     }
   }
 
-  async onClose(worker: Worker) {
+  onClose(worker: Worker) {
     const index = this.workers.indexOf(worker);
     const {
       socket,
