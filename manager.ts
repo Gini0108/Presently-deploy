@@ -13,7 +13,7 @@ import StateManager from "./manager/StateManager.ts";
 import SpacingManager from "./manager/SpacingManager.ts";
 import IdentityManager from "./manager/IdentityManager.ts";
 
-import GeneralRepository from "https://raw.githubusercontent.com/Schotsl/Uberdeno/v1.0.0/repository/GeneralRepository.ts";
+import GeneralRepository from "https://raw.githubusercontent.com/Schotsl/Uberdeno/v1.0.1/repository/GeneralRepository.ts";
 
 class Manager {
   openManager: OpenManager;
@@ -123,7 +123,7 @@ class Manager {
     }
   }
 
-  removeKnown(worker: Worker) {
+  async removeKnown(worker: Worker) {
     const index = this.workers.indexOf(worker);
     const {
       socket,
@@ -143,8 +143,8 @@ class Manager {
 
     // Set the worker status to offline in the database
     if (entity) {
-      // entity.online.setValue(false);
-      // await this.repository.updateObject(entity);
+      entity.online.setValue(false);
+      await this.workerRepository.updateObject(entity);
     }
   }
 
@@ -171,10 +171,10 @@ class Manager {
         await this.identityManager.receiveRequest(worker, parse);
 
         if (worker.entity) {
-          this.addKnown(worker);
-          this.startKnown(worker);
+          await this.addKnown(worker);
+          await this.startKnown(worker);
         } else {
-          this.removeUnknown(worker);
+          await this.removeUnknown(worker);
         }
 
         break;

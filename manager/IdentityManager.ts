@@ -3,7 +3,7 @@ import { RequestIdentity, ResponseIdentity, Worker } from "../types.ts";
 
 import WorkerEntity from "../entity/WorkerEntity.ts";
 import AbstractManager from "./AbstractManager.ts";
-import GeneralRepository from "https://raw.githubusercontent.com/Schotsl/Uberdeno/v1.0.0/repository/GeneralRepository.ts";
+import GeneralRepository from "https://raw.githubusercontent.com/Schotsl/Uberdeno/v1.0.1/repository/GeneralRepository.ts";
 
 export default class IdentityManager extends AbstractManager {
   constructor(repository: GeneralRepository) {
@@ -35,10 +35,10 @@ export default class IdentityManager extends AbstractManager {
       worker.entity = entity;
       worker.network = entity.network.getValue()!;
       // Set the worker to online
-      // entity.online.setValue(true);
+      entity.online.setValue(true);
 
       // Save the worker state in the database
-      // await this.repository.updateObject(entity);
+      await this.repository.updateObject(entity);
     }
 
     this.sendResponse(worker, success);
