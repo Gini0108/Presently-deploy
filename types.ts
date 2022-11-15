@@ -1,6 +1,6 @@
 import WorkerEntity from "./entity/WorkerEntity.ts";
 
-export interface Slide {
+export interface File {
   key: string;
   size: number;
   updated: Date;
@@ -85,9 +85,9 @@ export class ResponsePing extends ResponseAbstract {
 
 export class RequestOpen extends RequestAbstract {
   uuid: string;
-  slides: Slide[];
+  slides: File[];
 
-  constructor(uuid: string, slides: Slide[]) {
+  constructor(uuid: string, slides: File[]) {
     super(Action.RequestOpen);
 
     this.uuid = uuid;
@@ -140,9 +140,9 @@ export class RequestCover extends RequestAbstract {
 }
 
 export class ResponseCover extends ResponseAbstract {
-  cover?: Slide;
+  cover?: File;
 
-  constructor(cover?: Slide) {
+  constructor(cover?: File) {
     super(Action.ResponseCover);
 
     this.cover = cover;
