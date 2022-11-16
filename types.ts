@@ -84,10 +84,10 @@ export class ResponsePing extends ResponseAbstract {
 }
 
 export class RequestOpen extends RequestAbstract {
-  uuid: string;
+  uuid?: string;
   slides: File[];
 
-  constructor(uuid: string, slides: File[]) {
+  constructor(uuid?: string, slides: File[] = []) {
     super(Action.RequestOpen);
 
     this.uuid = uuid;
