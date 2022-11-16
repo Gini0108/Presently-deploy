@@ -32,8 +32,9 @@ export default class CoverManager extends AbstractManager {
     if (spacesContent) {
       const coverItem = spacesContent[0];
 
+      // TODO: This logic can be moved to Uberdeno
       coverObject = {
-        key: coverItem.key!.replace(/^.+?[/]/, ""),
+        name: coverItem.key!.replace(/^.*\/(.*)$/, "$1"),
         size: coverItem.size!,
         updated: coverItem.lastModified!,
         download: spacesClient.signedGET(coverItem.key!),

@@ -22,7 +22,7 @@ export default class OpenManager extends AbstractManager {
 
     const spacesSigned = spacesContent?.map((spacesItem) => {
       return {
-        key: spacesItem.key!.replace(/^.+?[/]/, ""),
+        name: spacesItem.key!.replace(/^.*\/(.*)$/, "$1"),
         size: spacesItem.size!,
         updated: spacesItem.lastModified!,
         download: spacesClient.signedGET(spacesItem.key!),

@@ -1,7 +1,7 @@
 import WorkerEntity from "./entity/WorkerEntity.ts";
 
 export interface File {
-  key: string;
+  name: string;
   size: number;
   updated: Date;
   download: string;
