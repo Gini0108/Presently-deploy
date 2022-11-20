@@ -9,8 +9,8 @@ import {
 import NetworkEntity from "../entity/NetworkEntity.ts";
 import NetworkCollection from "../collection/NetworkCollection.ts";
 
-import GeneralController from "https://raw.githubusercontent.com/Schotsl/Uberdeno/v1.0.1/controller/GeneralController.ts";
-import InterfaceController from "https://raw.githubusercontent.com/Schotsl/Uberdeno/v1.0.1/controller/InterfaceController.ts";
+import GeneralController from "https://raw.githubusercontent.com/Schotsl/Uberdeno/v1.0.3/controller/GeneralController.ts";
+import InterfaceController from "https://raw.githubusercontent.com/Schotsl/Uberdeno/v1.0.3/controller/InterfaceController.ts";
 
 export default class NetworkController implements InterfaceController {
   private generalController: GeneralController;

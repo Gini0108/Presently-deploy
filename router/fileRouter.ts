@@ -1,5 +1,5 @@
 import FileController from "../controller/FileController.ts";
-import GeneralRouter from "https://raw.githubusercontent.com/Schotsl/Uberdeno/v1.0.1/router/GeneralRouter.ts";
+import GeneralRouter from "https://raw.githubusercontent.com/Schotsl/Uberdeno/v1.0.3/router/GeneralRouter.ts";
 
 const fileController = new FileController("file");
 const fileRouter = new GeneralRouter(
