@@ -1,4 +1,4 @@
-import { magenta } from "https://deno.land/std@0.164.0/fmt/colors.ts";
+import { magenta } from "https://deno.land/std@0.165.0/fmt/colors.ts";
 import { RequestIdentity, ResponseIdentity, Worker } from "../types.ts";
 
 import WorkerEntity from "../entity/WorkerEntity.ts";
