@@ -31,17 +31,13 @@ CREATE TABLE network (
 CREATE TABLE file (
 	uuid BINARY(16) NOT NULL,
 	network BINARY(16) NOT NULL,
-
 	size INT(11) NOT NULL,
 	title VARCHAR(255) NOT NULL,
 	status VARCHAR(255),
-	reference VARCHAR(16),
-
+	reference BINARY(16),
 	created timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
 	updated timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-
 	PRIMARY KEY (uuid),
-	UNIQUE KEY (network),
 	FOREIGN KEY (network) REFERENCES network(uuid)
 );
 

@@ -1,21 +1,21 @@
-import { MissingImplementation } from "https://raw.githubusercontent.com/Schotsl/Uberdeno/v1.0.3/errors.ts";
+import { MissingImplementation } from "https://raw.githubusercontent.com/Schotsl/Uberdeno/v1.0.4/errors.ts";
 import {
   Request,
   Response,
   State,
 } from "https://deno.land/x/oak@v11.1.0/mod.ts";
 
-import spacesClient from "https://raw.githubusercontent.com/Schotsl/Uberdeno/v1.0.3/services/spacesClient.ts";
-import convertClient from "https://raw.githubusercontent.com/Schotsl/Uberdeno/v1.0.3/services/convertClient.ts";
+import spacesClient from "https://raw.githubusercontent.com/Schotsl/Uberdeno/v1.0.4/services/spacesClient.ts";
+import convertClient from "https://raw.githubusercontent.com/Schotsl/Uberdeno/v1.0.4/services/convertClient.ts";
 
 import FileEntity from "../entity/FileEntity.ts";
 import FileCollection from "../collection/FileCollection.ts";
 
-import GeneralRepository from "https://raw.githubusercontent.com/Schotsl/Uberdeno/v1.0.3/repository/GeneralRepository.ts";
-import GeneralController from "https://raw.githubusercontent.com/Schotsl/Uberdeno/v1.0.3/controller/GeneralController.ts";
-import InterfaceController from "https://raw.githubusercontent.com/Schotsl/Uberdeno/v1.0.3/controller/InterfaceController.ts";
+import GeneralRepository from "https://raw.githubusercontent.com/Schotsl/Uberdeno/v1.0.4/repository/GeneralRepository.ts";
+import GeneralController from "https://raw.githubusercontent.com/Schotsl/Uberdeno/v1.0.4/controller/GeneralController.ts";
+import InterfaceController from "https://raw.githubusercontent.com/Schotsl/Uberdeno/v1.0.4/controller/InterfaceController.ts";
 
-import { renderREST } from "https://raw.githubusercontent.com/Schotsl/Uberdeno/v1.0.3/helper.ts";
+import { renderREST } from "https://raw.githubusercontent.com/Schotsl/Uberdeno/v1.0.4/helper.ts";
 
 export default class FileController implements InterfaceController {
   private generalRepository: GeneralRepository;

@@ -1,9 +1,9 @@
 import { yellow } from "https://deno.land/std@0.165.0/fmt/colors.ts";
 import { RequestOpen, Worker } from "../types.ts";
 
-import spacesClient from "https://raw.githubusercontent.com/Schotsl/Uberdeno/v1.0.3/services/spacesClient.ts";
+import spacesClient from "https://raw.githubusercontent.com/Schotsl/Uberdeno/v1.0.4/services/spacesClient.ts";
 import AbstractManager from "./AbstractManager.ts";
-import GeneralRepository from "https://raw.githubusercontent.com/Schotsl/Uberdeno/v1.0.3/repository/GeneralRepository.ts";
+import GeneralRepository from "https://raw.githubusercontent.com/Schotsl/Uberdeno/v1.0.4/repository/GeneralRepository.ts";
 
 export default class OpenManager extends AbstractManager {
   constructor(repository: GeneralRepository) {
