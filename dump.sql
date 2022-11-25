@@ -28,15 +28,27 @@ CREATE TABLE network (
 	PRIMARY KEY (uuid)
 );
 
+CREATE TABLE user (
+	uuid BINARY(16) NOT NULL,
+	network BINARY(16) NOT NULL,
+	firebase VARCHAR(255) NOT NULL,
+
+	PRIMARY KEY (uuid),
+	FOREIGN KEY (network) REFERENCES network(uuid)
+}
+
 CREATE TABLE file (
 	uuid BINARY(16) NOT NULL,
 	network BINARY(16) NOT NULL,
+
 	size INT(11) NOT NULL,
 	title VARCHAR(255) NOT NULL,
 	status VARCHAR(255),
 	reference BINARY(16),
+
 	created timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
 	updated timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+
 	PRIMARY KEY (uuid),
 	FOREIGN KEY (network) REFERENCES network(uuid)
 );
