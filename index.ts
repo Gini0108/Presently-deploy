@@ -20,3 +20,5 @@ server.add(workerRouter);
 server.add(networkRouter);
 
 server.listen();
+
+console.log("Hello world");
