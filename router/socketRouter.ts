@@ -11,7 +11,7 @@ socketRouter.get("/", async (ctx) => {
 
   const socket = await ctx.upgrade();
 
-  manager.addWorker(socket);
+  manager.addUnknown(socket);
 });
 
 export default socketRouter;

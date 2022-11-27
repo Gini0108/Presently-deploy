@@ -2,16 +2,16 @@
   "$schema": "https://deno.land/x/denon@2.4.8/schema.json",
   "scripts": {
     "test": {
-      "cmd": "deno test index.ts",
-      "desc": "Test HvG-server"
+      "cmd": "deno test --import-map=import_map.json index.ts",
+      "desc": "Test Presently-deploy"
     },
     "start": {
-      "cmd": "deno run index.ts",
-      "desc": "Start HvG-server"
+      "cmd": "deno run --import-map=import_map.json index.ts",
+      "desc": "Start Presently-deploy"
     },
     "compile": {
-      "cmd": "deno compile --target=x86_64-unknown-linux-gnu index.ts",
-      "desc": "Compile HvG-server"
+      "cmd": "deno compile --import-map=import_map.json --target=x86_64-unknown-linux-gnu index.ts",
+      "desc": "Compile Presently-deploy"
     }
   },
   "allow": {

@@ -1,34 +1,36 @@
 import WorkerEntity from "./entity/WorkerEntity.ts";
 
-export interface Slide {
-  key: string;
+export interface File {
+  name: string;
   size: number;
-  updated: string;
+  updated: Date;
   download: string;
 }
 
 export interface Worker {
   socket: WebSocket;
   entity?: WorkerEntity;
-  serial?: string;
-  spacing?: number;
+  network?: string;
+  interval?: number;
 }
 
 export enum Action {
   RequestVerification = 0,
-  RespondVerification = 1,
+  ResponseVerification = 1,
   RequestIdentity = 2,
-  RespondIdentity = 3,
+  ResponseIdentity = 3,
   RequestStatus = 4,
-  RespondStatus = 5,
+  ResponseStatus = 5,
   RequestPing = 6,
-  RespondPing = 7,
+  ResponsePing = 7,
   RequestOpen = 8,
-  RespondOpen = 9,
+  ResponseOpen = 9,
   RequestState = 10,
-  RespondState = 11,
-  RequestInterval = 12,
-  RespondInterval = 13,
+  ResponseState = 11,
+  RequestSpacing = 12,
+  ResponseSpacing = 13,
+  RequestCover = 14,
+  ResponseCover = 15,
 }
 
 export class RequestAbstract {
@@ -39,7 +41,7 @@ export class RequestAbstract {
   }
 }
 
-export class RespondAbstract {
+export class ResponseAbstract {
   public action: Action;
 
   constructor(action: Action) {
@@ -48,18 +50,24 @@ export class RespondAbstract {
 }
 
 export class RequestIdentity extends RequestAbstract {
-  constructor() {
+  uuid: string;
+  secret: string;
+
+  constructor(uuid: string, secret: string) {
     super(Action.RequestIdentity);
+
+    this.uuid = uuid;
+    this.secret = secret;
   }
 }
 
-export class RespondIdentity extends RespondAbstract {
-  uuid: string;
+export class ResponseIdentity extends ResponseAbstract {
+  success: boolean;
 
-  constructor(uuid: string) {
-    super(Action.RespondIdentity);
+  constructor(success: boolean) {
+    super(Action.ResponseIdentity);
 
-    this.uuid = uuid;
+    this.success = success;
   }
 }
 
@@ -69,17 +77,17 @@ export class RequestPing extends RequestAbstract {
   }
 }
 
-export class RespondPing extends RespondAbstract {
+export class ResponsePing extends ResponseAbstract {
   constructor() {
-    super(Action.RespondPing);
+    super(Action.ResponsePing);
   }
 }
 
 export class RequestOpen extends RequestAbstract {
-  uuid: string;
-  slides: Slide[];
+  uuid?: string;
+  slides: File[];
 
-  constructor(uuid: string, slides: Slide[]) {
+  constructor(uuid?: string, slides: File[] = []) {
     super(Action.RequestOpen);
 
     this.uuid = uuid;
@@ -87,9 +95,9 @@ export class RequestOpen extends RequestAbstract {
   }
 }
 
-export class RespondOpen extends RespondAbstract {
+export class ResponseOpen extends ResponseAbstract {
   constructor() {
-    super(Action.RespondOpen);
+    super(Action.ResponseOpen);
   }
 }
 
@@ -103,24 +111,40 @@ export class RequestState extends RequestAbstract {
   }
 }
 
-export class RespondState extends RespondAbstract {
+export class ResponseState extends ResponseAbstract {
   constructor() {
-    super(Action.RespondState);
+    super(Action.ResponseState);
   }
 }
 
-export class RequestInterval extends RequestAbstract {
+export class RequestSpacing extends RequestAbstract {
   spacing: number;
 
   constructor(spacing: number) {
-    super(Action.RequestInterval);
+    super(Action.RequestSpacing);
 
     this.spacing = spacing;
   }
 }
 
-export class RespondInterval extends RespondAbstract {
+export class ResponseSpacing extends ResponseAbstract {
   constructor() {
-    super(Action.RespondInterval);
+    super(Action.ResponseSpacing);
+  }
+}
+
+export class RequestCover extends RequestAbstract {
+  constructor() {
+    super(Action.RequestCover);
+  }
+}
+
+export class ResponseCover extends ResponseAbstract {
+  cover?: File;
+
+  constructor(cover?: File) {
+    super(Action.ResponseCover);
+
+    this.cover = cover;
   }
 }

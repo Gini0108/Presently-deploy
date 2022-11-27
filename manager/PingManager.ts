@@ -1,27 +1,27 @@
-import { RequestPing, RespondIdentity, Worker } from "../types.ts";
-import { blue } from "https://deno.land/std@0.163.0/fmt/colors.ts";
+import { blue } from "https://deno.land/std@0.166.0/fmt/colors.ts";
+import { RequestPing, ResponseIdentity, Worker } from "../types.ts";
 
 import AbstractManager from "./AbstractManager.ts";
-import GeneralRepository from "https://raw.githubusercontent.com/Schotsl/Uberdeno/v1.0.0/repository/GeneralRepository.ts";
+import GeneralRepository from "https://raw.githubusercontent.com/Schotsl/Uberdeno/v1.1.0/repository/GeneralRepository.ts";
 
 export default class PingManager extends AbstractManager {
   constructor(repository: GeneralRepository) {
     super(repository);
   }
 
-  handleRequest(worker: Worker) {
-    console.log(
-      `${blue("[Ping]")} An ping update has been requested by the server`,
-    );
+  sendRequest(worker: Worker) {
+    // deno-fmt-ignore
+    console.log(`${blue("[Ping]")} The server has send a new ping request`);
 
     const request = new RequestPing();
 
     this.handleMessage(worker, request);
   }
 
-  handleRespond(_worker: Worker, _response: RespondIdentity) {
-    console.log(
-      `${blue("[Ping]")} An ping update has been received by the server`,
-    );
+  receiveResponse(_worker: Worker, _response: ResponseIdentity) {
+    // deno-fmt-ignore
+    console.log(`${blue("[Ping]")} The server has received a ping response`);
+
+    // TODO: Store the ping time in the repository
   }
 }

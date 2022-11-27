@@ -1,6 +1,6 @@
-import GeneralRepository from "https://raw.githubusercontent.com/Schotsl/Uberdeno/v1.0.0/repository/GeneralRepository.ts";
+import GeneralRepository from "https://raw.githubusercontent.com/Schotsl/Uberdeno/v1.1.0/repository/GeneralRepository.ts";
 
-import { red } from "https://deno.land/std@0.163.0/fmt/colors.ts";
+import { red } from "https://deno.land/std@0.166.0/fmt/colors.ts";
 import { RequestAbstract, Worker } from "../types.ts";
 
 export default class AbstractManager {

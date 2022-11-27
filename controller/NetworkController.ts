@@ -9,8 +9,8 @@ import {
 import NetworkEntity from "../entity/NetworkEntity.ts";
 import NetworkCollection from "../collection/NetworkCollection.ts";
 
-import GeneralController from "https://raw.githubusercontent.com/Schotsl/Uberdeno/v1.0.0/controller/GeneralController.ts";
-import InterfaceController from "https://raw.githubusercontent.com/Schotsl/Uberdeno/v1.0.0/controller/InterfaceController.ts";
+import GeneralController from "https://raw.githubusercontent.com/Schotsl/Uberdeno/v1.1.0/controller/GeneralController.ts";
+import InterfaceController from "https://raw.githubusercontent.com/Schotsl/Uberdeno/v1.1.0/controller/InterfaceController.ts";
 
 export default class NetworkController implements InterfaceController {
   private generalController: GeneralController;
@@ -22,6 +22,11 @@ export default class NetworkController implements InterfaceController {
       name,
       NetworkEntity,
       NetworkCollection,
+      {
+        key: "uuid",
+        type: "uuidv4",
+        value: "network",
+      },
     );
   }
 
@@ -35,21 +40,24 @@ export default class NetworkController implements InterfaceController {
   }
 
   getObject(
-    { response, params }: {
+    { response, params, state }: {
       response: Response;
       params: { uuid: string };
+      state: State;
     },
   ) {
-    return this.generalController.getObject({ response, params });
+    return this.generalController.getObject({ response, params, state });
   }
 
   async updateObject(
-    { request, response, params }: {
+    { request, response, params, state }: {
       request: Request;
       response: Response;
       params: { uuid: string };
+      state: State;
     },
   ) {
+    const uuid = params.uuid;
     const body = await request.body();
     const value = await body.value;
     const {
@@ -62,34 +70,40 @@ export default class NetworkController implements InterfaceController {
       request,
       response,
       params,
+      state,
       value,
     });
 
     if (typeof file !== "undefined") {
-      manager.networkOpen(file);
+      manager.networkOpen(uuid, file);
     }
 
     if (typeof playing !== "undefined") {
-      manager.networkState(playing);
+      manager.networkState(uuid, playing);
     }
 
     if (typeof spacing !== "undefined") {
-      manager.networkInterval(spacing);
+      manager.networkSpacing(uuid, spacing);
     }
   }
 
   removeObject(
-    { response, params }: {
+    { response, params, state }: {
       response: Response;
       params: { uuid: string };
+      state: State;
     },
   ) {
-    return this.generalController.removeObject({ response, params });
+    return this.generalController.removeObject({ response, params, state });
   }
 
   async addObject(
-    { request, response }: { request: Request; response: Response },
+    { request, response, state }: {
+      request: Request;
+      response: Response;
+      state: State;
+    },
   ) {
-    await this.generalController.addObject({ request, response });
+    await this.generalController.addObject({ request, response, state });
   }
 }
