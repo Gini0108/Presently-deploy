@@ -1,9 +1,9 @@
 import { brightMagenta } from "https://deno.land/std@0.166.0/fmt/colors.ts";
 import { RequestCover, ResponseCover, Worker } from "../types.ts";
 
-import spacesClient from "https://raw.githubusercontent.com/Schotsl/Uberdeno/v1.0.4/services/spacesClient.ts";
+import spacesClient from "https://raw.githubusercontent.com/Schotsl/Uberdeno/v1.1.0/services/spacesClient.ts";
 import AbstractManager from "./AbstractManager.ts";
-import GeneralRepository from "https://raw.githubusercontent.com/Schotsl/Uberdeno/v1.0.4/repository/GeneralRepository.ts";
+import GeneralRepository from "https://raw.githubusercontent.com/Schotsl/Uberdeno/v1.1.0/repository/GeneralRepository.ts";
 
 export default class CoverManager extends AbstractManager {
   constructor(repository: GeneralRepository) {

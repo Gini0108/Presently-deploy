@@ -1,4 +1,4 @@
-import Server from "https://raw.githubusercontent.com/Schotsl/Uberdeno/v1.0.4/other/Server.ts";
+import Server from "https://raw.githubusercontent.com/Schotsl/Uberdeno/v1.1.0/other/Server.ts";
 
 import fileRouter from "./router/fileRouter.ts";
 import userRouter from "./router/userRouter.ts";
@@ -10,11 +10,12 @@ import { verifyFirebase } from "./middleware.ts";
 
 const server = new Server();
 
+server.add(socketRouter);
+
 server.use(verifyFirebase);
 
 server.add(fileRouter);
 server.add(userRouter);
-server.add(socketRouter);
 server.add(workerRouter);
 server.add(networkRouter);
 

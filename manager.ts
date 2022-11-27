@@ -13,7 +13,7 @@ import StateManager from "./manager/StateManager.ts";
 import SpacingManager from "./manager/SpacingManager.ts";
 import IdentityManager from "./manager/IdentityManager.ts";
 
-import GeneralRepository from "https://raw.githubusercontent.com/Schotsl/Uberdeno/v1.0.4/repository/GeneralRepository.ts";
+import GeneralRepository from "https://raw.githubusercontent.com/Schotsl/Uberdeno/v1.1.0/repository/GeneralRepository.ts";
 
 class Manager {
   openManager: OpenManager;

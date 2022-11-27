@@ -1,21 +1,21 @@
-import { MissingImplementation } from "https://raw.githubusercontent.com/Schotsl/Uberdeno/v1.0.4/errors.ts";
+import { MissingImplementation } from "https://raw.githubusercontent.com/Schotsl/Uberdeno/v1.1.0/errors.ts";
 import {
   Request,
   Response,
   State,
 } from "https://deno.land/x/oak@v11.1.0/mod.ts";
 
-import spacesClient from "https://raw.githubusercontent.com/Schotsl/Uberdeno/v1.0.4/services/spacesClient.ts";
-import convertClient from "https://raw.githubusercontent.com/Schotsl/Uberdeno/v1.0.4/services/convertClient.ts";
+import spacesClient from "https://raw.githubusercontent.com/Schotsl/Uberdeno/v1.1.0/services/spacesClient.ts";
+import convertClient from "https://raw.githubusercontent.com/Schotsl/Uberdeno/v1.1.0/services/convertClient.ts";
 
 import FileEntity from "../entity/FileEntity.ts";
 import FileCollection from "../collection/FileCollection.ts";
 
-import GeneralRepository from "https://raw.githubusercontent.com/Schotsl/Uberdeno/v1.0.4/repository/GeneralRepository.ts";
-import GeneralController from "https://raw.githubusercontent.com/Schotsl/Uberdeno/v1.0.4/controller/GeneralController.ts";
-import InterfaceController from "https://raw.githubusercontent.com/Schotsl/Uberdeno/v1.0.4/controller/InterfaceController.ts";
+import GeneralRepository from "https://raw.githubusercontent.com/Schotsl/Uberdeno/v1.1.0/repository/GeneralRepository.ts";
+import GeneralController from "https://raw.githubusercontent.com/Schotsl/Uberdeno/v1.1.0/controller/GeneralController.ts";
+import InterfaceController from "https://raw.githubusercontent.com/Schotsl/Uberdeno/v1.1.0/controller/InterfaceController.ts";
 
-import { renderREST } from "https://raw.githubusercontent.com/Schotsl/Uberdeno/v1.0.4/helper.ts";
+import { renderREST } from "https://raw.githubusercontent.com/Schotsl/Uberdeno/v1.1.0/helper.ts";
 
 export default class FileController implements InterfaceController {
   private generalRepository: GeneralRepository;
@@ -34,6 +34,11 @@ export default class FileController implements InterfaceController {
       name,
       FileEntity,
       FileCollection,
+      {
+        key: "network",
+        type: "uuidv4",
+        value: "network",
+      },
     );
   }
 
@@ -51,19 +56,22 @@ export default class FileController implements InterfaceController {
   }
 
   async getObject(
-    { response, params }: {
+    { response, params, state }: {
       response: Response;
       params: { uuid: string };
+      state: State;
     },
   ) {
     const fileUuid = params.uuid;
-
-    // const fileName = `${fileUuid}.pptx`;
-    // const fileSigned = spacesClient.signedGET(fileName);
-
     const fileEntity = await this.generalRepository.getObject(
       fileUuid,
+      {
+        key: "network",
+        type: "uuidv4",
+        value: state.network,
+      },
     ) as FileEntity;
+
     const fileStatus = fileEntity.status.getValue();
     const fileReference = fileEntity.reference.getValue();
 
@@ -74,21 +82,34 @@ export default class FileController implements InterfaceController {
 
       fileEntity.status.setValue(convertStatus);
 
-      this.generalRepository.updateObject(fileEntity);
+      this.generalRepository.updateObject(
+        fileEntity,
+        {
+          key: "network",
+          type: "uuidv4",
+          value: state.network,
+        },
+      );
     }
 
     response.body = renderREST(fileEntity);
   }
 
   async addObjectStatus(
-    { response, params }: {
+    { response, params, state }: {
       response: Response;
       params: { uuid: string };
+      state: State;
     },
   ) {
     const fileUuid = params.uuid;
     const fileEntity = await this.generalRepository.getObject(
       fileUuid,
+      {
+        key: "network",
+        type: "uuidv4",
+        value: state.network,
+      },
     ) as FileEntity;
 
     const fileStatus = fileEntity.status.getValue();
@@ -100,21 +121,30 @@ export default class FileController implements InterfaceController {
       fileEntity.status.setValue(convertStatus);
       fileEntity.reference.setValue(convertUuid);
 
-      this.generalRepository.updateObject(fileEntity);
+      this.generalRepository.updateObject(
+        fileEntity,
+        {
+          key: "network",
+          type: "uuidv4",
+          value: state.network,
+        },
+      );
     }
 
     response.body = renderREST(fileEntity);
   }
 
   async removeObject(
-    { response, params }: {
+    { response, params, state }: {
       response: Response;
       params: { uuid: string };
+      state: State;
     },
   ) {
     const entity = await this.generalController.getObject({
       response,
       params,
+      state,
     });
 
     // Remove the file from S3 storage
@@ -125,15 +155,20 @@ export default class FileController implements InterfaceController {
     await spacesClient.deleteFile(foldername);
 
     // Remove the file from the database
-    return this.generalController.removeObject({ response, params });
+    return this.generalController.removeObject({ response, params, state });
   }
 
   async addObject(
-    { request, response }: { request: Request; response: Response },
+    { request, response, state }: {
+      request: Request;
+      response: Response;
+      state: State;
+    },
   ) {
     const entity = await this.generalController.addObject({
       request,
       response,
+      state,
     });
 
     const filename = `${entity.uuid}.pptx`;
