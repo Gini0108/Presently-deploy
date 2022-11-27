@@ -14,7 +14,7 @@ export default class OpenManager extends AbstractManager {
     // deno-fmt-ignore
     console.log(`${yellow("[Open]")} The server has send a new open request`);
 
-    const spacesResponse = await spacesClient.listFiles(`slides/${uuid}`);
+    const spacesResponse = await spacesClient.listFiles(`${uuid}`);
     const spacesContent = spacesResponse?.contents;
 
     // The first item is just the directory instead of a file so we'll remove it
