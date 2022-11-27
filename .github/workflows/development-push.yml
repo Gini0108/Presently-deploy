@@ -42,4 +42,4 @@ jobs:
         with:
           project: presently-dev
           entrypoint: index.ts
-          import-map: import-map.json
+          import-map: ./import-map.json
