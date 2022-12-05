@@ -1,9 +1,9 @@
-import { magenta } from "https://deno.land/std@0.166.0/fmt/colors.ts";
+import { magenta } from "https://deno.land/std@0.167.0/fmt/colors.ts";
 import { RequestIdentity, ResponseIdentity, Worker } from "../types.ts";
 
 import WorkerEntity from "../entity/WorkerEntity.ts";
 import AbstractManager from "./AbstractManager.ts";
-import GeneralRepository from "https://raw.githubusercontent.com/Schotsl/Uberdeno/v1.1.0/repository/GeneralRepository.ts";
+import GeneralRepository from "https://raw.githubusercontent.com/Schotsl/Uberdeno/v1.2.0/repository/GeneralRepository.ts";
 
 export default class IdentityManager extends AbstractManager {
   constructor(repository: GeneralRepository) {
