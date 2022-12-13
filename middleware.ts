@@ -2,7 +2,7 @@ import * as jose from "https://deno.land/x/jose@v4.3.7/index.ts";
 
 import UserEntity from "./entity/UserEntity.ts";
 import UserCollection from "./collection/UserCollection.ts";
-import GeneralRepository from "https://raw.githubusercontent.com/Schotsl/Uberdeno/v1.1.0/repository/GeneralRepository.ts";
+import GeneralRepository from "https://raw.githubusercontent.com/Schotsl/Uberdeno/v1.2.0/repository/GeneralRepository.ts";
 
 interface Pair {
   [key: string]: string;
@@ -13,7 +13,7 @@ import { Request, State } from "https://deno.land/x/oak@v11.1.0/mod.ts";
 import {
   InvalidAuthorization,
   MissingAuthorization,
-} from "https://raw.githubusercontent.com/Schotsl/Uberdeno/v1.1.0/errors.ts";
+} from "https://raw.githubusercontent.com/Schotsl/Uberdeno/v1.2.0/errors.ts";
 
 export async function verifyFirebase(
   { request, state }: {
