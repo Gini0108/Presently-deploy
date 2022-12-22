@@ -3,7 +3,7 @@ import { RequestIdentity, ResponseIdentity, Worker } from "../types.ts";
 
 import WorkerEntity from "../entity/WorkerEntity.ts";
 import AbstractManager from "./AbstractManager.ts";
-import GeneralRepository from "https://raw.githubusercontent.com/Schotsl/Uberdeno/v1.2.0/repository/GeneralRepository.ts";
+import GeneralRepository from "https://raw.githubusercontent.com/Schotsl/Uberdeno/v1.2.1/repository/GeneralRepository.ts";
 
 export default class IdentityManager extends AbstractManager {
   constructor(repository: GeneralRepository) {

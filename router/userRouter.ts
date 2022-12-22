@@ -1,5 +1,5 @@
-import GeneralRouter from "https://raw.githubusercontent.com/Schotsl/Uberdeno/v1.2.0/router/GeneralRouter.ts";
-import GeneralController from "https://raw.githubusercontent.com/Schotsl/Uberdeno/v1.2.0/controller/GeneralController.ts";
+import GeneralRouter from "https://raw.githubusercontent.com/Schotsl/Uberdeno/v1.2.1/router/GeneralRouter.ts";
+import GeneralController from "https://raw.githubusercontent.com/Schotsl/Uberdeno/v1.2.1/controller/GeneralController.ts";
 
 import UserEntity from "../entity/UserEntity.ts";
 import UserCollection from "../collection/UserCollection.ts";
