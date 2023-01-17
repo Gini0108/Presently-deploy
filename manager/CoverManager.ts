@@ -1,4 +1,4 @@
-import { brightMagenta } from "https://deno.land/std@0.172.0/fmt/colors.ts";
+import { brightMagenta } from "https://deno.land/std@0.173.0/fmt/colors.ts";
 import { RequestCover, ResponseCover, Worker } from "../types.ts";
 
 import spacesClient from "https://raw.githubusercontent.com/Schotsl/Uberdeno/v1.2.1/services/spacesClient.ts";
