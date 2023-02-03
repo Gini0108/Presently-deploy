@@ -1,4 +1,4 @@
-import { gray } from "https://deno.land/std@0.175.0/fmt/colors.ts";
+import { gray } from "https://deno.land/std@0.176.0/fmt/colors.ts";
 import { RequestSpacing, Worker } from "../types.ts";
 
 import AbstractManager from "./AbstractManager.ts";
